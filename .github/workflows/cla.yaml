@@ -1,4 +1,6 @@
 # How to implement the workflow in repository
+# Create a .github/workflows/cla.yaml file in the repository and copy code below
+# ###################################################
 # name: CLA Assistant
 # on:
 #   issue_comment:
@@ -7,9 +9,15 @@
 #     types: [opened,closed,synchronize]
 # jobs:
 #   cla_assistant:
-#     uses: borislavr/renovate-config/.github/workflows/cla.yaml@main
+#     uses: Netcracker/qubership-github-workflows/.github/workflows/cla.yaml@main
 #     secrets:
 #       personal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+# ###################################################
+# PERSONAL_ACCESS_TOKEN should be created for Netcracker/cla-storage with repository permissions
+# - Read access to metadata
+# - Read and Write access to code, merge queues and pull requests
+# PERSONAL_ACCESS_TOKEN Actions secret should be added on organization level to be accesible by workflows in all repositories.
+
 name: "CLA Assistant"
 on:
   workflow_call:
