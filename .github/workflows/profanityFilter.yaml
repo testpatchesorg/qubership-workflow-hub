@@ -1,7 +1,7 @@
 # The name of the workflow
 name: Profanity filter
 
-on: [workflow_dispatch]
+on: [workflow_call]
 # Trigger on issue or pull requests, that are opened, edited, or reopened
 #  issue_comment:
 #    types: [created, edited]
