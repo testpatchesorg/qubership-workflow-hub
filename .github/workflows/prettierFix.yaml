@@ -1,4 +1,17 @@
 ---
+# How to implement the workflow in repository
+# Create a .github/workflows/prettier.yaml file in the repository and copy code below
+# ###################################################
+# name: Prettier-fix
+# on: [pull_request, push, workflow_dispatch]
+#
+# permissions:
+#   contents: write
+#
+# jobs:
+#   call-prettier-fix:
+#     uses: Netcracker/qubership-github-workflows/.github/workflows/prettierFix.yaml@main
+# ###################################################
 name: Prettier-fix
 on: [workflow_call]
 
