@@ -1,14 +1,24 @@
-# The name of the workflow
-name: Profanity filter
+# How to implement the workflow in repository
+# Create a .github/workflows/profanityFilter.yaml file in the repository and copy code below
+# ###################################################
+# name: Profanity filter
+# on:
+#   issue_comment:
+#     types: [created, edited]
+#   issues:
+#     types: [opened, edited, reopened]
+#   pull_request:
+#     types: [opened, edited, reopened]
+# permissions:
+#   issues: write
+#   pull-requests: write
+# jobs:
+#   call-apply-filter:
+#     uses: Netcracker/qubership-github-workflows/.github/workflows/profanityFilter.yaml@main
+# ###################################################
 
+name: Profanity filter
 on: [workflow_call]
-# Trigger on issue or pull requests, that are opened, edited, or reopened
-#  issue_comment:
-#    types: [created, edited]
-#  issues:
-#    types: [opened, edited, reopened]
-#  pull_request:
-#    types: [opened, edited, reopened]
 
 # Required permissions
 permissions:
