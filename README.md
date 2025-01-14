@@ -112,6 +112,55 @@ The workflow consists of several sequential jobs:
 To make it use one need to do several preparations in the project.
 
 1. First of all please make sure the `pom.xml` file prepared to build source code and java doc jars alongside with main artifact. You need to sign all publishing artifacts with PGP key too. The instruction on how to do it can be found here [Prepare your project to publish into Maven Central](./docs/maven-publish-pom-preparation_doc.md)
-2. Create a new action in your repository. Create a file `.github/workflows/release.yaml` and copy the code below or just copy the [prepared file](./docs/examples/release.yaml) 
+2. Create a new action in your repository. Create a file `.github/workflows/release.yaml` and copy the code below or just copy the [prepared file](./docs/examples/release.yaml):
+
+```yaml
+---
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        required: false
+        type: string
+      release_info:
+        required: false
+        type: string
+      java_version:
+        required: false
+        type: string
+        default: "21"
+
+jobs:
+  pom:
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/update-pom-release.yml@main
+    with:
+      file: pom.xml
+      revision: ${{ github.event.inputs.revision }}
+
+  git_release:
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/create-github-release.yml@main
+    needs: pom
+    with:
+      revision: ${{ github.event.inputs.revision }}
+      release_info: ${{ github.event.inputs.release_info }}
+      draft: false
+      prerelease: false
+
+  maven:
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/maven-publish.yml@main
+    needs: git_release
+    with:
+      maven_command: "--batch-mode deploy"
+      java_version: "21"
+      revision: ${{ github.event.inputs.revision }}
+    secrets:
+      maven_username: ${{ secrets.MAVEN_USER }}
+      maven_password: ${{ secrets.MAVEN_PASSWORD }}
+      maven_gpg_passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE  }}
+      maven_gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY  }}
+
+```
 
 The workflow needs several secrets to be prepared to work properly. For `Netcracker` repositories all of them already prepared, configured and available for use. You can find them in table [The organization level secrets and vars used in actions](#1)
