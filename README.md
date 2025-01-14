@@ -2,6 +2,10 @@
 
 The repository for reusable workflows.
 
+Detailed description of existing workflows can be found here [Index of Workflow Documentation](https://github.com/Netcracker/qubership-workflow-hub/blob/main/.github/workflows/docs/index.md)
+
+Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required. 
+
 ## Common workflows
 
 There are several reusable workflows which should be added into every Netcracker repository, see the description below.
