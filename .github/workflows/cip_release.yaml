@@ -1,4 +1,4 @@
-name: Release Workflow
+name: CIP Release
 
 on:
   workflow_dispatch:
