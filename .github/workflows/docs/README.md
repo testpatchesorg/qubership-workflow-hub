@@ -4,13 +4,13 @@ This index provides a quick overview of the available workflow documentation in 
 
 ---
 
-## Workflow Index
+## Reusable Workflows
 
 | Workflow Name                  | Description                                                                 | Documentation Link                                   |
 |--------------------------------|-----------------------------------------------------------------------------|-----------------------------------------------------|
-| Maven Publish Workflow         | Automates signing and deploying Maven artifacts to a repository.            | [Maven Publish](./maven_publish_workflow_doc.md)   |
-| GitHub Release Workflow        | Automates creating and tagging releases on GitHub.                          | [GitHub Release](./github_release_workflow_doc.md) |
-| Update Version on pom.xml      | Updates the `<revision>` version in a specified `pom.xml` file.             | [Update Version](./update_version_workflow_doc.md) |
+| Maven Publish Workflow         | Automates signing and deploying Maven artifacts to a repository.            | [Maven Publish](./reusable/maven-publish_doc.md)   |
+| GitHub Release Workflow        | Automates creating and tagging releases on GitHub.                          | [GitHub Release](./reusable/create-github-release_doc.md) |
+| Update Version on pom.xml      | Updates the `<revision>` version in a specified `pom.xml` file.             | [Update Version](./reusable/update-pom-release_doc.md|
 
 ---
 
