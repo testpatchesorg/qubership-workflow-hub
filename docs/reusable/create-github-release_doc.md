@@ -84,7 +84,7 @@ on:
 
 jobs:
   call-create-release:
-    uses: ./.github/workflows/create-release.yml
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/create-release.yml
     with:
       revision: "1.0.0"
       draft: false

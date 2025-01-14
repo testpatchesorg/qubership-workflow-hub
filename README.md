@@ -2,11 +2,13 @@
 
 The repository for reusable workflows.
 
-Detailed description of existing workflows can be found here [Index of Workflow Documentation](https://github.com/Netcracker/qubership-workflow-hub/blob/main/docs/README.md)
+Detailed description of existing workflows can be found here [Index of Workflow Documentation](./docs/README.md)
+
+---
 
 Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required. 
 
-**The organization level secrets and vars used in actions**
+<span id="1"></span>**The organization level secrets and vars used in actions**
 
 | Name                          | Purpose                                                                              |
 |-------------------------------|--------------------------------------------------------------------------------------|
@@ -22,11 +24,11 @@ There are several reusable workflows which should be added into every Netcracker
 
 ### CLA
 
-The action for [CLA](https://github.com/Netcracker/qubership-workflow-hub/blob/main/CLA/cla.md) "signing" for contributors.
+The action for [CLA](./CLA/cla.md) "signing" for contributors.
 
 > More info about underlying GitHub action can be found here [contributor-assistant](https://github.com/contributor-assistant/github-action)
 
-To add the CLA signing into your repository just create the new file `.github/workflows/cla.yaml` and paste the code below:
+To add the CLA signing into your repository just create the new file `.github/workflows/cla.yaml` and paste the code below or just copy the [prepared file](./docs/examples/cla.yaml):
 
 ```yaml
 ---
@@ -51,7 +53,7 @@ The action to check style and syntax of several document types. It creates PR if
 
 > More info about underlying GitHub action can be found here [prettier-fix](https://github.com/WorkOfStan/prettier-fix)
 
-To add the prettier into your repository just create the new file `.github/workflows/prettier.yaml` and paste the code below:
+To add the prettier into your repository just create the new file `.github/workflows/prettier.yaml` and paste the code belowor just copy the [prepared file](./docs/examples/prettier.yaml):
 
 ```yaml
 ---
@@ -72,7 +74,7 @@ The action to check PRs/issues comments on profany words.
 
 > More info about underlying GitHub action can be found here [profanity-filter](https://github.com/IEvangelist/profanity-filter)
 
-To add the profanity filter into your repository just create the new file `.github/workflows/profanity-filter.yaml` and paste the code below:
+To add the profanity filter into your repository just create the new file `.github/workflows/profanity-filter.yaml` and paste the code below or just copy the [prepared file](./docs/examples/profanity-filter.yaml):
 
 ```yaml
 ---
@@ -94,3 +96,22 @@ jobs:
   call-apply-filter:
     uses: Netcracker/qubership-workflow-hub/.github/workflows/profanityFilter.yaml@main
 ```
+
+---
+
+## Maven project release workflow
+
+Maven project release workflow is used to make a Github release and publish released artifacts into Maven Central.
+The workflow consists of several sequential jobs:
+
+1. [Update pom.xml file with the release version](./docs/reusable/update-pom-release_doc.md).
+2. [Create GitHub release](./docs/reusable/create-github-release_doc.md)
+3. [Publish released artifacts into Maven Central](./docs/reusable/maven-publish_doc.md)
+---
+
+To make it use one need to do several preparations in the project.
+
+1. First of all please make sure the `pom.xml` file prepared to build source code and java doc jars alongside with main artifact. You need to sign all publishing artifacts with PGP key too. The instruction on how to do it can be found here [Prepare your project to publish into Maven Central](./docs/maven-publish-pom-preparation_doc.md)
+2. Create a new action in your repository. Create a file `.github/workflows/release.yaml` and copy the code below or just copy the [prepared file](./docs/examples/release.yaml) 
+
+The workflow needs several secrets to be prepared to work properly. For `Netcracker` repositories all of them already prepared, configured and available for use. You can find them in table [The organization level secrets and vars used in actions](#1)

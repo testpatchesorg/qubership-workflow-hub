@@ -72,7 +72,7 @@ on:
 
 jobs:
   call-update-version:
-    uses: ./.github/workflows/update-version.yml
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/update-version.yml
     with:
       file: "path/to/pom.xml"
       revision: "1.0.1"
