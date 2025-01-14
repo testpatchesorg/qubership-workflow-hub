@@ -2,9 +2,19 @@
 
 The repository for reusable workflows.
 
-Detailed description of existing workflows can be found here [Index of Workflow Documentation](https://github.com/Netcracker/qubership-workflow-hub/blob/main/.github/workflows/docs/index.md)
+Detailed description of existing workflows can be found here [Index of Workflow Documentation](https://github.com/Netcracker/qubership-workflow-hub/blob/main/docs/README.md)
 
 Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required. 
+
+**The organization level secrets and vars used in actions**
+
+| Name                          | Purpose                                                                              |
+|-------------------------------|--------------------------------------------------------------------------------------|
+| secrets.PERSONAL_ACCESS_TOKEN | Used by actions to access repositories data                                          |
+| secrets.MAVEN_USER            | User name to authenticate in Maven Central repository to publish released artifacts  |
+| secrets.MAVEN_PASSWORD        | User token to authenticate in Maven Central repository to publish released artifacts |
+| secrets.MAVEN_GPG_PRIVATE_KEY | GPG private key to sign artefacts (jar, pom etc) to publish them into Maven Central  |
+| secrets.MAVEN_GPG_PASSPHRASE  | GPG private key passphrase                                                           |
 
 ## Common workflows
 
