@@ -1,0 +1,32 @@
+name: Update Version on pom.xml
+
+on:
+  workflow_call:
+    inputs:
+      file:
+        required: true
+        type: string
+      revision:
+        required: true
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Update version in the pom file
+      run: |
+        echo "Updating version in ${{ inputs.file }}..."
+        sed -i "s|<revision>.*</revision>|<revision>${{ inputs.revision }}</revision>|" ${{ inputs.file }}
+
+    - name: Commit changes
+      run: |
+        git config --global user.email "publisher@qubership.org"
+        git config --global user.name "Qubership User"
+        git add ${{ inputs.file }}
+        git commit -m "Update version to ${{ inputs.revision }} for release"
+        git push origin main

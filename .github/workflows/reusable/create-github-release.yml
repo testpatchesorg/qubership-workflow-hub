@@ -1,0 +1,50 @@
+name: Create GitHub Release
+
+on:
+  workflow_call:
+    inputs:
+      revision:
+        required: true
+        type: string
+      draft:
+        required: false
+        type: boolean
+        default: false
+      prerelease:
+        required: false
+        type: boolean
+        default: false
+      release_info:
+        required: false
+        type: string  
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: main
+        fetch-depth: 0    
+
+    - name: Pull latest changes
+      run: |
+        git fetch origin main
+        git reset --hard origin/main
+        git log -1 
+
+    - name: Create and push tag
+      run: |
+        git config --global user.email "tech@qubership.com"
+        git config --global user.name "tech"
+        git tag -a v${{ inputs.revision }} -m "Release v${{ inputs.revision }}"
+        git push origin v${{ inputs.revision }}        
+
+    - name: Create GitHub release using gh CLI
+      run: |
+         gh release create v${{ inputs.revision }} --title "Release v${{ inputs.revision }}" --notes "Release v${{ inputs.revision }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
