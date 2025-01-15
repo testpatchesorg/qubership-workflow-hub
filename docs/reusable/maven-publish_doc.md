@@ -112,7 +112,7 @@ on:
 
 jobs:
   call-maven-publish:
-    uses: ./.github/workflows/maven-publish.yml
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/maven-publish.yml
     with:
       maven_command: "clean deploy"
       java_version: "17"
