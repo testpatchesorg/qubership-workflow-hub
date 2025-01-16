@@ -8,10 +8,10 @@ on:
         type: string
         description: 'Custom release version'
       publish:
+        description: 'Enable publish release?'
         required: true
-        type: boolean
-        default: false
-        description: 'Enable publish release'
+        default: 'false'
+        type: string
 
 jobs:
   draft-release:
