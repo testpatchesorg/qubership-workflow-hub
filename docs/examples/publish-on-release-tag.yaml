@@ -16,21 +16,20 @@ on:
 jobs:
   get_release_version:
     runs-on: ubuntu-latest
-    outputs:
-      release_version: ${{ steps.get_release_version.outputs.release_version }}
     steps:
       - name: Get release version
         id: get_release_version
         run: |
           TAG_NAME=${{ github.event.release.tag_name }}
           RELEASE_VERSION=${TAG_NAME#v}
-          echo "::set-output name=release_version::$RELEASE_VERSION"
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV 
 
   pom:
     uses: Netcracker/qubership-workflow-hub/.github/workflows/update-pom-release.yml@main
+    needs: get_release_version
     with:
       file: pom.xml
-      revision: ${{ steps.get_release_version.outputs.release_version }}
+      revision: ${{ env.RELEASE_VERSION }}
 
   maven:
     uses: Netcracker/qubership-workflow-hub/.github/workflows/maven-publish.yml@main
@@ -38,7 +37,7 @@ jobs:
     with:
       maven_command: "--batch-mode deploy"
       java_version: '21'
-      revision: ${{ steps.get_release_version.outputs.release_version }}
+      revision: ${{ env.RELEASE_VERSION }}
     secrets:
       maven_username: ${{ secrets.MAVEN_USER }}
       maven_password: ${{ secrets.MAVEN_PASSWORD }}
