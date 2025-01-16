@@ -6,13 +6,12 @@ on:
       version:
         required: true
         type: string
-        default: '2025.1-1.0.0'
         description: 'Custom release version'
       publish:
         required: true
         type: boolean
         default: false
-        description: 'Enable publish release?'
+        description: 'Enable publish release'
 
 jobs:
   draft-release:
