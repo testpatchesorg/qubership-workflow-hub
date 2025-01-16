@@ -1,19 +1,17 @@
 ---
 
-# This GitHub Actions workflow is designed to be triggered on a push to the main branch with a tag that starts with 'v' (e.g., v1.0.0). The workflow performs the following tasks:
-
-# Extract Release Version: Extracts the tag name and removes the leading 'v' character to get the release version.
-# Update pom.xml: Updates the version in the pom.xml file using the extracted release version.
-# Publish to Maven: Publishes the artifact to the Maven repository using the updated pom.xml.
+# This GitHub Actions workflow is designed to be triggered when a release is marked as a full release..
+# The workflow performs the following tasks:
+# - Extract Release Version: Extracts the tag name and removes the leading 'v' character to get the release version.
+# - Update pom.xml: Updates the version in the pom.xml file using the extracted release version.
+# - Publish to Maven: Publishes the artifact to the Maven repository using the updated pom.xml.
 
 name: Publish on release tag
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
-    branches:
-      - main
+  release:
+    types:
+      - released
 
 jobs:
   get_release_version:
@@ -24,7 +22,7 @@ jobs:
       - name: Get release version
         id: get_release_version
         run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
+          TAG_NAME=${{ github.event.release.tag_name }}
           RELEASE_VERSION=${TAG_NAME#v}
           echo "::set-output name=release_version::$RELEASE_VERSION"
 
