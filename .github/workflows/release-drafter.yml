@@ -37,7 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trigger Maven Publication
-        if: ${{ inputs.publish }}
+        if: ${{ inputs.publish == 'true' }}
         uses: peter-evans/repository-dispatch@v3.0.0
         with:
           event-type: maven-publication-trigger
