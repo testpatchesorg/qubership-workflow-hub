@@ -1,17 +1,20 @@
 ---
 
-# This GitHub Actions workflow is designed to be triggered when a release is marked as a full release..
+# This GitHub Actions workflow is designed to be triggered when a release is marked as a full release.
 # The workflow performs the following tasks:
 # - Extract Release Version: Extracts the tag name and removes the leading 'v' character to get the release version.
 # - Update pom.xml: Updates the version in the pom.xml file using the extracted release version.
 # - Publish to Maven: Publishes the artifact to the Maven repository using the updated pom.xml.
 
-name: Publish on release tag
+name: Upload Release to Maven Central
 
 on:
   release:
     types:
       - released
+  repository_dispatch:
+    types:
+      - maven-publication-trigger
 
 jobs:
   get_release_version:

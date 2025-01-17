@@ -111,56 +111,97 @@ The workflow consists of several sequential jobs:
 
 To make it use one need to do several preparations in the project.
 
-1. First of all please make sure the `pom.xml` file prepared to build source code and java doc jars alongside with main artifact. You need to sign all publishing artifacts with PGP key too. The instruction on how to do it can be found here [Prepare your project to publish into Maven Central](./docs/maven-publish-pom-preparation_doc.md)
-2. Create a new action in your repository. Create a file `.github/workflows/release.yaml` and copy the code below or just copy the [prepared file](./docs/examples/release.yaml):
+### Step 1: Prepare pom.xml
+
+First of all please make sure the `pom.xml` file prepared to build source code and java doc jars alongside with main artifact. You need to sign all publishing artifacts with PGP key too. The instruction on how to do it can be found here [Prepare your project to publish into Maven Central](./docs/maven-publish-pom-preparation_doc.md)
+
+### Step 2: GitHub release workflow
+
+Create a new workflow in your repository. Create a file `.github/workflows/release.yaml` and copy the code below or just copy the [prepared file](./docs/examples/release.yaml):
 
 ```yaml
----
 name: Release
 
 on:
   workflow_dispatch:
     inputs:
-      revision:
-        required: false
+      version:
+        required: true
+        default: '2025.1-1.0.0'
         type: string
-      release_info:
-        required: false
-        type: string
-      java_version:
-        required: false
-        type: string
-        default: "21"
+        description: 'Release version'
+      publish:
+        required: true
+        type: boolean
+        default: false
+        description: 'Enable publish release?'
 
 jobs:
+  release:
+    uses:  Netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      publish: ${{ github.event.inputs.publish }}
+```
+
+This workflow is designed to be run manually. It has two input parameters on manual execution:
+
+- `Release version` -- a string represents version number of the release
+- `Enable publish release?` -- boolean value. If `false` (default) the workflow will create a draft release. If it is `true` then workflow will create and publish a GitHub release.
+
+### Step 3: Maven Central publication workflow
+
+Create a new workflow in your repository. Create a file `.github/workflows/upload-to-maven-central.yaml` and copy the code below or just copy the [prepared file](./docs/examples/upload-to-maven-central.yaml):
+
+```yaml
+---
+name: Upload Release to Maven Central
+
+on:
+  release:
+    types:
+      - released
+  repository_dispatch:
+    types:
+      - maven-publication-trigger
+
+jobs:
+  get_release_version:
+    runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.get_release_version.outputs.release_version }}
+    steps:
+      - name: Get release version
+        id: get_release_version
+        run: |
+          TAG_NAME=${{ github.event.release.tag_name }}
+          RELEASE_VERSION=${TAG_NAME#v}
+          echo ${RELEASE_VERSION}
+          echo "release_version=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
+
   pom:
     uses: Netcracker/qubership-workflow-hub/.github/workflows/update-pom-release.yml@main
+    needs: get_release_version
     with:
       file: pom.xml
-      revision: ${{ github.event.inputs.revision }}
-
-  git_release:
-    uses: Netcracker/qubership-workflow-hub/.github/workflows/create-github-release.yml@main
-    needs: pom
-    with:
-      revision: ${{ github.event.inputs.revision }}
-      release_info: ${{ github.event.inputs.release_info }}
-      draft: false
-      prerelease: false
+      revision: ${{ needs.get_release_version.outputs.release_version }}
 
   maven:
     uses: Netcracker/qubership-workflow-hub/.github/workflows/maven-publish.yml@main
-    needs: git_release
+    needs: [get_release_version, pom]
     with:
       maven_command: "--batch-mode deploy"
-      java_version: "21"
-      revision: ${{ github.event.inputs.revision }}
+      java_version: '21'
+      revision: ${{ needs.get_release_version.outputs.release_version }}
     secrets:
       maven_username: ${{ secrets.MAVEN_USER }}
       maven_password: ${{ secrets.MAVEN_PASSWORD }}
-      maven_gpg_passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE  }}
-      maven_gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY  }}
-
+      maven_gpg_passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      maven_gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
 ```
+
+This workflow will set the release wersion in `pom.xml` file, create artifacts and publish them into Maven Central.
+
+### Step 4: Prepare actions secrets
 
 The workflow needs several secrets to be prepared to work properly. For `Netcracker` repositories all of them already prepared, configured and available for use. You can find them in table [The organization level secrets and vars used in actions](#1). Detailed instructions on how to generate a GPG key and set up secrets in a GitHub repository can be found in [this document](./docs/maven-publish-secrets_doc.md).
