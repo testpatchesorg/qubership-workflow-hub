@@ -10,8 +10,8 @@ on:
       publish:
         description: 'Enable publish release?'
         required: true
-        default: 'false'
-        type: string
+        default: false
+        type: boolean
 
 jobs:
   draft-release:
@@ -37,7 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trigger Maven Publication
-        if: ${{ inputs.publish == 'true' }}
+        if: ${{ inputs.publish }}
         uses: peter-evans/repository-dispatch@v3.0.0
         with:
           event-type: maven-publication-trigger
