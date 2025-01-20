@@ -1,12 +1,9 @@
-name: 'Check Tag'
-description: 'Chec a specified tag'
+name: 'Tag Checker Action'
+description: 'Check a specified tag'
 inputs:
   tag:
     description: 'Tag name'
     required: true
-  github-token:
-    description: 'GitHub Token'
-    required: false
 outputs:
   exists:
     description: 'True/False'
