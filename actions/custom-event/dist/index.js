@@ -31833,7 +31833,7 @@ const github = __nccwpck_require__(5355);
 async function run() {
   try {
     
-    const eventName = core.getInput('event_name', { required: true });
+    const eventType= core.getInput('event_type', { required: true });
     const clientPayloadInput = core.getInput('client_payload', { required: false }) || '{}';
 
     let clientPayload;
@@ -31843,7 +31843,7 @@ async function run() {
       throw new Error(`Invalid JSON for client_payload: ${clientPayloadInput}`);
     }
 
-    core.info(`Event name: ${eventName}`);
+    core.info(`Event name: ${eventType}`);
     core.info(`Client Payload: ${JSON.stringify(clientPayload)}`);
 
     const token = process.env.GITHUB_TOKEN;
@@ -31857,13 +31857,13 @@ async function run() {
     const response = await octokit.rest.repos.createDispatchEvent({
       owner,
       repo,
-      event_type: eventName,
+      event_type: eventType,
       client_payload: clientPayload,
     });
 
 
     core.setOutput('status', response.status);
-    core.info(`Custom event "${eventName}" triggered with status: ${response.status}`);
+    core.info(`Custom event "${eventType}" triggered with status: ${response.status}`);
     
   } catch (error) {
     core.setFailed(error.message);
