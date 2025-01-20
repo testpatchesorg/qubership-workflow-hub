@@ -1,4 +1,4 @@
-name: "Custom Event Trigger"
+name: "Custom Dispatch Event"
 description: "Triggers a custom repository_dispatch event"
 inputs:
   event_name:
