@@ -6,7 +6,7 @@ This  Action triggers a custom `repository_dispatch` event in the repository.
 
 | Name            | Description                                         | Required | Default |
 |-----------------|-----------------------------------------------------|----------|---------|
-| `event_name`    | The name of the custom event to trigger.            | Yes      | None    |
+| `event_type`    | The type of the custom event to trigger.            | Yes      | None    |
 | `client_payload`| Optional JSON payload to send with the event.       | No       | `{}`    |
 | `GITHUB_TOKEN`  | GitHub Token for authentication.                   | Yes      | None    |
 

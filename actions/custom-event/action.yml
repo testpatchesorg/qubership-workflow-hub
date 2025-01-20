@@ -1,8 +1,8 @@
 name: "Custom Event Action"
 description: "Triggers a custom repository_dispatch event"
 inputs:
-  event_name:
-    description: "The name of the custom event"
+  event_type:
+    description: "The type of the custom event"
     required: true
   client_payload:
     description: "Payload to send with the event"
