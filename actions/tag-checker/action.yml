@@ -1,0 +1,15 @@
+name: 'Check Tag'
+description: 'Chec a specified tag'
+inputs:
+  tag:
+    description: 'Tag name'
+    required: true
+  github-token:
+    description: 'GitHub Token'
+    required: false
+outputs:
+  exists:
+    description: 'True/False'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
