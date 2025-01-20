@@ -117,10 +117,11 @@ First of all please make sure the `pom.xml` file prepared to build source code a
 
 ### Step 2: GitHub release workflow
 
-Create a new workflow in your repository. Create a file `.github/workflows/release.yaml` and copy the code below or just copy the [prepared file](./docs/examples/release.yaml):
+Create a new workflow in your repository. Create a file `.github/workflows/github-release.yaml` and copy the code below or just copy the [prepared file](./docs/examples/github-release.yaml):
 
 ```yaml
-name: Release
+---
+name: GitHub Release
 
 on:
   workflow_dispatch:
@@ -129,7 +130,7 @@ on:
         required: true
         default: '2025.1-1.0.0'
         type: string
-        description: 'Release version'
+        description: 'Custom release version'
       publish:
         required: true
         type: boolean
@@ -137,7 +138,13 @@ on:
         description: 'Enable publish release?'
 
 jobs:
+  update-pom-version:
+    uses:  Netcracker/qubership-workflow-hub/.github/workflows/update-pom-release.yml@main
+    with:
+      file: 'pom.xml'
+      revision: ${{ github.event.inputs.version }}
   release:
+    needs: [update-pom-version]
     uses:  Netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@main
     with:
       version: ${{ github.event.inputs.version }}
@@ -179,16 +186,9 @@ jobs:
           echo ${RELEASE_VERSION}
           echo "release_version=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
 
-  pom:
-    uses: Netcracker/qubership-workflow-hub/.github/workflows/update-pom-release.yml@main
-    needs: get_release_version
-    with:
-      file: pom.xml
-      revision: ${{ needs.get_release_version.outputs.release_version }}
-
-  maven:
+  upload_to_maven_central:
     uses: Netcracker/qubership-workflow-hub/.github/workflows/maven-publish.yml@main
-    needs: [get_release_version, pom]
+    needs: [get_release_version]
     with:
       maven_command: "--batch-mode deploy"
       java_version: '21'
@@ -202,6 +202,10 @@ jobs:
 
 This workflow will set the release wersion in `pom.xml` file, create artifacts and publish them into Maven Central.
 
-### Step 4: Prepare actions secrets
+### Step 4: Add configuration file for GitHub release
+
+Upload [prepared configuration file](./docs/examples/release-drafter.yml) to your repository in `.github/` folder. You can customize it in future for your needs.
+
+### Step 5: Prepare actions secrets
 
 The workflow needs several secrets to be prepared to work properly. For `Netcracker` repositories all of them already prepared, configured and available for use. You can find them in table [The organization level secrets and vars used in actions](#1). Detailed instructions on how to generate a GPG key and set up secrets in a GitHub repository can be found in [this document](./docs/maven-publish-secrets_doc.md).

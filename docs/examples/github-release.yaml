@@ -1,5 +1,5 @@
 ---
-name: Release
+name: GitHub Release
 
 on:
   workflow_dispatch:
@@ -16,7 +16,13 @@ on:
         description: 'Enable publish release?'
 
 jobs:
+  update-pom-version:
+    uses:  Netcracker/qubership-workflow-hub/.github/workflows/update-pom-release.yml@main
+    with:
+      file: 'pom.xml'
+      revision: ${{ github.event.inputs.version }}
   release:
+    needs: [update-pom-version]
     uses:  Netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@main
     with:
       version: ${{ github.event.inputs.version }}
