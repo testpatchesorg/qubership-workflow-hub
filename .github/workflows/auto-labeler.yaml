@@ -18,9 +18,6 @@ on:
         required: true
         type: string
         default: './.github/auto-labeler-config.yaml'
-    secrets:
-      github_token:
-        required: true
 
 jobs:
   assign-labels:
@@ -32,7 +29,7 @@ jobs:
         uses: mauroalderete/action-assign-labels@v1
         with:
           pull-request-number: ${{ inputs.pull_request_number }}
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           conventional-commits: ${{ inputs.config_file }}
           maintain-labels-not-matched: true
           apply-changes: true
