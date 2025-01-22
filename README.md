@@ -206,6 +206,39 @@ This workflow will set the release wersion in `pom.xml` file, create artifacts a
 
 Upload [prepared configuration file](./docs/examples/release-drafter.yml) to your repository in `.github/` folder. You can customize it in future for your needs.
 
+```yaml
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+
+categories:
+  - title: '💥 Breaking Changes'
+    labels:
+      - breaking-change
+  - title: '🚀 New Features'
+    labels:
+      - feature
+  - title: '🐛 Bug Fixes'
+    labels:
+      - bug
+      - fix
+      - bugfix
+  - title: '🛠️ Technical Debt'
+    labels:
+      - refactor
+
+change-template: '- $TITLE (#$NUMBER) by @$AUTHOR'
+no-changes-template: 'No significant changes'
+
+template: |
+  ## 🚀 Release
+
+  ### What's Changed
+  $CHANGES
+
+  **Contributors:** $CONTRIBUTORS
+```
+
 ### Step 5: Prepare actions secrets
 
 The workflow needs several secrets to be prepared to work properly. For `Netcracker` repositories all of them already prepared, configured and available for use. You can find them in table [The organization level secrets and vars used in actions](#secrets_table). Detailed instructions on how to generate a GPG key and set up secrets in a GitHub repository can be found in [this document](./docs/maven-publish-secrets_doc.md).
