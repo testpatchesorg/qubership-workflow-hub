@@ -8,7 +8,7 @@ Detailed description of existing workflows can be found here [Index of Workflow 
 
 Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required. 
 
-<span id="1"></span>**The organization level secrets and vars used in actions**
+<span id="secrets_table"></span>**The organization level secrets and vars used in actions**
 
 | Name                          | Purpose                                                                              |
 |-------------------------------|--------------------------------------------------------------------------------------|
@@ -208,4 +208,81 @@ Upload [prepared configuration file](./docs/examples/release-drafter.yml) to you
 
 ### Step 5: Prepare actions secrets
 
-The workflow needs several secrets to be prepared to work properly. For `Netcracker` repositories all of them already prepared, configured and available for use. You can find them in table [The organization level secrets and vars used in actions](#1). Detailed instructions on how to generate a GPG key and set up secrets in a GitHub repository can be found in [this document](./docs/maven-publish-secrets_doc.md).
+The workflow needs several secrets to be prepared to work properly. For `Netcracker` repositories all of them already prepared, configured and available for use. You can find them in table [The organization level secrets and vars used in actions](#secrets_table). Detailed instructions on how to generate a GPG key and set up secrets in a GitHub repository can be found in [this document](./docs/maven-publish-secrets_doc.md).
+
+## Automatic PR labels based on conventional commits
+
+The workflow automatically label PR on it's open/reopen events. It checks all the commit messages for certain words and apply corresponding labels to PR. Those labels used by [Maven project release workflow](#maven-project-release-workflow) to generate release notes.
+
+---
+
+### Step 1: Create workflow file
+
+Create a new workflow in your repository. Create a file `.github/workflows/automatic-pr-labeler.yaml` and copy the code below or just copy the [prepared file](./docs/examples/automatic-pr-labeler.yaml):
+
+```yaml
+---
+
+name: Automatic PR Labeler
+
+on:
+  pull_request:
+    branches: [main]
+    types:
+      [opened, reopened]
+
+jobs:
+  assign-labels:
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/auto-labeler.yaml@main
+    name: Assign labels in pull request
+    if: github.event.pull_request.merged == false
+    with:
+      pull_request_number: ${{ github.event.pull_request.number }}
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      config_file: './.github/auto-labeler-config.yaml'
+```
+
+### Step 2: Add configuration file
+
+Create a new configuration file `.github/auto-labeler-config.yaml`. Copy code below or just copy the [prepared file](./docs/examples/auto-labeler-config.yaml)
+
+```yaml
+conventional-commits:
+  - type: 'fix'
+    nouns: ['FIX', 'Fix', 'fix', 'FIXED', 'Fixed', 'fixed']
+    labels: ['bug']
+  - type: 'feature'
+    nouns: ['FEATURE', 'Feature', 'feature', 'FEAT', 'Feat', 'feat']
+    labels: ['feature']
+  - type: 'breaking_change'
+    nouns: ['BREAKING CHANGE', 'BREAKING', 'MAJOR']
+    labels: ['breaking-change']
+  - type: 'refactor'
+    nouns: ['refactor','Refactor']
+    labels: ['refactor']
+  - type: 'documentation'
+    nouns: ['doc','document','documentation']
+    labels: ['documentation']
+  - type: 'build'
+    nouns: ['build','rebuild']
+    labels: ['build']
+  - type: 'config'
+    nouns: ['config', 'conf', 'cofiguration', 'configure']
+    labels: ['config']
+```
+
+### Step 3: Follow the conventional commits messages strategy
+
+The configuration file from [previous step](#step-2-add-configuration-file) defines the next rules for PR labeling based on words in **commit messages**:
+
+| Commit message word(s) | Label |
+| -- | -- |
+| 'FIX', 'Fix', 'fix', 'FIXED', 'Fixed', 'fixed' | bug |
+| 'FEATURE', 'Feature', 'feature', 'FEAT', 'Feat', 'feat' | feature |
+| 'BREAKING CHANGE', 'BREAKING', 'MAJOR' | breaking-change |
+| 'refactor','Refactor' | refactor |
+| 'doc','document','documentation' | documentation |
+| 'build','rebuild' | build |
+| 'config', 'conf', 'cofiguration', 'configure' | config |
+
+Labels on PRs used to generate release notes for GitHub releases. You can edit labels configuration and [release notes generation template](#step-4-add-configuration-file-for-github-release) to extend or improve the default ones.
