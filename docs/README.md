@@ -11,7 +11,7 @@ This index provides a quick overview of the available workflow documentation in 
 
 ---
 
-## Reusable Workflows
+## Flows
 
 | Workflow Name                  | Description                                                                 | Documentation Link                                   |
 |--------------------------------|-----------------------------------------------------------------------------|-----------------------------------------------------|
