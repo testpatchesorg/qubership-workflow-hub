@@ -1,0 +1,102 @@
+name: Python build
+
+on:
+  workflow_call:  
+    inputs:
+      version:
+        required: false
+        type: string
+      poetry_version_options:
+        required: false
+        type: string
+        default: 'patch'        
+      python-version:
+        required: false
+        type: string
+        default: '3.11'
+      poetry_build_params:
+        required: false
+        type: string
+      pytest_run:
+        required: true
+        type: boolean
+      pytest_params:
+        required: false
+        type: string
+
+    secrets:
+      PYPI_API_TOKEN:
+        required: true        
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug variables    
+        run: |
+          echo version = ${{ inputs.version }}
+          echo poetry_version_options = ${{ inputs.poetry_version_options }}
+          echo python-version = ${{ inputs.python-version }}
+          echo poetry_build_params = ${{ inputs.poetry_build_params }}
+          echo pytest_run = ${{ inputs.pytest_run }} 
+          echo pytest_params = ${{ inputs.pytest_params }} 
+          
+          echo "Environment:"
+          env
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --user pipx
+          pipx install poetry
+
+      - name: Remove dist
+        run: rm -rf dist/
+
+      - name: Debug 
+        run: poetry config repositories.test https://test.pypi.org/legacy/
+
+      - name: AutoPatch version
+        if: ${{ inputs.poetry_version_options != '' && inputs.version == '' }}
+        run: poetry version ${{ inputs.poetry_version_options }}
+
+      - name: Set specific version
+        if: ${{ inputs.version != '' }}
+        run: poetry version ${{ inputs.version }}
+
+      - name: Build package
+        run: poetry build ${{ inputs.poetry_build_params }}
+
+      - name: Validate build
+        run: |
+          ls -l dist/
+          echo "Build validation complete."
+
+      - name: Run tests
+        if: ${{ inputs.pytest_run == true }}
+        run: |
+          poetry install
+          poetry run pytest ${{ inputs.pytest_params }}
+
+      - name: Publish to PyPi
+        run: |
+          poetry config pypi-token.pypi $PYPI_TOKEN
+          poetry publish --no-interaction -p test
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TEST_API_TOKEN }}
+
+      - name: Update Source on GitHub
+        run: |        
+          git config --global user.email "tech@qubership.org"
+          git config --global user.name "tech"
+          git add . 
+          git commit -m "Update version to ${{ inputs.version }} for release"
+          git push -u origin main
