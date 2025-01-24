@@ -6,16 +6,21 @@
 # - Update pom.xml: Updates the version in the pom.xml file using the extracted release version.
 # - Publish to Maven: Publishes the artifact to the Maven repository using the updated pom.xml.
 
-name: Upload Release to Maven Central
+name: Release And Upload to Maven Central
 
 on:
-  release:
-    types:
-      - released
-  repository_dispatch:
-    types:
-      - maven-publication-trigger
-
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        default: '2025.1-1.0.0'
+        type: string
+        description: 'Custom release version'
+      publish:
+        required: true
+        type: boolean
+        default: false
+        description: 'Enable publish release?'
 jobs:
   get_release_version:
     runs-on: ubuntu-latest
