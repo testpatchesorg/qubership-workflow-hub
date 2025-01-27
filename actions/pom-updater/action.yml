@@ -1,16 +1,23 @@
-name: 'Pom replace value action'
-description: 'Check a specified tag'
+name: 'Update XML Node'
+description: 'Updates an XML node in a specified file using an XPath expression.'
+
 inputs:
   filePath:
-    description: 'Path to the file'
-    required: true
+    description: 'The path to the XML file to update. Defaults to `./pom.xml`.'
+    required: false
+    default: './pom.xml'
   path:
-    description: ''
-    required: true
+    description: 'The XPath expression to locate the node to update. Defaults to `//p:project/p:properties/p:revision`.'
+    required: false
+    default: '//p:project/p:properties/p:revision'
   newValue:
-    description: ''
+    description: 'The new value to set for the selected XML node.'
     required: true
 
 runs:
   using: 'node16'
   main: 'dist/index.js'
+
+branding:
+  icon: 'edit'
+  color: 'blue'
