@@ -5,11 +5,11 @@ inputs:
   author_name:
     description: 'The name of the commit author. Defaults to `github-actions`.'
     required: false
-    default: 'github-actions'
+    default: 'qubership-actions[bot]'
   author_email:
-    description: 'The email of the commit author. Defaults to `tech@qubership.com`.'
+    description: 'The email of the commit author. Defaults to `qubership-actions[bot]@qubership.com`.'
     required: false
-    default: 'tech@qubership.com'
+    default: 'qubership-actions[bot]@qubership.com'
   commit_message:
     description: 'The commit message. Defaults to `Automated commit`.'
     required: false
