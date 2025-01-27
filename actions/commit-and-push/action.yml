@@ -3,9 +3,9 @@ description: 'Updates an XML node in a specified file using an XPath expression.
 
 inputs:
   filePath:
-    description: 'The path to the XML file to update. Defaults to `pom.xml`.'
+    description: 'The path to the XML file to update. Defaults to `./pom.xml`.'
     required: false
-    default: 'pom.xml'
+    default: './pom.xml'
   path:
     description: 'The XPath expression to locate the node to update. Defaults to `//p:project/p:properties/p:revision`.'
     required: false
