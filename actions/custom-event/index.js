@@ -3,7 +3,7 @@ const github = require('@actions/github');
 
 async function run() {
   try {
-    
+
     const eventType= core.getInput('event_type', { required: true });
     const clientPayloadInput = core.getInput('client_payload', { required: false }) || '{}';
 
@@ -21,7 +21,7 @@ async function run() {
     if (!token) {
       throw new Error('GitHub token is not provided. Make sure it is passed as an environment variable.');
     }
-    
+
     const octokit = github.getOctokit(token);
     const { owner, repo } = github.context.repo;
 
@@ -35,7 +35,7 @@ async function run() {
 
     core.setOutput('status', response.status);
     core.info(`Custom event "${eventType}" triggered with status: ${response.status}`);
-    
+
   } catch (error) {
     core.setFailed(error.message);
   }

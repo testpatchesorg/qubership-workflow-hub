@@ -31855,7 +31855,6 @@ async function run() {
   }
 }
 
-// Запуск основной функции
 run();
 module.exports = __webpack_exports__;
 /******/ })()

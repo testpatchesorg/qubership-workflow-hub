@@ -10,7 +10,7 @@ inputs:
     description: 'The XPath expression to locate the node to update. Defaults to `//p:project/p:properties/p:revision`.'
     required: false
     default: '//p:project/p:properties/p:revision'
-  newValue:
+  new_value:
     description: 'The new value to set for the selected XML node.'
     required: true
 

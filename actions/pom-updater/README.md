@@ -10,7 +10,7 @@
 |--------------|-----------|-------------------------------------------------------------------------------------------------|-------------------------------------------|
 | `filePath`   | No        | The path to the XML file to update.                                                             | `./pom.xml`                               |
 | `path`       | No        | The XPath expression to locate the node to update.                                              | `//p:project/p:properties/p:revision`     |
-| `newValue`   | Yes       | The new value to set for the selected XML node.                                                 | N/A                                       |
+| `new_value`   | Yes       | The new value to set for the selected XML node.                                                 | N/A                                       |
 
 ## Example Usage
 
@@ -31,4 +31,4 @@ jobs:
         with:
           filePath: './pom.xml'
           path: '//p:project/p:properties/p:revision'
-          newValue: '1.0.1'
+          new_value: '1.0.1'
