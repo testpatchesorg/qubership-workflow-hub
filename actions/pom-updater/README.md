@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Update XML Node
-        uses: your-repo/update-xml-node-action@main
+        uses: netcracker/qubership-workflow-hub/actions/pom-updater@main
         with:
           filePath: './pom.xml'
           path: '//p:project/p:properties/p:revision'
