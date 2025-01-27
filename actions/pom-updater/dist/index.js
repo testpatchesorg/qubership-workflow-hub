@@ -35062,7 +35062,7 @@ async function run() {
   try {
     const filePath = core.getInput('filePath') || 'pom.xml';
     const xpathExpression = core.getInput('path') || '//p:project/p:properties/p:revision';
-    const newValue = core.getInput('newValue');
+    const newValue = core.getInput('new_value');
 
     if (!newValue) {
       throw new Error('Input "newValue" is required but not provided.');
@@ -35090,6 +35090,7 @@ async function run() {
     core.info(`Updated file: ${filePath}`);
     //const updatedXml = fs.readFileSync(filePath, 'utf8');
     //core.info(`Updated XML:\n${updatedXml}`);
+
   } catch (error) {
     core.setFailed(`Action failed: ${error.message}`);
   }
