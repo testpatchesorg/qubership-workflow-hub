@@ -17,7 +17,6 @@ This index provides a quick overview of the available workflow documentation in 
 |--------------------------------|-----------------------------------------------------------------------------|-----------------------------------------------------|
 | Maven Publish         | Automates signing and deploying Maven artifacts to a repository.            | [Maven Publish](./reusable/maven-publish_doc.md)   |
 | GitHub Release        | Automates creating and tagging releases on GitHub.                          | [GitHub Release](./reusable/create-github-release_doc.md) |
-| Update Version on pom.xml      | Updates the `<revision>` version in a specified `pom.xml` file.             | [Update Version](./reusable/update-pom-release_doc.md) |
 | Python Build          | Automates building, testing, and publishing Python packages.                | [Python Build](./reusable/python-publish.md)        |
 
 
@@ -44,12 +43,6 @@ with:
   # inputs
 ```
 
-### Update Version on pom.xml
-```yaml
-uses: ./.github/workflows/update-pom-version.yml
-with:
-  # inputs
-```
 
 ### Python Build 
 ```yaml
