@@ -1,13 +1,13 @@
 name: 'Commit and Push'
 description: 'Check a specified tag'
 inputs:
-  email:
-    description: 'Email'
+  author_name:
+    description: 'Author Name'
     required: false
-  user:
-    description: 'User'
+  author_email:
+    description: 'Author Email'
     required: false
-  commitMessage:
+  commit_message:
     description: 'Commit Message'
     required: false
 

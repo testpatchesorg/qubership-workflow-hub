@@ -31834,9 +31834,9 @@ const { execSync } = __nccwpck_require__(5317);
 async function run() {
   try {
 
-    const email = core.getInput('email');
-    const user = core.getInput('user');
-    const commitMessage = core.getInput('commitMessage') || 'Automated commit';
+    const user = core.getInput('author_name') || 'github-actions'; ;
+    const email = core.getInput('author_email') || 'tech@qubership.com';
+    const commitMessage = core.getInput('commit_message') || 'Automated commit';
 
     core.info(`Using email: ${email}`);
     core.info(`Using username: ${user}`);

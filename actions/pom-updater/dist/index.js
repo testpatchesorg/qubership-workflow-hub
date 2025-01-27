@@ -35077,14 +35077,19 @@ async function run() {
       throw new Error(`No nodes found for expression: ${xpathExpression}`);
     }
 
+    core.info(`Found ${nodes.length} nodes for expression: ${xpathExpression}`);
+
     nodes.forEach((node) => {
       node.textContent = newValue;
+      core.info(`Updated node value to: ${newValue}`);
     });
 
     const serializedXml = new XMLSerializer().serializeToString(doc);
     fs.writeFileSync(filePath, serializedXml);
-    const updatedXml = fs.readFileSync(filePath, 'utf8');
-    core.info(`Updated XML:\n${updatedXml}`);
+
+    core.info(`Updated file: ${filePath}`);
+    //const updatedXml = fs.readFileSync(filePath, 'utf8');
+    //core.info(`Updated XML:\n${updatedXml}`);
   } catch (error) {
     core.setFailed(`Action failed: ${error.message}`);
   }
