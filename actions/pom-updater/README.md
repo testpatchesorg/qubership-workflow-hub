@@ -1,4 +1,4 @@
-# Update XML Node Action
+# Pom update Action
 
 **Category**: File Management
 
@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Update XML Node
-        uses: netcracker/qubership-workflow-hub/actions/pom-updater@main
+        uses: uses: netcracker/qubership-workflow-hub/actions/pom-update@main
         with:
           filePath: './pom.xml'
           path: '//p:project/p:properties/p:revision'
