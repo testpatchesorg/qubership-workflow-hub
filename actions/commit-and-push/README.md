@@ -2,21 +2,20 @@
 
 **Category**: Source Code Management
 
-**Description**: This action performs a commit and pushes changes to the specified repository.
+**Description**: This action automatically commits and pushes changes to the repository.
 
 ## Inputs
 
-| Name            | Required  | Description                                              |
-|-----------------|-----------|----------------------------------------------------------|
-| `branch`        | No       | The branch to which the changes will be pushed.         |
-| `commit_message`| No       | The commit message.                                     |
-| `author_name`   | No        | The name of the commit author. Defaults Tech Qubersip. |
-| `author_email`  | No        | The email of the commit author. Defaults tech@qubership.com. |
+| Name             | Required  | Description                                                   | Default                |
+|------------------|-----------|---------------------------------------------------------------|------------------------|
+| `author_name`    | No        | The name of the commit author.                                | `github-actions`       |
+| `author_email`   | No        | The email of the commit author.                               | `tech@qubership.com`   |
+| `commit_message` | No        | The commit message for the commit.                           | `Automated commit`     |
 
 ## Example Usage
 
 ```yaml
-name: Commit and Push Changes
+name: Commit and Push
 on:
   push:
     branches:
@@ -29,15 +28,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Make Changes
-        run: |
-          # Commands to make changes
-          echo "Some changes" >> file.txt
-
       - name: Commit and Push Changes
-        uses: Netcracker/qubership-workflow-hub/actions/commit-and-push@main
+        uses: netcracker/qubership-workflow-hub/actions/commit-and-push@main
         with:
-          branch: 'main'
-          commit_message: 'Added changes to file.txt'
           author_name: 'Your Name'
           author_email: 'your-email@example.com'
+          commit_message: 'Update files with automated script'
