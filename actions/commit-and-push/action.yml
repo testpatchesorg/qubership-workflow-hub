@@ -1,0 +1,16 @@
+name: 'Commit and Push'
+description: 'Check a specified tag'
+inputs:
+  email:
+    description: 'Email'
+    required: false
+  user:
+    description: 'User'
+    required: false
+  commitMessage:
+    description: 'Commit Message'
+    required: false
+
+runs:
+  using: 'node16'
+  main: 'index.js'
