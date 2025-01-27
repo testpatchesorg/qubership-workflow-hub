@@ -1,23 +1,24 @@
-name: 'Update XML Node'
-description: 'Updates an XML node in a specified file using an XPath expression.'
+name: 'Commit and Push'
+description: 'Automatically commits and pushes changes to the repository.'
 
 inputs:
-  filePath:
-    description: 'The path to the XML file to update. Defaults to `./pom.xml`.'
+  author_name:
+    description: 'The name of the commit author. Defaults to `github-actions`.'
     required: false
-    default: './pom.xml'
-  path:
-    description: 'The XPath expression to locate the node to update. Defaults to `//p:project/p:properties/p:revision`.'
+    default: 'github-actions'
+  author_email:
+    description: 'The email of the commit author. Defaults to `tech@qubership.com`.'
     required: false
-    default: '//p:project/p:properties/p:revision'
-  newValue:
-    description: 'The new value to set for the selected XML node.'
-    required: true
+    default: 'tech@qubership.com'
+  commit_message:
+    description: 'The commit message. Defaults to `Automated commit`.'
+    required: false
+    default: 'Automated commit'
 
 runs:
   using: 'node16'
   main: 'dist/index.js'
 
 branding:
-  icon: 'edit'
-  color: 'blue'
+  icon: 'git-commit'
+  color: 'green'
