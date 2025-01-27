@@ -15,7 +15,7 @@
 ## Example Usage
 
 ```yaml
-name: Update XML Node
+name: Update Pom
 on:
   workflow_dispatch:
 
@@ -26,8 +26,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Update XML Node
-        uses: uses: netcracker/qubership-workflow-hub/actions/pom-update@main
+      - name: Update Pom 
+        uses: netcracker/qubership-workflow-hub/actions/pom-update@main
         with:
           filePath: './pom.xml'
           path: '//p:project/p:properties/p:revision'

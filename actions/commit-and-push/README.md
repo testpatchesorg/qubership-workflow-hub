@@ -9,7 +9,7 @@
 | Name             | Required  | Description                                                   | Default                |
 |------------------|-----------|---------------------------------------------------------------|------------------------|
 | `author_name`    | No        | The name of the commit author.                                | `qubership-actions[bot]`       |
-| `author_email`   | No        | The email of the commit author.                               | `ubership-actions[bot]@qubership.com`   |
+| `author_email`   | No        | The email of the commit author.                               | `qubership-actions[bot]@qubership.com`   |
 | `commit_message` | No        | The commit message for the commit.                           | `Automated commit`     |
 
 ## Example Usage
