@@ -2,15 +2,15 @@
 
 **Category**: File Management
 
-**Description**: This action updates an XML node's value in a specified XML file using an XPath expression.
+**Description**: This action updates an XML node's value in a specified file using an XPath expression.
 
 ## Inputs
 
-| Name            | Required  | Description                                                                 |
-|-----------------|-----------|-----------------------------------------------------------------------------|
-| `filePath`      | No        | The path to the XML file to update. Defaults to `pom.xml`.                 |
-| `path`          | No        | The XPath expression to locate the node to update. Defaults to `//p:project/p:properties/p:revision`. |
-| `newValue`      | Yes       | The new value to set for the selected XML node.                            |
+| Name         | Required  | Description                                                                                     | Default                                   |
+|--------------|-----------|-------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `filePath`   | No        | The path to the XML file to update.                                                             | `./pom.xml`                               |
+| `path`       | No        | The XPath expression to locate the node to update.                                              | `//p:project/p:properties/p:revision`     |
+| `newValue`   | Yes       | The new value to set for the selected XML node.                                                 | N/A                                       |
 
 ## Example Usage
 
@@ -27,8 +27,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Update XML Node
-        uses: your-repo/your-action@main
+        uses: your-repo/update-xml-node-action@main
         with:
-          filePath: 'pom.xml'
+          filePath: './pom.xml'
           path: '//p:project/p:properties/p:revision'
           newValue: '1.0.1'
