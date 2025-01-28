@@ -140,7 +140,7 @@ conventional-commits:
     labels: ['bug']
   - type: 'feature'
     nouns: ['FEATURE', 'Feature', 'feature', 'FEAT', 'Feat', 'feat']
-    labels: ['feature']
+    labels: ['enhancement']
   - type: 'breaking_change'
     nouns: ['BREAKING CHANGE', 'BREAKING', 'MAJOR']
     labels: ['breaking-change']
@@ -314,6 +314,7 @@ categories:
   - title: '🚀 New Features'
     labels:
       - feature
+      - en
   - title: '🐛 Bug Fixes'
     labels:
       - bug
