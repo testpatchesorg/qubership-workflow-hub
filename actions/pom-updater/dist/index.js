@@ -35080,8 +35080,9 @@ async function run() {
     core.info(`Found ${nodes.length} nodes for expression: ${xpathExpression}`);
 
     nodes.forEach((node) => {
+      core.info(`Updated node value ${node.textContent} to: ${newValue}`);
       node.textContent = newValue;
-      core.info(`Updated node value to: ${newValue}`);
+
     });
 
     const serializedXml = new XMLSerializer().serializeToString(doc);
