@@ -27,7 +27,7 @@ async function run() {
     nodes.forEach((node) => {
       core.info(`Updated node value ${node.textContent} to: ${newValue}`);
       node.textContent = newValue;
-      
+
     });
 
     const serializedXml = new XMLSerializer().serializeToString(doc);
