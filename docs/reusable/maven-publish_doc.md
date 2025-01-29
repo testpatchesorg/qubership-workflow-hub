@@ -20,12 +20,13 @@ This workflow is designed to be triggered via a `workflow_call` event, allowing 
 
 The workflow accepts the following inputs:
 
-| Input Name      | Type   | Required | Default                | Description                                            |
-|-----------------|--------|----------|------------------------|--------------------------------------------------------|
-| `maven_command` | string | false    | `--batch-mode deploy`  | Maven command to execute for the build and deployment. |
+| Input Name      | Type   | Required | Default               | Description                                            |
+|-----------------|--------|----------|-----------------------|--------------------------------------------------------|
+| `maven_command` | string | false    | `--batch-mode deploy` | Maven command to execute for the build and deployment. |
 | `java_version`  | string | false    | `21`                  | Version of Java to set up for the Maven build.         |
-| `server_id`     | string | false    | `central`             | Server ID for Maven deployment.                       |
-| `version`      | string | true     |                        | The version tag for the code to publish.             |
+| `server_id`     | string | false    | `central`             | Server ID for Maven deployment.                        |
+| `version`       | string | true     |                       | The version tag for the code to publish.               |
+| `branch`        | string | true     | `main`                | branch or tag to use to build artifact                 |
 
 ### Secrets
 
