@@ -35,3 +35,4 @@ jobs:
           author_name: 'Your Name'
           author_email: 'your-email@example.com'
           commit_message: 'Update files with automated script'
+          branch_name: 'main'
