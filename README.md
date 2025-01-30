@@ -165,7 +165,7 @@ The configuration file from [previous step](#step-2-add-configuration-file) defi
 | Commit message word(s) | Label |
 | -- | -- |
 | 'FIX', 'Fix', 'fix', 'FIXED', 'Fixed', 'fixed' | bug |
-| 'FEATURE', 'Feature', 'feature', 'FEAT', 'Feat', 'feat' | feature |
+| 'FEATURE', 'Feature', 'feature', 'FEAT', 'Feat', 'feat' | enhancement |
 | 'BREAKING CHANGE', 'BREAKING', 'MAJOR' | breaking-change |
 | 'refactor','Refactor' | refactor |
 | 'doc','document','documentation' | documentation |
@@ -479,5 +479,9 @@ This workflow is designed to be run manually. It has six input parameters on man
 ### Step 2: Prepare secrets
 
 The Python Release workflow require PyPi API token. You need to get it from PyPi and add into your repositories Actions secrets. The name of the secret should be `PYPI_API_TOKEN`.
+
+### Step 3: Add configuration file for GitHub release
+
+The step exactly the same as [Step 3: Add configuration file for GitHub release](#step-3-add-configuration-file-for-github-release) for maven release workflow.
 
 ---
