@@ -125,7 +125,6 @@ jobs:
     if: github.event.pull_request.merged == false
     with:
       pull_request_number: ${{ github.event.pull_request.number }}
-      github_token: ${{ secrets.GITHUB_TOKEN }}
       config_file: './.github/auto-labeler-config.yaml'
 ```
 
