@@ -15,7 +15,7 @@ on:
         required: true
         type: number
       config_file:
-        required: true
+        required: false
         type: string
         default: './.github/auto-labeler-config.yaml'
 permissions:

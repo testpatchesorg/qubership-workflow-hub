@@ -14,7 +14,7 @@ on:
         default: main
       publish:
         description: 'Enable publish release?'
-        required: true
+        required: false
         default: 'false'
         type: string
       config-name:
