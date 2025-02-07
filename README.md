@@ -6,6 +6,29 @@ Detailed description of existing workflows can be found here [Index of Workflow 
 
 ---
 
+- [qubership-workflow-hub](#qubership-workflow-hub)
+  - [Common workflows](#common-workflows)
+    - [CLA](#cla)
+    - [Prettier](#prettier)
+    - [Profanity filter](#profanity-filter)
+    - [Automatic PR labels based on conventional commits](#automatic-pr-labels-based-on-conventional-commits)
+      - [Step 1: Create workflow file](#step-1-create-workflow-file)
+      - [Step 2: Add configuration file](#step-2-add-configuration-file)
+      - [Step 3: Follow the conventional commits messages strategy](#step-3-follow-the-conventional-commits-messages-strategy)
+  - [Maven project release workflow](#maven-project-release-workflow)
+    - [Step 1: Prepare pom.xml](#step-1-prepare-pomxml)
+    - [Step 2: Maven release workflow](#step-2-maven-release-workflow)
+    - [Step 3: Add configuration file for GitHub release](#step-3-add-configuration-file-for-github-release)
+    - [Step 4: Prepare actions secrets](#step-4-prepare-actions-secrets)
+  - [Python Project Release Workflow](#python-project-release-workflow)
+    - [Step 1: Python release workflow](#step-1-python-release-workflow)
+    - [Step 2: Prepare secrets](#step-2-prepare-secrets)
+    - [Step 3: Add configuration file for GitHub release](#step-3-add-configuration-file-for-github-release-1)
+  - [GO Project Check Modules License](#go-project-check-modules-license)
+    - [Step 1: Create GO Project Check Modules License workflow](#step-1-create-go-project-check-modules-license-workflow)
+    - [Step 2: Create Configuration File](#step-2-create-configuration-file)
+
+---
 Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required. 
 
 <span id="secrets_table"></span>**The organization level secrets and vars used in actions**
@@ -484,3 +507,41 @@ The Python Release workflow require PyPi API token. You need to get it from PyPi
 The step exactly the same as [Step 3: Add configuration file for GitHub release](#step-3-add-configuration-file-for-github-release) for maven release workflow.
 
 ---
+
+## GO Project Check Modules License
+
+The workflow will check licenses of all dependencies if they are in scope of allowlist.
+
+> More info about used tool can be found here [wwhrd](https://github.com/frapposelli/wwhrd)
+
+---
+
+### Step 1: Create GO Project Check Modules License workflow
+
+Create new a file `.github/workflows/check-license.yaml` and copy the code below or just copy the [prepared file](./docs/examples/check-license.yaml):
+
+```yaml
+---
+
+name: Check Go Modules Licenses
+on:
+  push:
+
+jobs:
+  check-license:
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/go-check-license.yaml@main
+```
+
+### Step 2: Create Configuration File
+
+Create a new file `.wwhrd.yml` in the root of repository and copy the code below or just copy the [prepared file](./docs/examples/.wwhrd.yml):
+
+```yaml
+allowlist:
+  - Apache-2.0
+  - MIT
+  - BSD-3-Clause
+  - BSD-2-Clause
+  - ISC
+  - MPL-2.0
+```
