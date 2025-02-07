@@ -39,7 +39,7 @@ jobs:
           ref: ${{ github.ref_name }}
 
       - name: Run Release Drafter
-        uses: release-drafter/release-drafter@v5
+        uses: release-drafter/release-drafter@v6.1.0
         with:
           config-name: ${{ inputs.config-name }}
           publish: ${{ inputs.publish }}
