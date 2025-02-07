@@ -1,5 +1,5 @@
 ---
-#     
+#
 # on:
 #     pull_request:
 #       branches: [main]
@@ -14,10 +14,12 @@ on:
       pull_request_number:
         required: true
         type: number
-      config_file: 
+      config_file:
         required: true
         type: string
         default: './.github/auto-labeler-config.yaml'
+permissions:
+  contents: write
 
 jobs:
   assign-labels:
@@ -29,8 +31,7 @@ jobs:
         uses: mauroalderete/action-assign-labels@v1
         with:
           pull-request-number: ${{ inputs.pull_request_number }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
           conventional-commits: ${{ inputs.config_file }}
           maintain-labels-not-matched: true
           apply-changes: true
-    
