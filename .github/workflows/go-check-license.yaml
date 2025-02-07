@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Code checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
 
       - name: Find go.mod files
         id: find
