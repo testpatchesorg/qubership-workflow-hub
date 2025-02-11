@@ -20,7 +20,7 @@ jobs:
         run: |
           GO_MOD_FILE=$(find . -name go.mod | head -n 1)
           if [ -f ${GO_MOD_FILE} ]; then
-            echo "GO_MOD_FILE=${GO_MOD_FILE}" >> $GITHUB_ENV
+            echo "GO_MOD_FILE=\"${GO_MOD_FILE}\"" >> $GITHUB_ENV
             echo "GO_MOD_DIR=$(dirname ${GO_MOD_FILE})" >> $GITHUB_ENV
             MODULE=$(cat ${GO_MOD_FILE} | grep module | awk '{print $2}')
             echo "MODULE=${MODULE}" >> $GITHUB_ENV
