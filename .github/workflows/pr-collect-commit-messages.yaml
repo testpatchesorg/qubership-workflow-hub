@@ -1,0 +1,17 @@
+---
+
+name: Collect Commit Messages
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  pull-requests: write
+
+jobs:
+  get-commit-messages:
+    uses: Netcracker/qubership-workflow-hub/.github/workflows/pr-add-auto-description.yaml@main

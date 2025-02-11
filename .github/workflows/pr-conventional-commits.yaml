@@ -1,0 +1,25 @@
+---
+
+# This workflow will run the Conventional Commits PR Check action on the code in the PR
+# It will check if all the commits in PR follow the Conventional Commits specification
+
+name: Conventional Commits PR Check
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+permissions:
+  pull-requests: read
+jobs:
+  build:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: webiny/action-conventional-commits@v1.3.0
