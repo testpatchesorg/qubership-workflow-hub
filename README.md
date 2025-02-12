@@ -32,7 +32,7 @@ Detailed description of existing workflows can be found here [Index of Workflow 
     - [Step 2: Create Configuration File](#step-2-create-configuration-file)
 
 ---
-Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required. 
+Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required.
 
 <span id="secrets_table"></span>**The organization level secrets and vars used in actions**
 
@@ -197,7 +197,7 @@ The configuration file from [previous step](#step-2-add-configuration-file) defi
 | 'build','rebuild' | build |
 | 'config', 'conf', 'cofiguration', 'configure' | config |
 
-Labels on PRs used to generate release notes for GitHub releases. You can edit labels configuration and [release notes generation template](#step-4-add-configuration-file-for-github-release) to extend or improve the default ones.
+Labels on PRs used to generate release notes for GitHub releases. You can edit labels configuration and [release notes generation template](#step-3-add-configuration-file-for-github-release) to extend or improve the default ones.
 
 ### Collect Commit Messages in PR
 
