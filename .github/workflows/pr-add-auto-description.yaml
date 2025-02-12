@@ -25,9 +25,9 @@ jobs:
           -H "Authorization: Bearer ${{ github.token }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           "${{ github.event.pull_request.commits_url }}" \
-          | jq -r '.[] | "[\(.sha)](\(.html_url)) \(.commit.message)"')
+          | jq -r '.[] | "[\(.author.login)](\(.html_url)) \(.commit.message)"')
           echo "<!-- start match -->" > ./_commit_messages.txt
-          echo "### Automatically added description" >> ./_commit_messages.txt
+          echo "### Commits in the PR" >> ./_commit_messages.txt
           echo "${COMMITS}" >> ./_commit_messages.txt
           echo "<!-- end match -->" >> ./_commit_messages.txt
 
