@@ -15,6 +15,9 @@ Detailed description of existing workflows can be found here [Index of Workflow 
       - [Step 1: Create workflow file](#step-1-create-workflow-file)
       - [Step 2: Add configuration file](#step-2-add-configuration-file)
       - [Step 3: Follow the conventional commits messages strategy](#step-3-follow-the-conventional-commits-messages-strategy)
+    - [Add commit messages to PR body](#add-commit-messages-to-pr-body)
+    - [Conventional Commits PR Check](#conventional-commits-pr-check)
+    - [Lint PR Title](#lint-pr-title)
   - [Maven project release workflow](#maven-project-release-workflow)
     - [Step 1: Prepare pom.xml](#step-1-prepare-pomxml)
     - [Step 2: Maven release workflow](#step-2-maven-release-workflow)
@@ -29,7 +32,7 @@ Detailed description of existing workflows can be found here [Index of Workflow 
     - [Step 2: Create Configuration File](#step-2-create-configuration-file)
 
 ---
-Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required. 
+Below is the short description of how to implement common workflows in any Netcracker repository. All necessery secrets and variables for common workflows are already present on organization level, no additional settings or configurations are required.
 
 <span id="secrets_table"></span>**The organization level secrets and vars used in actions**
 
@@ -194,7 +197,106 @@ The configuration file from [previous step](#step-2-add-configuration-file) defi
 | 'build','rebuild' | build |
 | 'config', 'conf', 'cofiguration', 'configure' | config |
 
-Labels on PRs used to generate release notes for GitHub releases. You can edit labels configuration and [release notes generation template](#step-4-add-configuration-file-for-github-release) to extend or improve the default ones.
+Labels on PRs used to generate release notes for GitHub releases. You can edit labels configuration and [release notes generation template](#step-3-add-configuration-file-for-github-release) to extend or improve the default ones.
+
+### Add commit messages to PR body
+
+The workflow will collect commit messages from pull request and add them in pull request description.
+
+---
+
+To add commit messages in pull request description into your repository just create the new file `.github/workflows/pr-collect-commit-messages.yaml` and paste the code below or just copy the [prepared file](./docs/examples/pr-collect-commit-messages.yaml):
+
+```yaml
+---
+
+name: "Add commit messages to PR body"
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  update-pr-body:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Update PR body"
+        uses: netcracker/qubership-workflow-hub/actions/pr-add-messages@main
+```
+
+### Conventional Commits PR Check
+
+The workflow will check commits in pull request if they follow [Conventional Commits](conventionalcommits.org) strategy.
+
+More info on underlying Github action can be found here [Conventional Commits GitHub Action](https://github.com/webiny/action-conventional-commits)
+
+---
+
+To add the workflow into your repository just create the new file `.github/workflows/pr-conventional-commits.yaml` and paste the code below or just copy the [prepared file](./docs/examples/pr-conventional-commits.yaml):
+
+```yaml
+---
+
+name: Conventional Commits PR Check
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+permissions:
+  pull-requests: read
+jobs:
+  build:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: webiny/action-conventional-commits@v1.3.0
+```
+
+### Lint PR Title
+
+The workflow will check pull request title if it follows [Conventional Commits](conventionalcommits.org) strategy.
+
+More info on underlying Github action can be found here [Semantic Pull Request](https://github.com/amannn/action-semantic-pull-request).
+
+---
+
+To add the workflow into your repository just create the new file `.github/workflows/pr-lint-title.yaml` and paste the code below or just copy the [prepared file](./docs/examples/pr-lint-title.yaml):
+
+```yaml
+---
+
+name: "Lint PR Title"
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+permissions:
+  pull-requests: read
+
+jobs:
+  main:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+```
 
 ---
 
