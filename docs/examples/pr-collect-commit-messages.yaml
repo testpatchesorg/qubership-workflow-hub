@@ -1,17 +1,17 @@
 ---
 
-name: Collect Commit Messages in PR
+name: "Add commit messages to PR body"
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - synchronize
-      - reopened
+  pull_request:
+    types: [opened, synchronize]
 
 permissions:
   pull-requests: write
 
 jobs:
-  get-commit-messages:
-    uses: Netcracker/qubership-workflow-hub/.github/workflows/pr-add-auto-description.yaml@main
+  update-pr-body:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Update PR body"
+        uses: netcracker/qubership-workflow-hub/actions/pr-add-messages@main

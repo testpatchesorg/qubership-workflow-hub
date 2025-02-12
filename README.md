@@ -15,7 +15,7 @@ Detailed description of existing workflows can be found here [Index of Workflow 
       - [Step 1: Create workflow file](#step-1-create-workflow-file)
       - [Step 2: Add configuration file](#step-2-add-configuration-file)
       - [Step 3: Follow the conventional commits messages strategy](#step-3-follow-the-conventional-commits-messages-strategy)
-    - [Collect Commit Messages in PR](#collect-commit-messages-in-pr)
+    - [Add commit messages to PR body](#add-commit-messages-to-pr-body)
     - [Conventional Commits PR Check](#conventional-commits-pr-check)
     - [Lint PR Title](#lint-pr-title)
   - [Maven project release workflow](#maven-project-release-workflow)
@@ -199,7 +199,7 @@ The configuration file from [previous step](#step-2-add-configuration-file) defi
 
 Labels on PRs used to generate release notes for GitHub releases. You can edit labels configuration and [release notes generation template](#step-3-add-configuration-file-for-github-release) to extend or improve the default ones.
 
-### Collect Commit Messages in PR
+### Add commit messages to PR body
 
 The workflow will collect commit messages from pull request and add them in pull request description.
 
@@ -210,21 +210,21 @@ To add commit messages in pull request description into your repository just cre
 ```yaml
 ---
 
-name: Collect Commit Messages
+name: "Add commit messages to PR body"
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - synchronize
-      - reopened
+  pull_request:
+    types: [opened, synchronize]
 
 permissions:
   pull-requests: write
 
 jobs:
-  get-commit-messages:
-    uses: Netcracker/qubership-workflow-hub/.github/workflows/pr-add-auto-description.yaml@main
+  update-pr-body:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Update PR body"
+        uses: netcracker/qubership-workflow-hub/actions/pr-add-messages@main
 ```
 
 ### Conventional Commits PR Check
