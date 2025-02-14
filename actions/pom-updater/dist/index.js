@@ -35054,46 +35054,68 @@ module.exports = parseParams
 /************************************************************************/
 var __webpack_exports__ = {};
 const core = __nccwpck_require__(8335);
+const fs = __nccwpck_require__(9896);
 const { DOMParser, XMLSerializer } = __nccwpck_require__(6714);
 const xpath = __nccwpck_require__(9941);
-const fs = __nccwpck_require__(9896);
+
+const NAMESPACES = { p: 'http://maven.apache.org/POM/4.0.0' };
+const select = xpath.useNamespaces(NAMESPACES);
+
+const parseXml = (filePath) =>
+  new DOMParser().parseFromString(fs.readFileSync(filePath, 'utf8'));
+
+const writeXml = (doc, filePath) =>
+  fs.writeFileSync(filePath, new XMLSerializer().serializeToString(doc));
+
+async function getArtifactId() {
+  const doc = parseXml('pom.xml');
+  const nodes = select('//p:project/p:artifactId', doc);
+  if (!nodes.length) {
+    throw new Error('❗️ No artifactId node found in pom.xml');
+  }
+  return nodes[0].textContent;
+}
 
 async function run() {
   try {
-    const filePath = core.getInput('file_path') || 'pom.xml';
+
+    const filePathsInput = core.getInput('file_path') || '{"default": "pom.xml"}';
+    let filePathsObj;
+    try {
+      filePathsObj = JSON.parse(filePathsInput);
+    } catch {
+      throw new Error('❗️ Input "file_paths" should be a valid JSON object.');
+    }
+    const filePaths = Object.values(filePathsObj);
+
+
     const xpathExpression = core.getInput('path') || '//p:project/p:properties/p:revision';
     const newValue = core.getInput('new_value');
+    if (!newValue) throw new Error('❗️ Input "new_value" is required.');
 
-    if (!newValue) {
-      throw new Error('Input "newValue" is required but not provided.');
+
+    for (const filePath of filePaths) {
+      const doc = parseXml(filePath);
+      const nodes = select(xpathExpression, doc);
+      if (!nodes.length) {
+        throw new Error(`❗️ No nodes found for expression: ${xpathExpression} in ${filePath}`);
+      }
+      nodes.forEach(node => {
+        core.info(`🔷 Update node value "${node.textContent}" -> "${newValue}"`);
+        node.textContent = newValue;
+      });
+      writeXml(doc, filePath);
+      core.info(`💡 Updated file: ${filePath}`);
     }
 
-    const select = xpath.useNamespaces({ p: 'http://maven.apache.org/POM/4.0.0' });
-    const xml = fs.readFileSync(filePath, 'utf8');
-    const doc = new DOMParser().parseFromString(xml);
-    const nodes = select(xpathExpression, doc);
+    let = artifact = await getArtifactId()
+    core.setOutput('artifact_id', artifact);
 
-    if (nodes.length === 0) {
-      throw new Error(`No nodes found for expression: ${xpathExpression}`);
-    }
+    core.info(`🔷 Updated artifactId: ${artifact}`);
 
-    core.info(`Found ${nodes.length} nodes for expression: ${xpathExpression}`);
-
-    nodes.forEach((node) => {
-      core.info(`Updated node value ${node.textContent} to: ${newValue}`);
-      node.textContent = newValue;
-
-    });
-
-    const serializedXml = new XMLSerializer().serializeToString(doc);
-    fs.writeFileSync(filePath, serializedXml);
-
-    core.info(`Updated file: ${filePath}`);
-    //const updatedXml = fs.readFileSync(filePath, 'utf8');
-    //core.info(`Updated XML:\n${updatedXml}`);
-
+    core.info('✅ Action completed successfully!');
   } catch (error) {
-    core.setFailed(`Action failed: ${error.message}`);
+    core.setFailed(`❌ Action failed: ${error.message}`);
   }
 }
 

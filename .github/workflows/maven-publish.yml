@@ -18,10 +18,18 @@ on:
       version:
         required: true
         type: string
-      branch:
+      ref:
         required: false
         type: string
         default: "main"
+      upload-artifact:
+        required: false
+        type: boolean
+        default: false
+      artifact-id:
+        default: artifact
+        required: false
+        type: string
 
     secrets:
       maven_username:
@@ -34,13 +42,13 @@ on:
         required: true
 
 jobs:
-  publish:
+  upload:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch}}
+          ref: ${{ inputs.ref}}
           fetch-depth: 0
 
       - name: Cache Maven dependencies
@@ -71,3 +79,10 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.maven_username }}
           MAVEN_PASSWORD: ${{ secrets.maven_password }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.maven_gpg_passphrase }}
+
+      - name: Upload all Maven target directories
+        if: ${{ inputs.upload-artifact }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-id }}
+          path: '**/target'
