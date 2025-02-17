@@ -11,7 +11,7 @@ inputs:
     required: false
     default: "qubership-actios[bot]@qubership.com"
   commit_message:
-    description: "The commit message. Defaults to `Automated commit`."
+    description: "[ci skip] The commit message. Defaults to `Automated commit`."
     required: false
     default: "Automated commit"
 
@@ -30,7 +30,7 @@ runs:
       run: |
         set -x
         git add .
-        git commit -m "${{ inputs.commit_message }} [ci skip]" || echo "No changes to commit. [ci skip]"
+        git commit -m "doc: [ci skip] ${{ inputs.commit_message }}" || echo "[ci skip] No changes to commit. "
       continue-on-error: true
 
     - name: Push changes
