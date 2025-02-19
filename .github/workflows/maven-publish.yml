@@ -34,7 +34,7 @@ on:
       maven-password:
         required: false
 
-      server-token:
+      maven-token:
         required: true
       gpg-private-key:
         required: false
@@ -78,7 +78,7 @@ jobs:
         run: mvn ${{ inputs.maven-command }}
         env:
           # MAVEN_USERNAME: ${{ secrets.maven-username }}
-          MAVEN_PASSWORD: ${{ secrets.maven-password }}
+          MAVEN_PASSWORD: ${{ secrets.maven-token }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.maven-gpg-passphrase }}
 
       - name: Upload all Maven target directories
