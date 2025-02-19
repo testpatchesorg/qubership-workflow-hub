@@ -60,11 +60,11 @@ runs:
 
         # Update PR description with messages
         if messages:
-            messages_body = "\n### Commit messages:\n" + "\n".join(messages) + "\n"
+            messages_body = "\n<!-- start messages -->\n### Commit messages:\n" + "\n".join(messages) + "\n<!-- end messages -->\n"
             new_description = re.sub('<!-- start messages -->.*?<!-- end messages -->', messages_body, pr_body, flags=re.DOTALL)
             # if it is the first time body update
             if new_description == pr_body:
-                new_description = pr_body + "\n<!-- start messages -->\n### Commit messages:\n" + "\n".join(messages) + "\n<!-- end messages -->"
+                new_description = pr_body + messages_body
 
             update_pr_url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}"
             update_data = {
