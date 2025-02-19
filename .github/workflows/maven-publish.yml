@@ -1,4 +1,4 @@
-name: Publish to Maven Central
+name: Deploy to Maven Repository
 
 on:
   workflow_call:
@@ -43,7 +43,7 @@ on:
 
 
 jobs:
-  upload:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
