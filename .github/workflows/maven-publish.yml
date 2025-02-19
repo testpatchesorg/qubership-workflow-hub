@@ -31,9 +31,11 @@ on:
     secrets:
       maven-username:
         required: false
+      maven-password:
+        required: false
 
       server-token:
-        required: false
+        required: true
       gpg-private-key:
         required: false
       pgp-passphrase:
