@@ -38,7 +38,7 @@ on:
         required: true
       gpg-private-key:
         required: false
-      pgp-passphrase:
+      gpg-passphrase:
         required: false
 
 
@@ -79,7 +79,7 @@ jobs:
         env:
           # MAVEN_USERNAME: ${{ secrets.maven-username }}
           MAVEN_PASSWORD: ${{ secrets.maven-token }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.maven-gpg-passphrase }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.gpg-passphrase }}
 
       - name: Upload all Maven target directories
         if: ${{ inputs.upload-artifact }}
