@@ -4,9 +4,10 @@ This index provides a quick overview of the available workflow and action docume
 
 ---
 
-## Flows
+## Reusable Flows
 
-| Reusable Workflow                                             | Description                                                      |
+| Name                                             | Description                                                      |
+| --------------------------------------------------------- | ---------------------------------------------------------------- |
 | [create-github-release](../.github/workflows/create-github-release.yml) | Automates creating and tagging releases on GitHub.               |
 | [docker-publish](../.github/workflows/docker-publish.yml)              | Automates building and publishing Docker images.     |
 | [github-release](../.github/workflows/github-release.yaml)              | Creates a GitHub release based on the specified version.     |
@@ -16,8 +17,9 @@ This index provides a quick overview of the available workflow and action docume
 | [tag-creator](../.github/workflows/tag-creator.yml)              | Creates a new tag in the repository.     |
 
 
+## Template Flows
 
-| Template Workflow                                             | Description                                                      |
+| Name                                             | Description                                                      |
 | --------------------------------------------------------- | ---------------------------------------------------------------- |
 | [automatic-pr-labeler](../.github/workflows/automatic-pr-labeler.yaml) | Automatically labels pull requests when they are opened or reopened. |
 | [auto-labeler](../.github/workflows/auto-labeler.yaml)          | Automatically labels pull requests based on conventional commits. |
@@ -32,8 +34,6 @@ This index provides a quick overview of the available workflow and action docume
 | [profanityFilter](../.github/workflows/profanityFilter.yaml)              | Filters profanity in issues, comments, and pull requests.     |
 | [super-linter](../.github/workflows/super-linter.yaml)              | Runs multiple linters to validate code.     |
 
-
-
 ## Actions
 
 | Action Name                                            | Description                                                      |
@@ -47,14 +47,6 @@ This index provides a quick overview of the available workflow and action docume
 | [poetry-publisher](../actions/poetry-publisher/README.md) | Automates building, testing, and publishing Python packages using Poetry. |
 
 ---
-
-
-| Workflow                                            | Description                                                      |
-| ------------------------------------------------------ | ---------------------------------------------------------------- |
-
-
-
-
 
 ## Usage
 
