@@ -8,18 +8,17 @@ This index provides a quick overview of the available workflow and action docume
 
 | Name                                             | Description                                                      |
 | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| [create-github-release](../.github/workflows/create-github-release.yml) | Automates creating and tagging releases on GitHub.               |
-| [docker-publish](../.github/workflows/docker-publish.yml)              | Automates building and publishing Docker images.     |
-| [github-release](../.github/workflows/github-release.yaml)              | Creates a GitHub release based on the specified version.     |
-| [maven-publish](../.github/workflows/maven-publish.yml)              | Automates signing and deploying Maven artifacts to a repository.     |
-| [python-publish](../.github/workflows/python-publish.yml)              | Automates building, testing, and publishing Python packages.     |
-| [release-drafter](../.github/workflows/release-drafter.yml)              | Drafts a new release based on merged pull requests.     |
-| [tag-creator](../.github/workflows/tag-creator.yml)              | Creates a new tag in the repository.     |
+| [github-release](../docs/reusable/github-release.md) | Automates creating and tagging releases on GitHub.               |
+| [docker-publish](../docs/reusable/docker-publish.md)              | Automates building and publishing Docker images.     |
+| [github-release](../docs/reusable/github-release.md)              | Creates a GitHub release based on the specified version.     |
+| [maven-publish](../docs/reusable/maven-publish.md)              | Automates signing and deploying Maven artifacts to a repository.     |
+| [python-publish](../docs/reusable/python-publish.md)              | Automates building, testing, and publishing Python packages.     |
+| [release-drafter](../docs/reusable/release-drafter.md)              | Drafts a new release based on merged pull requests.     |
+| [tag-creator](../docs/reusable//tag-creator.md)              | Creates a new tag in the repository.     |
 
 
-## Template Flows
 
-| Name                                             | Description                                                      |
+| Template Workflow                                             | Description                                                      |
 | --------------------------------------------------------- | ---------------------------------------------------------------- |
 | [automatic-pr-labeler](../.github/workflows/automatic-pr-labeler.yaml) | Automatically labels pull requests when they are opened or reopened. |
 | [auto-labeler](../.github/workflows/auto-labeler.yaml)          | Automatically labels pull requests based on conventional commits. |
