@@ -21,7 +21,7 @@ This **Docker Publish** GitHub Workflow automates building and publishing Docker
 
 ### Detailed Description of Variables
 
-`ref`: Tag or branch name to create release from. If not specified, the current branch is used. If a tag like `v1.0.1` is provided, the tags for the Docker image will be `latest`, `1.0.1`, `1.0`, and `1`.
+- `ref`: Tag or branch name to create release from. If not specified, the current branch is used. If a tag like `v1.0.1` is provided, the tags for the Docker image will be `latest`, `1.0.1`, `1.0`, and `1`.
 - `artifact-id`: Artifact ID to use for building the Docker image. If not specified, no artifact will be downloaded.
 - `context`: Docker build context. Can be `git` or `workflow`. The default is `git`, meaning the current repository will be used as the context. If set to `workflow`, the context will be the directory where the workflow is running.
 - `dry-run`: If set to `true`, the workflow will perform all steps except pushing the Docker image. This is useful for testing.
