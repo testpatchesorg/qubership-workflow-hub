@@ -20,7 +20,7 @@ on:
         required: false
         type: boolean
       download-artifact:
-        default: true
+        default: false
         required: false
         type: boolean
       component:
