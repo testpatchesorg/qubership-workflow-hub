@@ -250,11 +250,11 @@ The step exactly the same as [Step 3: Add configuration file for GitHub release]
 
 ### Some more info on input parameters
 
-The [underlying reusable workflow](./.github/workflows/docker-publish.yml) accepts more input parameters then the release workflow. For simplicity the template forkflow provides reasonable defaults which are sutable in most of cases. The default usage scenario assumes the following conditions:
+The [underlying reusable workflow](./.github/workflows/docker-publish.yml) accepts more input parameters then the release workflow. For simplicity the template forkflow provides reasonable defaults which are sutable in most cases. The default usage scenario assumes the following conditions:
 
 - The resulting artifact name is the same as repository name
 - Artifact built from tag name equal to `v${version}`
-- There are no pre-built artifacts. It means that Dockerfile has the build from sources section
+- There are no pre-built artifacts. It means that Dockerfile has a "build from sources" stage
 - There is only one Dockerfile and it placed in the root of repository
 - Build context for Dockerfile is `.`
 
