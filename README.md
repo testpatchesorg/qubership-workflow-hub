@@ -27,6 +27,10 @@ Detailed description of existing workflows can be found here [Index of Workflow 
     - [Step 1: Python release workflow](#step-1-python-release-workflow)
     - [Step 2: Prepare secrets](#step-2-prepare-secrets)
     - [Step 3: Add configuration file for GitHub release](#step-3-add-configuration-file-for-github-release-1)
+  - [Docker Project Release Workflow](#docker-project-release-workflow)
+    - [Step 1: Docker release workflow](#step-1-docker-release-workflow)
+    - [Step 2: Add configuration file for GitHub release](#step-2-add-configuration-file-for-github-release)
+    - [Some more info on input parameters](#some-more-info-on-input-parameters)
   - [GO Project Check Modules License](#go-project-check-modules-license)
     - [Step 1: Create GO Project Check Modules License workflow](#step-1-create-go-project-check-modules-license-workflow)
     - [Step 2: Create Configuration File](#step-2-create-configuration-file)
@@ -141,14 +145,14 @@ Maven project release workflow is used to make a Github release and publish rele
 The workflow consists of several sequential jobs:
 
 1. Checks if the tag already exists.
-2. [Updates the version in the pom.xml file](./docs/reusable/update-pom-release_doc.md)
+2. [Updates the version in the pom.xml file](./docs/reusable/pomupdater.md)
 3. Commits the changes to the repository.
 4. Builds the project using Maven.
 5. Runs tests.
 6. Tags the commit with the release version.
-7. [Deploys the artifact to the Maven repository](./docs/reusable/maven-publish_doc.md)
+7. [Deploys the artifact to the Maven repository](./docs/reusable/maven-publish.md)
 8. Builds and publishes a Docker image.
-9. [Create GitHub release](./docs/reusable/create-github-release_doc.md)
+9. [Create GitHub release](./docs/reusable/github-release.md)
 
 ---
 
@@ -216,6 +220,45 @@ The Python Release workflow require PyPi API token. You need to get it from PyPi
 ### Step 3: Add configuration file for GitHub release
 
 The step exactly the same as [Step 3: Add configuration file for GitHub release](#step-3-add-configuration-file-for-github-release) for maven release workflow.
+
+---
+
+## Docker Project Release Workflow
+
+Docker project release workflow is used to make a Github release and publish released artifacts into GitHub docker registry.
+The workflow consists of several sequential jobs:
+
+1. Checks if the tag already exists.
+2. Ceates a new tag with name "v${version}.
+3. [Builds and publishes a Docker image](./docs/reusable/docker-publish.md).
+4. [Create GitHub release](./docs/reusable/create-github-release.md)
+
+---
+
+### Step 1: Docker release workflow
+
+Copy the [prepared file](https://github.com/Netcracker/.github/blob/main/workflow-templates/docker-release.yaml) into `.github/workflows` directory of your repository.
+
+This workflow is designed to be run manually. It has four input parameters on manual execution:
+
+- `Release version` -- a string represents version number of the release
+- `Dry run` -- if selected the workflow will go through all the steps, but will not publish anything.
+
+### Step 2: Add configuration file for GitHub release
+
+The step exactly the same as [Step 3: Add configuration file for GitHub release](#step-3-add-configuration-file-for-github-release) for maven release workflow.
+
+### Some more info on input parameters
+
+The [underlying reusable workflow](./.github/workflows/docker-publish.yml) accepts more input parameters then the release workflow. For simplicity the template forkflow provides reasonable defaults which are sutable in most of cases. The default usage scenario assumes the following conditions:
+
+- The resulting artifact name is the same as repository name
+- Artifact built from tag name equal to `v${version}`
+- There are no pre-built artifacts. It means that Dockerfile has the build from sources section
+- There is only one Dockerfile and it placed in the root of repository
+- Build context for Dockerfile is `.`
+
+If the default case isn't your's -- please read [the detailed description](./docs/reusable/docker-publish.md#detailed-description-of-variables) of the input parameters and customize them according to your needs.
 
 ---
 
