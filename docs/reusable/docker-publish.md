@@ -35,6 +35,7 @@ For example, if you have multiple components defined as follows:
   {"name": "default", "file": "./Dockerfile", "context": "."},
   {"name": "another-component", "file": "./another/Dockerfile", "context": "./another"}
 ]
+```
 
 ## Usage Example
 
@@ -63,3 +64,4 @@ jobs:
                   ]'
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
