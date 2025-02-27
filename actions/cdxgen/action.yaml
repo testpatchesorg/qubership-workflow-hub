@@ -35,7 +35,8 @@ runs:
     - name: "Generate BOM"
       run: |
         cd ${GITHUB_WORKSPACE}
-        docker run --rm -v /tmp:/tmp -v $(pwd):/app:rw -t ghcr.io/cyclonedx/cdxgen:v8.6.0 -r /app -p -o /app/${{ github.event.repository.name }}_sbom.json "${{ env.PROJECT_TYPE }}"
+        export FETCH_LICENSE=true
+        docker run --rm -e FETCH_LICENSE=true -v /tmp:/tmp -v $(pwd):/app:rw -t ghcr.io/cyclonedx/cdxgen:v8.6.0 -r /app -p -o /app/${{ github.event.repository.name }}_sbom.json "${{ env.PROJECT_TYPE }}"
         docker rmi -f $(docker images -aq)
       shell: bash
 
@@ -49,8 +50,9 @@ runs:
     - name: "Generate Depscan report"
       run: |
         cd ${GITHUB_WORKSPACE}
-        docker run --rm -v $PWD:/app ghcr.io/owasp-dep-scan/dep-scan \
-        --src /app --reports-dir /app/reports --bom /app/${{ github.event.repository.name }}_sbom.json
+        export FETCH_LICENSE=true
+        docker run --rm -e FETCH_LICENSE=true -v $PWD:/app ghcr.io/owasp-dep-scan/dep-scan --src /app \
+        --reports-dir /app/reports --bom /app/${{ github.event.repository.name }}_sbom.json
       shell: bash
 
     - name: "Upload Depscan report"
