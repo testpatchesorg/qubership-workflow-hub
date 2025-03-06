@@ -45,6 +45,8 @@ jobs:
           ref: "v1.0.0"
           dist-path: "./dist"
           upload: "true"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 ## Example Configuration File
 
