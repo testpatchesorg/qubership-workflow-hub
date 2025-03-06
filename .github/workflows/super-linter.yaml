@@ -5,9 +5,9 @@
 # For more information, see:
 # https://github.com/github/super-linter
 name: Lint Code Base
-#env:
-#  VALIDATE_JSCPD: false
-#  VALIDATE_CECKOV: false
+env:
+  VALIDATE_JSCPD: "false"
+  VALIDATE_CHECKOV: "false"
 on:
   push:
     branches: [ "main" ]
@@ -35,5 +35,3 @@ jobs:
           VALIDATE_ALL_CODEBASE: ${{ inputs.full_scan || false }}
           DEFAULT_BRANCH: "main"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_JSCPD: "false"
-          VALIDATE_CHECKOV: "false"
