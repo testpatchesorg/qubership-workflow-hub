@@ -9,7 +9,7 @@ Detailed description of existing workflows can be found here [Index of Workflow 
 - [qubership-workflow-hub](#qubership-workflow-hub)
   - [Common workflows](#common-workflows)
     - [CLA](#cla)
-    - [Prettier](#prettier)
+    - [Lint code base (Super-linter)](#lint-code-base-super-linter)
     - [Profanity filter](#profanity-filter)
     - [Automatic PR labels based on conventional commits](#automatic-pr-labels-based-on-conventional-commits)
       - [Step 1: Create workflow file](#step-1-create-workflow-file)
@@ -63,13 +63,19 @@ To add the CLA signing into your repository just copy the [prepared file](https:
 
 The `PERSONAL_ACCESS_TOKEN` used in the workflow is defined on organization level then you can use it in any Netcracker/\* repository.
 
-### Prettier
+### Lint code base (Super-linter)
 
-The action to check style and syntax of several document types. It creates PR if found any issue.
+This workflow executes several linters on changed files based on languages used in your code base whenever you push a code or open a pull request.
+You can adjust the behavior by adding/modifying configuration files for super-linter itself and for individual linters.
 
-> More info about underlying GitHub action can be found here [prettier-fix](https://github.com/WorkOfStan/prettier-fix)
+For more information, see:
+[Super-linter](https://github.com/super-linter/super-linter)
 
-To add the prettier into your repository just copy the [prepared file](https://github.com/Netcracker/.github/blob/main/workflow-templates/prettier.yaml) into `.github/workflows` directory of your repository.
+Configuration file for super-linter example:
+[.github/super-linter.env](https://github.com/Netcracker/.github/blob/main/.github/super-linter.env)
+Configuration files for individual linters should be placed in .github/linters
+
+To add the super-linter workflow into your repository just copy the [prepared file](https://github.com/Netcracker/.github/blob/main/workflow-templates/super-linter.yaml) into `.github/workflows` directory of your repository.
 
 ### Profanity filter
 
