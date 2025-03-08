@@ -14,11 +14,10 @@ on:
     inputs:
       repo_name:
         description: >
-          You can specify the name of the repository where workflows should be
-          pushed manually. As long as the repository is not ignored by workflow
-          settings.
+          Specify the name of the target repository where files should be
+          pushed. 
           If you do not specify the exact repository name, the workflow will try to
-          replicate all missing changes to all repositories.
+          replicate all missing changes to all organization repositories.
         required: false
 jobs:
   replicate_common_workflows:
