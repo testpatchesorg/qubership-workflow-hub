@@ -5,20 +5,6 @@ on:
     secrets:
       GH_ACCESS_TOKEN:
         required: true
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/**
-  workflow_dispatch:
-    inputs:
-      repo_name:
-        description: >
-          Specify the name of the target repository where files should be
-          pushed. 
-          If you do not specify the exact repository name, the workflow will try to
-          replicate all missing changes to all organization repositories.
-        required: false
 jobs:
   replicate_common_workflows:
     runs-on: ubuntu-latest
