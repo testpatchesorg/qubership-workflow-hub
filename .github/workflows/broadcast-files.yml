@@ -1,0 +1,66 @@
+---
+name: Broadcast files to organization repositories
+on:
+  workflow_call:
+    secrets:
+      GH_ACCESS_TOKEN:
+        required: true
+jobs:
+  replicate_common_workflows:
+    runs-on: ubuntu-latest
+    env:
+      REPOS_TO_IGNORE: >-
+        qubership-workflow-hub,KubeMarine,k8s-conformance,gatekeeper-library,cassandra-exporter,microservice-restclient,base-images-module-base,get-package-ids
+      GH_ACCESS_TOKEN: '${{ secrets.GH_ACCESS_TOKEN }}'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Replicating common workflows
+        uses: derberg/manage-files-in-multiple-repositories@v2
+        with:
+          github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
+          patterns_to_include: >-
+            workflow-templates/cla.yaml, workflow-templates/super-linter.yml,
+            workflow-templates/profanity-filter.yaml,
+            workflow-templates/automatic-pr-labeler.yaml,
+            workflow-templates/pr-collect-commit-messages.yaml,
+            workflow-templates/pr-conventional-commits.yaml,
+            workflow-templates/pr-lint-title.yaml,
+            workflow-templates/cdxgen.yaml
+          repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
+          exclude_private: true
+          exclude_forked: false
+          branches: '.*-release,main'
+          commit_message: 'ci: update of common workflows'
+  replicate_gitattributes:
+    name: Replicate .gitattributes file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Replicating file
+        uses: derberg/manage-files-in-multiple-repositories@v2
+        with:
+          github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
+          patterns_to_include: .gitattributes
+          repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
+          exclude_private: true
+          exclude_forked: false
+          commit_message: 'ci: update of gitattributes file'
+  replicate_cloud_core_dependabot:
+    name: Replicate dependabot config file for Cloud-Core repos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Replicating file
+        uses: derberg/manage-files-in-multiple-repositories@v2
+        with:
+          github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
+          patterns_to_include: config/dependabot/cloud-core/dependabot.yml
+          destination: .github/
+          repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
+          exclude_private: true
+          exclude_forked: false
+          topics_to_include: core
+          commit_message: 'ci: update cloud-core dependabot config file'
