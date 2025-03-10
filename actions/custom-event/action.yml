@@ -11,6 +11,12 @@ inputs:
   github-token:
     description: "GitHub Token"
     required: true
+  owner:
+    description: "Owner of the repository"
+    required: false
+  repo:
+    description: "Repository name"
+    required: false
 outputs:
   status:
     description: "Status of the dispatch request"

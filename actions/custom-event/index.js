@@ -25,7 +25,10 @@ async function run() {
     }
 
     const octokit = github.getOctokit(token);
-    const { owner, repo } = github.context.repo;
+    //const { owner, repo } = github.context.repo;
+
+    const owner =  core.getInput('owner') || github.context.repo.owner;
+    const repo =  core.getInput('repo') || github.context.repo.repo;
 
     const response = await octokit.rest.repos.createDispatchEvent({
       owner,
