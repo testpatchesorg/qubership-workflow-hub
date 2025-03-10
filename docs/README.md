@@ -34,6 +34,12 @@ This index provides a quick overview of the available workflow and action docume
 | [profanityFilter](../.github/workflows/profanityFilter.yaml)              | Filters profanity in issues, comments, and pull requests.     |
 | [super-linter](../.github/workflows/super-linter.yaml)              | Runs multiple linters to validate code.     |
 
+## System Flows
+
+| Name                                            | Description                                                      |
+| --------------------------------------------------------- | ---------------------------------------------------------------- |
+| [broadcast-files](../.github/workflows/broadcast-files.yml)| Allows to propagate common workflows, common configs etc. across the organization or specific repo. |
+
 ## Actions
 
 | Action Name                                            | Description                                                      |
