@@ -31838,6 +31838,14 @@ function parseClientPayload(input) {
   }
 }
 
+function parseClientPayload(input) {
+  try {
+    return JSON.parse(input);
+  } catch (error) {
+    throw new Error(`❗ Invalid JSON for client_payload: ${input}`);
+  }
+}
+
 async function run() {
   try {
     const eventType = core.getInput("event-type", { required: true });
