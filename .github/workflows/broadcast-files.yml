@@ -1,12 +1,15 @@
 ---
 name: Broadcast files to organization repositories
 on:
+  push:
+    branches:
+      - main
   workflow_call:
     secrets:
       GH_ACCESS_TOKEN:
         required: true
 permissions:
-  pull-requests: read
+  pull-requests: write
   contents: read
 
 jobs:
@@ -56,7 +59,7 @@ jobs:
         uses: derberg/manage-files-in-multiple-repositories@v2
         with:
           github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
-          patterns_to_include: '.gitattributes,.editorconfig,auto-labeler-config.yaml,.github/assets-config.yml'
+          patterns_to_include: '.gitattributes,.editorconfig,auto-labeler-config.yaml'
           repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
           exclude_private: true
           exclude_forked: false
