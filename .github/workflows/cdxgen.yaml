@@ -44,12 +44,12 @@ jobs:
             echo "NO_CYCLONE_REPORT=false" >> $GITHUB_STEP_SUMMARY
             echo "NO_CYCLONE_REPORT=false" >> $GITHUB_ENV
           fi
-          if [ "${{ inputs.fetch-license }}" != "true" ]; then
-            echo "FETCH_LICENSE=false" >> $GITHUB_STEP_SUMMARY
-            echo "FETCH_LICENSE=false" >> $GITHUB_ENV
-          else
+          if [ "${{ inputs.fetch-license }}" != "false" ]; then
             echo "FETCH_LICENSE=true" >> $GITHUB_STEP_SUMMARY
             echo "FETCH_LICENSE=true" >> $GITHUB_ENV
+          else
+            echo "FETCH_LICENSE=false" >> $GITHUB_STEP_SUMMARY
+            echo "FETCH_LICENSE=false" >> $GITHUB_ENV
           fi
 
       - name: "cdxgen"
