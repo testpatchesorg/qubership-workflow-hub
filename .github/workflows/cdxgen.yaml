@@ -40,7 +40,7 @@ jobs:
           echo "FETCH_LICENSE=${FETCH_LICENSE}" >> $GITHUB_STEP_SUMMARY
       - name: "cdxgen"
         id: cdxgen
-        uses: netcracker/qubership-workflow-hub/actions/cdxgen@feature/cyclonedx
+        uses: netcracker/qubership-workflow-hub/actions/cdxgen@main
         with:
           no-cyclone-report: ${{ github.event.inputs.no-cyclone-report }}
           fetch-license: ${{ github.event.inputs.fetch-license }}
