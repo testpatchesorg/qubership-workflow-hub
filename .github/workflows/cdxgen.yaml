@@ -17,16 +17,16 @@ on:
       fetch-license:
         description: "Fetch license information"
         required: false
-        default: false
+        default: true
         type: boolean
   push:
     branches:
       - 'main'
 permissions:
   contents: read
-env:
-  NO_CYCLONE_REPORT: ${{ github.event.inputs.no-cyclone-report && true || false }}
-  FETCH_LICENSE: ${{ github.event.inputs.fetch-license && true || false }}
+# env:
+#   NO_CYCLONE_REPORT: ${{ inputs.no-cyclone-report && true || false }}
+#   FETCH_LICENSE: ${{ inputs.fetch-license && true || false }}
 # ${{ x && 'ifTrue' || 'ifFalse'  }}
 
 jobs:
@@ -37,8 +37,21 @@ jobs:
     steps:
       - name: "Input parameters"
         run: |
-          echo "NO_CYCLONE_REPORT=${NO_CYCLONE_REPORT}" >> $GITHUB_STEP_SUMMARY
-          echo "FETCH_LICENSE=${FETCH_LICENSE}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ inputs.no-cyclone-report }}" == "true" ]; then
+            echo "NO_CYCLONE_REPORT=true" >> $GITHUB_STEP_SUMMARY
+            echo "NO_CYCLONE_REPORT=true" >> $GITHUB_ENV
+          else
+            echo "NO_CYCLONE_REPORT=false" >> $GITHUB_STEP_SUMMARY
+            echo "NO_CYCLONE_REPORT=false" >> $GITHUB_ENV
+          fi
+          if [ "${{ inputs.fetch-license }}" == "true" ]; then
+            echo "FETCH_LICENSE=true" >> $GITHUB_STEP_SUMMARY
+            echo "FETCH_LICENSE=true" >> $GITHUB_ENV
+          else
+            echo "FETCH_LICENSE=false" >> $GITHUB_STEP_SUMMARY
+            echo "FETCH_LICENSE=false" >> $GITHUB_ENV
+          fi
+
       - name: "cdxgen"
         id: cdxgen
         uses: netcracker/qubership-workflow-hub/actions/cdxgen@main
