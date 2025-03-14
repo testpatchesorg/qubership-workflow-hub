@@ -17,7 +17,7 @@ on:
       fetch-license:
         description: "Fetch license information"
         required: false
-        default: true
+        default: false
         type: boolean
   push:
     branches:
@@ -25,8 +25,9 @@ on:
 permissions:
   contents: read
 env:
-  NO_CYCLONE_REPORT: ${{ github.event.inputs.no-cyclone-report || false }}
-  FETCH_LICENSE: ${{ github.event.inputs.fetch-license || false }}
+  NO_CYCLONE_REPORT: ${{ github.event.inputs.no-cyclone-report && true || false }}
+  FETCH_LICENSE: ${{ github.event.inputs.fetch-license && true || false }}
+# ${{ x && 'ifTrue' || 'ifFalse'  }}
 
 jobs:
   cdxgen:
@@ -42,8 +43,8 @@ jobs:
         id: cdxgen
         uses: netcracker/qubership-workflow-hub/actions/cdxgen@main
         with:
-          no-cyclone-report: ${{ github.event.inputs.no-cyclone-report }}
-          fetch-license: ${{ github.event.inputs.fetch-license }}
+          no-cyclone-report: ${{ env.NO_CYCLONE_REPORT }}
+          fetch-license: ${{ env.FETCH_LICENSE }}
   deploy-pages:
     if: needs.cdxgen.outputs.page-url != ''
     permissions:
