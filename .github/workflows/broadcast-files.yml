@@ -1,8 +1,5 @@
 name: Broadcast files to organization repositories
 on:
-  push:
-    branches:
-    - main
   workflow_call:
     secrets:
       GH_ACCESS_TOKEN:
@@ -10,14 +7,13 @@ on:
 permissions:
   pull-requests: write
   contents: read
+env:
+  # REPOS_TO_IGNORE: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
+  GH_ACCESS_TOKEN: '${{ secrets.GH_ACCESS_TOKEN }}'
 jobs:
   replicate_common_workflows:
+    name: Replicate common workflows
     runs-on: ubuntu-latest
-    env:
-      REPOS_TO_IGNORE: >-
-        qubership-workflow-hub, qubership-test-pipelines, KubeMarine,
-        k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
-      GH_ACCESS_TOKEN: '${{ secrets.GH_ACCESS_TOKEN }}'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -36,15 +32,17 @@ jobs:
           workflow-templates/cdxgen.yaml
         patterns_to_ignore: 'CLA/netcracker-logo.png,CLA/netcracker-logo.svg'
         destination: .github/workflows
-        repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
+        repos_to_ignore: .github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
         exclude_private: true
         exclude_forked: false
-        branches: '.*-release,main'
-        committer_email: CorePaaSGroup@netcracker.com
+        # broadcast-pilot: Temp topic for testing purposes
+        topics_to_include: broadcast-pilot
+        branches: main
         committer_username: NetcrackerCLPLCI
+        bot_branch_name: broadcast-bot
         commit_message: 'ci: update of common workflows'
-  replicate_git_common_files:
-    name: Replicate git common files
+  replicate_gitattributes_files:
+    name: Replicate gitgitattributes file
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -53,13 +51,36 @@ jobs:
       uses: derberg/manage-files-in-multiple-repositories@v2
       with:
         github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
-        patterns_to_include: '.gitattributes,.editorconfig,auto-labeler-config.yaml'
-        repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
+        patterns_to_include: '.gitattributes'
+        repos_to_ignore: .github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
         exclude_private: true
         exclude_forked: false
-        committer_email: CorePaaSGroup@netcracker.com
+        # broadcast-pilot: Temp topic for testing purposes
+        topics_to_include: broadcast-pilot
+        branches: main
         committer_username: NetcrackerCLPLCI
-        commit_message: 'ci: update of gitattributes file'
+        bot_branch_name: broadcast-bot
+        commit_message: 'ci: update of gitattributes file according to https://github.com/gitattributes/gitattributes templates'
+  replicate_editorconfig:
+    name: Replicate editorconfig file
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Replicating file
+      uses: derberg/manage-files-in-multiple-repositories@v2
+      with:
+        github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
+        patterns_to_include: .editorconfig
+        repos_to_ignore: .github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
+        exclude_private: true
+        exclude_forked: false
+        # broadcast-pilot: Temp topic for testing purposes
+        topics_to_include: broadcast-pilot
+        branches: main
+        committer_username: NetcrackerCLPLCI
+        bot_branch_name: broadcast-bot
+        commit_message: 'ci: update of editorconfig file. If changes needed please contribute to https://github.com/Netcracker/.github/blob/main/.editorconfig'
   replicate_cloud_core_dependabot:
     name: Replicate dependabot config file for Cloud-Core repos
     runs-on: ubuntu-latest
@@ -72,15 +93,16 @@ jobs:
         github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
         patterns_to_include: config/dependabot/cloud-core/dependabot.yml
         destination: .github/
-        repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
+        repos_to_ignore: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
         exclude_private: true
         exclude_forked: false
         topics_to_include: core
-        committer_email: CorePaaSGroup@netcracker.com
+        branches: main
         committer_username: NetcrackerCLPLCI
+        bot_branch_name: broadcast-bot
         commit_message: 'ci: update cloud-core dependabot config file'
-  replicate_codestyle_configs:
-    name: Replicate codestyle config files
+  replicate_superlinter_configs:
+    name: Replicate Super-Linter config files
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -90,14 +112,17 @@ jobs:
       with:
         github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
         patterns_to_include: '.github/super-linter.env,.github/linters'
-        repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
+        repos_to_ignore: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
         exclude_private: true
         exclude_forked: false
-        committer_email: CorePaaSGroup@netcracker.com
+        # broadcast-pilot: Temp topic for testing purposes
+        topics_to_include: broadcast-pilot
+        branches: main
         committer_username: NetcrackerCLPLCI
-        commit_message: 'ci: update of codestyle config files'
-  replicate_example_configs:
-    name: Replicate example config files
+        bot_branch_name: broadcast-bot
+        commit_message: 'ci: update of superlinter config files'
+  replicate_release_drafter_configs:
+    name: Replicate Release drafter config file
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -106,11 +131,35 @@ jobs:
       uses: derberg/manage-files-in-multiple-repositories@v2
       with:
         github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
-        patterns_to_include: docs/examples/release-drafter-config.yml
+        patterns_to_include: config/examples/release-drafter-config.yml
         destination: .github/
-        repos_to_ignore: '${{ env.REPOS_TO_IGNORE }}'
+        repos_to_ignore: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
         exclude_private: true
         exclude_forked: false
-        committer_email: CorePaaSGroup@netcracker.com
+        # broadcast-pilot: Temp topic for testing purposes
+        topics_to_include: broadcast-pilot
+        branches: main
         committer_username: NetcrackerCLPLCI
-        commit_message: 'ci: update example config files'
+        bot_branch_name: broadcast-bot
+        commit_message: 'ci: update release drafter config file'
+  replicate_auto_labeler_configs:
+    name: Replicate auto labeler config file
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Replicating file
+      uses: derberg/manage-files-in-multiple-repositories@v2
+      with:
+        github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
+        patterns_to_include: config/examples/auto-labeler-config.yaml
+        destination: .github/
+        repos_to_ignore: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
+        exclude_private: true
+        exclude_forked: false
+        # broadcast-pilot: Temp topic for testing purposes
+        topics_to_include: broadcast-pilot
+        branches: main
+        committer_username: NetcrackerCLPLCI
+        bot_branch_name: broadcast-bot
+        commit_message: 'ci: update auto labeler config'
