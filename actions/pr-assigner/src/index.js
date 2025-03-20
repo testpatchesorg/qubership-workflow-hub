@@ -78,7 +78,7 @@ async function run() {
         assignees = shuffleArray(assignees);
     }
 
-    assignees = assignees.slice(count);
+    assignees = assignees.slice(0, count);
 
     try {
         const pullRequest = github.context.payload.pull_request;
