@@ -23,18 +23,17 @@ jobs:
         github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
         patterns_to_include: >-
           workflow-templates/cla.yaml,
-          workflow-templates/super-linter.yml,
+          workflow-templates/super-linter.yaml,
           workflow-templates/profanity-filter.yaml,
           workflow-templates/automatic-pr-labeler.yaml,
           workflow-templates/pr-collect-commit-messages.yaml,
           workflow-templates/pr-conventional-commits.yaml,
-          workflow-templates/pr-lint-title.yaml,
-          workflow-templates/cdxgen.yaml
+          workflow-templates/pr-lint-title.yaml
         patterns_to_ignore: 'CLA/netcracker-logo.png,CLA/netcracker-logo.svg'
         destination: .github/workflows
         repos_to_ignore: .github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
         exclude_private: true
-        exclude_forked: false
+        exclude_forked: true
         # broadcast-pilot: Temp topic for testing purposes
         topics_to_include: broadcast-pilot
         branches: main
@@ -52,9 +51,9 @@ jobs:
       with:
         github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
         patterns_to_include: '.gitattributes'
-        repos_to_ignore: .github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
+        repos_to_ignore: .github, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
         exclude_private: true
-        exclude_forked: false
+        exclude_forked: true
         # broadcast-pilot: Temp topic for testing purposes
         topics_to_include: broadcast-pilot
         branches: main
@@ -72,9 +71,9 @@ jobs:
       with:
         github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
         patterns_to_include: .editorconfig
-        repos_to_ignore: .github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
+        repos_to_ignore: .github, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan
         exclude_private: true
-        exclude_forked: false
+        exclude_forked: true
         # broadcast-pilot: Temp topic for testing purposes
         topics_to_include: broadcast-pilot
         branches: main
@@ -93,9 +92,8 @@ jobs:
         github_token: '${{ secrets.GH_ACCESS_TOKEN }}'
         patterns_to_include: config/dependabot/cloud-core/dependabot.yml
         destination: .github/
-        repos_to_ignore: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
         exclude_private: true
-        exclude_forked: false
+        exclude_forked: true
         topics_to_include: core
         branches: main
         committer_username: NetcrackerCLPLCI
@@ -114,7 +112,7 @@ jobs:
         patterns_to_include: '.github/super-linter.env,.github/linters'
         repos_to_ignore: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
         exclude_private: true
-        exclude_forked: false
+        exclude_forked: true
         # broadcast-pilot: Temp topic for testing purposes
         topics_to_include: broadcast-pilot
         branches: main
@@ -135,7 +133,7 @@ jobs:
         destination: .github/
         repos_to_ignore: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
         exclude_private: true
-        exclude_forked: false
+        exclude_forked: true
         # broadcast-pilot: Temp topic for testing purposes
         topics_to_include: broadcast-pilot
         branches: main
@@ -156,7 +154,7 @@ jobs:
         destination: .github/
         repos_to_ignore: '.github, qubership-workflow-hub, qubership-test-pipelines, KubeMarine, k8s-conformance, gatekeeper-library, cassandra-exporter, pg_hint_plan'
         exclude_private: true
-        exclude_forked: false
+        exclude_forked: true
         # broadcast-pilot: Temp topic for testing purposes
         topics_to_include: broadcast-pilot
         branches: main
