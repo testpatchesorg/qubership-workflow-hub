@@ -85,7 +85,7 @@
         - name: Extract Docker metadata
           if: inputs.tags-override == ''
           id: meta
-          uses: docker/metadata-action@v4
+          uses: docker/metadata-action@v5
           with:
             context: ${{ inputs.context }}
             images: ghcr.io/${{ github.repository_owner }}/${{ inputs.artifact-id  || matrix.component.name }}          
@@ -109,7 +109,7 @@
                  echo "repository ${{ github.repository }}"
   
         - name: Build and push Docker image
-          uses: docker/build-push-action@v4
+          uses: docker/build-push-action@v6
           with:
             context: ${{ matrix.component.context }}
             file: ${{ matrix.component.file }}
