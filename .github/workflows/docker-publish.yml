@@ -98,7 +98,9 @@
         - name: Prepeare tags
           if: inputs.tags-override != ''
           id: prepare-tags
-          run: 'echo tags=ghcr.io/${{ github.repository_owner }}/${{ inputs.artifact-id  || matrix.component.name }}:${{ inputs.tags-override }} >> $GITHUB_ENV'
+          run: |
+                owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+                echo "tags=ghcr.io/${owner}/${{ inputs.artifact-id  || matrix.component.name }}:${{ inputs.tags-override }}" >> $GITHUB_ENV
           
   
         - name: Check Dockerfile existence
@@ -109,8 +111,9 @@
                  echo "repository ${{ github.repository }}"
   
         - name: Build and push Docker image
-          uses: docker/build-push-action@v6
+          uses: docker/build-push-action@v4
           with:
+            provenance: false
             context: ${{ matrix.component.context }}
             file: ${{ matrix.component.file }}
             push: ${{ !inputs.dry-run }}
