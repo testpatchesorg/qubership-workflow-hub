@@ -31,7 +31,7 @@
           default: "linux/amd64"
           required: false
           type: string
-        tags-override:
+        tags:
           default: ''
           required: false
           type: string  
@@ -80,7 +80,7 @@
             echo "URL ghcr.io/${{ github.repository_owner }}/${{ inputs.artifact-id || matrix.component.name }}"
   
         - name: Extract Docker metadata
-          if: inputs.tags-override == ''
+          if: inputs.tags == ''
           id: meta
           uses: docker/metadata-action@v4
           with:
@@ -93,10 +93,10 @@
               type=semver,pattern={{major}}
   
         - name: Prepare tags
-          if: inputs.tags-override != ''
+          if: inputs.tags != ''
           id: prepare-tags
           run: |
-            IFS=',' read -ra TAGS <<< "${{ inputs.tags-override }}"
+            IFS=',' read -ra TAGS <<< "${{ inputs.tags }}"
             TAGS_OUTPUT=""
             for TAG in "${TAGS[@]}"; do
               TAG=$(echo "$TAG" | xargs) 

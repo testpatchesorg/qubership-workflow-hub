@@ -20,7 +20,7 @@ This **Docker Publish** GitHub Workflow automates building and publishing Docker
 | `download-artifact`| If true, downloads the artifact before building the Docker image.           | No       | `false` |
 | `component`        | JSON string describing components for building Docker images.              | No       | `[{"name": "default", "file": "./Dockerfile", "context": "."}]` |
 | `platforms`        | Platforms to build the Docker image for (e.g., `linux/amd64`).             | No       | `linux/amd64` |
-| `tags-override`    | Custom tags to override the default tagging strategy.                      | No       | None    |
+| `tags`             | Custom tags to override the default tagging strategy.                      | No       | None    |
 
 ### Detailed Description of Variables
 
@@ -35,7 +35,7 @@ This **Docker Publish** GitHub Workflow automates building and publishing Docker
   - `context`: Build context for the Docker image.
   The default is one component with the name `default`, a Dockerfile in the root of the repository, and the context `.`.
 - **`platforms`**: Platforms to build the Docker image for. Default is `linux/amd64`.
-- **`tags-override`**: Custom tags to override the default tagging strategy. Tags should be provided as a comma-separated string.
+- **`tags`**: Custom tags to override the default tagging strategy. Tags should be provided as a comma-separated string.
 
 ### Example for Multiple Components
 
