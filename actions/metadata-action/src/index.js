@@ -55,7 +55,7 @@ function findDistTag(ref, distTags) {
     for (let item of distTags) {
       let key = Object.keys(item)[0];
       if (key === "tag") {
-        return item[key]; // возвращаем значение из item
+        return item[key];
       }
     }
     return "latest";
@@ -64,11 +64,11 @@ function findDistTag(ref, distTags) {
     let key = Object.keys(item)[0];
     if (key.includes('*')) {
       if (matchesPattern(branchName, key)) {
-        return item[key]; // возвращаем значение из item
+        return item[key];
       }
     } else {
       if (branchName === key || branchName.startsWith(key + "/")) {
-        return item[key]; // возвращаем значение из item
+        return item[key];
       }
     }
   }
@@ -88,21 +88,33 @@ async function run() {
   const ref = new RefExtractor().extract(name);
 
   const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
-  const loader = new ConfigLoader().load(configurationPath);
+  const loader = new ConfigLoader()
+  const config = loader.load(configurationPath);
 
   core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
 
-  const template = findTemplate(!ref.isTag ? ref.name : "tag", loader["branches-template"]);
-  if (!template) {
-    core.setFailed(`❗️ No template found for ref: ${ref.name}`);
-    return;
+  let template = null;
+  let distTag = null;
+
+  if (loader.fileExists) {
+    template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
+    distTag = findDistTag(ref, config["dist-tags"]);
+  }
+
+  if (template === null) {
+    core.warning(`💡 No template found for ref: ${ref.name}, will be used default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
+    template = `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
+  }
+
+  if (distTag === null) {
+    core.warning(`💡 No dist-tag found for ref: ${ref.name}, will be used default -> latest`);
+    distTag = "latest";
   }
 
   // let fill =  fillTemplate(template, { ...ref, ...generateSnapshotVersionParts(), ...extractSemverParts(ref.name) });
-
   const parts = generateSnapshotVersionParts();
   const semverParts = extractSemverParts(ref.name);
-  const distTag = findDistTag(ref, loader["dist-tags"]) || "default";
+
   const values = { ...ref, "ref-name": ref.name, ...semverParts, ...parts, ...github.context, distTag };
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);
@@ -114,7 +126,7 @@ async function run() {
   core.info(`🔹 Template: ${template}`);
 
   let t = ref.name;
-  core.info(`🔹 Name: ${{ t}}`)
+  core.info(`🔹 Name: ${{ t }}`)
   core.info(`💡 Rendered template: ${result}`);
 
   core.setOutput("result", result);
@@ -128,7 +140,7 @@ async function run() {
   core.setOutput("patch", semverParts.patch);
   core.setOutput("tag", distTag);
 
-   core.info('✅ Action completed successfully!');
+  core.info('✅ Action completed successfully!');
 }
 
 run();
