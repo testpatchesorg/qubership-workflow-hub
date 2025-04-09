@@ -15,7 +15,7 @@ async function run() {
   //   configurationPath = "./.github/package-cleanup-config.yml";
   // }
 
-  const isDebug = core.getInput("debug").toLowerCase() === "true";
+  const isDebug = core.getInput("debug").toLowerCase() === "false";
   const dryRun = core.getInput("dry-run").toLowerCase() === "true";
   core.info(`🔹isDebug: ${isDebug}`);
   core.info(`🔹dryRun: ${dryRun}`);
