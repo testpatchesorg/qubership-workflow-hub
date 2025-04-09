@@ -22,7 +22,6 @@ The primary result of this action is the deletion of old container package versi
 | `included-tags`    | A comma-separated list of tags to include for deletion. Wildcards (`*`) are supported. | No       | `""` (all tags included)     |
 | `excluded-tags`    | A comma-separated list of tags to exclude from deletion. Wildcards (`*`) are supported.| No       | `""` (no tags excluded)                  |
 | `config-file-path` | The path to the configuration file. `NOT SUPPORTED AT THIS MOMENT`          | No       | `.github/package-cleanup.yml` |
-| `debug`            | Enable debug mode for detailed logging.                                     | No       | `false`                     |
 | `dry-run`          | Enable dry-run mode to preview deletions without making changes.            | No       | `false`                     |
 
 ## 📌 Outputs
@@ -86,7 +85,6 @@ jobs:
           threshold-days: ${{ github.event.inputs.threshold-days }}
           included-tags: ${{ github.event.inputs.included-tags }}
           excluded-tags: ${{ github.event.inputs.excluded-tags }}
-          debug: ${{ github.event.inputs.debug }}
           dry-run: ${{ github.event.inputs.dry-run }}
         env:
           PACKAGE_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
