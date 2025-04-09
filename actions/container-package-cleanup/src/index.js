@@ -93,7 +93,7 @@ async function run() {
     return;
   }
 
-  if (isDebug) {
+  if (isDebug && dryRun) {
     core.info(`💡 Packanes name: ${JSON.stringify(packagesNames, null, 2)}`);
     core.info(`💡 Package with version for delete: ${JSON.stringify(filteredPackagesWithVersionsForDelete, null, 2)}`);
   }
