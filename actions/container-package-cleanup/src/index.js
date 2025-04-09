@@ -15,7 +15,7 @@ async function run() {
   //   configurationPath = "./.github/package-cleanup-config.yml";
   // }
 
-  const isDebug = core.getInput("debug").toLowerCase() === "false";
+  const isDebug = core.getInput("debug").toLowerCase() === "true";
   const dryRun = core.getInput("dry-run").toLowerCase() === "true";
   core.info(`🔹isDebug: ${isDebug}`);
   core.info(`🔹dryRun: ${dryRun}`);
@@ -93,7 +93,7 @@ async function run() {
     return;
   }
 
-  if (isDebug && dryRun) {
+  if (isDebug && dry) {
     core.info(`💡 Packanes name: ${JSON.stringify(packagesNames, null, 2)}`);
     core.info(`💡 Package with version for delete: ${JSON.stringify(filteredPackagesWithVersionsForDelete, null, 2)}`);
   }
