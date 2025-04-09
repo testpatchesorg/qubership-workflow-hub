@@ -29914,6 +29914,54 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 1090:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(8335);
+class Report {
+    async writeSummary(filteredPackagesWithVersionsForDelete) {
+        if (!filteredPackagesWithVersionsForDelete || filteredPackagesWithVersionsForDelete.length === 0) {
+            core.info("❗️No packages or versions to delete.");
+            return;
+        }
+
+        // Calculate summary statistics.
+        const totalPackages = filteredPackagesWithVersionsForDelete.length;
+        const totalDeletedVersions = filteredPackagesWithVersionsForDelete.reduce((total, item) => total + item.versions.length, 0);
+
+        const tableData = [
+            [
+                { data: "Package", header: true },
+                { data: "Deleted Versions", header: true }
+            ]
+        ];
+
+        filteredPackagesWithVersionsForDelete.forEach(({ package: pkg, versions }) => {
+
+            const pkgInfo = `<strong>${pkg.name}</strong>&#10;(ID: ${pkg.id})`;
+
+            const versionsInfo = versions
+                .map(v => `• <code>${v.id}</code> — ${v.metadata.container.tags.join(", ")}`)
+                .join("<br>");
+
+            tableData.push([pkgInfo, versionsInfo]);
+        });
+
+        core.summary.addRaw(`## 🎯 Container Package Cleanup Summary\n\n`);
+        core.summary.addRaw(`**Total Packages Processed:** ${totalPackages}
+                             **Total Deleted Versions:** ${totalDeletedVersions}\n\n`);
+        core.summary.addRaw(`---\n\n`);
+        core.summary.addTable(tableData);
+        core.summary.addRaw(`\n\n✅ Cleanup operation completed successfully.`);
+
+        await core.summary.write();
+    }
+}
+
+module.exports = Report;
+
+/***/ }),
+
 /***/ 2937:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -31998,6 +32046,7 @@ var __webpack_exports__ = {};
 
 const core = __nccwpck_require__(8335);
 const OctokitWrapper = __nccwpck_require__(2937);
+const Report = __nccwpck_require__(1090);
 
 async function run() {
 
@@ -32086,9 +32135,11 @@ async function run() {
     return;
   }
 
-  if (isDebug && dryRun) {
-    core.info(`💡 Packanes name: ${JSON.stringify(packagesNames, null, 2)}`);
+  if (isDebug) {
+    core.info(`💡 Packages name: ${JSON.stringify(packagesNames, null, 2)}`);
+    core.info(`::group::Delete versions Log.`);
     core.info(`💡 Package with version for delete: ${JSON.stringify(filteredPackagesWithVersionsForDelete, null, 2)}`);
+    core.info(`::endgroup::`);
   }
 
   if (dryRun) {
@@ -32103,7 +32154,9 @@ async function run() {
     }
   }
 
+  await new Report().writeSummary(filteredPackagesWithVersionsForDelete);
   core.info("✅ All specified versions have been deleted successfully.");
+
 }
 
 function wildcardMatch(tag, pattern) {

@@ -5,6 +5,7 @@
 
 const core = require("@actions/core");
 const OctokitWrapper = require("./wrapper");
+const Report = require("./report");
 
 async function run() {
 
@@ -93,9 +94,11 @@ async function run() {
     return;
   }
 
-  if (isDebug && dry) {
-    core.info(`💡 Packanes name: ${JSON.stringify(packagesNames, null, 2)}`);
+  if (isDebug) {
+    core.info(`💡 Packages name: ${JSON.stringify(packagesNames, null, 2)}`);
+    core.info(`::group::Delete versions Log.`);
     core.info(`💡 Package with version for delete: ${JSON.stringify(filteredPackagesWithVersionsForDelete, null, 2)}`);
+    core.info(`::endgroup::`);
   }
 
   if (dryRun) {
@@ -110,7 +113,9 @@ async function run() {
     }
   }
 
+  await new Report().writeSummary(filteredPackagesWithVersionsForDelete);
   core.info("✅ All specified versions have been deleted successfully.");
+
 }
 
 function wildcardMatch(tag, pattern) {
