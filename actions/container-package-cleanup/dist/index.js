@@ -32019,7 +32019,7 @@ async function run() {
   const includedTags = rawIncludedTags ? rawIncludedTags.split(",") : [];
 
   const rawExcludedTags = core.getInput('excluded-tags');
-  const excludedTags = rawExcludedTags ? rawExcludedTags.split(",") : ['release*'];
+  const excludedTags = rawExcludedTags ? rawExcludedTags.split(",") : [];
 
   const now = new Date();
   const thresholdDate = new Date(now.getTime() - thresholdDays * 24 * 60 * 60 * 1000);
@@ -32087,7 +32087,8 @@ async function run() {
   }
 
   if (isDebug) {
-    core.info(`💡 Package wit version for delete: ${JSON.stringify(filteredPackagesWithVersionsForDelete, null, 2)}`);
+    core.info(`💡 Packanes name: ${JSON.stringify(packagesNames, null, 2)}`);
+    core.info(`💡 Package with version for delete: ${JSON.stringify(filteredPackagesWithVersionsForDelete, null, 2)}`);
   }
 
   if (dryRun) {

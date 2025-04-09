@@ -26,7 +26,7 @@ async function run() {
   const includedTags = rawIncludedTags ? rawIncludedTags.split(",") : [];
 
   const rawExcludedTags = core.getInput('excluded-tags');
-  const excludedTags = rawExcludedTags ? rawExcludedTags.split(",") : ['release*'];
+  const excludedTags = rawExcludedTags ? rawExcludedTags.split(",") : [];
 
   const now = new Date();
   const thresholdDate = new Date(now.getTime() - thresholdDays * 24 * 60 * 60 * 1000);
