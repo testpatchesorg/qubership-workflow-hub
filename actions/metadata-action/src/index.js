@@ -139,6 +139,7 @@ async function run() {
   core.setOutput("minor", semverParts.minor);
   core.setOutput("patch", semverParts.patch);
   core.setOutput("tag", distTag);
+  core.setOutput("short-sha", shortSha);
 
   core.info('✅ Action completed successfully!');
 }

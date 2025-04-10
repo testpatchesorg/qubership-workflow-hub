@@ -25,6 +25,8 @@ outputs:
         description: "Minor version."
     patch:
         description: "Patch version."
+    short-sha:
+        description: "Short SHA."
 runs:
   using: "node20"
   main: "dist/index.js"
