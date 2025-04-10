@@ -115,7 +115,7 @@ async function run() {
   const parts = generateSnapshotVersionParts();
   const semverParts = extractSemverParts(ref.name);
   const shortSha = github.context.sha.slice(0, 7);
-  const values = { ...ref, "ref-name": ref.name, "short-sha:": shortSha, ...semverParts, ...parts, ...github.context, distTag };
+  const values = { ...ref, "ref-name": ref.name, "short-sha": shortSha, ...semverParts, ...parts, ...github.context, distTag };
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);
   core.info(`🔹 semver: ${JSON.stringify(semverParts)}`);
