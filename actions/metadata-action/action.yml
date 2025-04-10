@@ -4,7 +4,7 @@ inputs:
     configuration-path:
         description: "Path to the configuration file."
         required: false
-    short-sha-deep:
+    short-sha:
         description: "Short SHA deep."
         default: "7"
         required: false
