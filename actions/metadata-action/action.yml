@@ -4,6 +4,10 @@ inputs:
     configuration-path:
         description: "Path to the configuration file."
         required: false
+    short-sha-deep:
+        description: "Short SHA deep."
+        default: "7"
+        required: false
 outputs:
     result:
         description: "Current timestamp."

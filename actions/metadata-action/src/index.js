@@ -114,7 +114,8 @@ async function run() {
   // let fill =  fillTemplate(template, { ...ref, ...generateSnapshotVersionParts(), ...extractSemverParts(ref.name) });
   const parts = generateSnapshotVersionParts();
   const semverParts = extractSemverParts(ref.name);
-  const shortSha = github.context.sha.slice(0, 7);
+  const shortShaDeep = core.getInput("short-sha-deep") || 7;
+  const shortSha = github.context.sha.slice(0, shortShaDeep);
   const values = { ...ref, "ref-name": ref.name, "short-sha": shortSha, ...semverParts, ...parts, ...github.context, distTag };
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);
