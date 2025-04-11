@@ -85,6 +85,11 @@ async function run() {
   // const def_template = core.getInput("default-template");
 
   const name = core.getInput('ref') || github.context.ref || github.context.payload.pull_request.head.ref;
+
+  if (!name || name === "" || name === "undefined") {
+    name = github.context.payload.pull_request.head.ref
+    core.warning(`Cant detect ref, using default: ${name}`);
+  }
   const ref = new RefExtractor().extract(name);
 
   const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
