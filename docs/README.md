@@ -8,9 +8,10 @@ This index provides a quick overview of the available workflow and action docume
 
 | Name                                             | Description                                                      |
 | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| [docker-publish](../docs/reusable/docker-publish.md)              | Automates building and publishing Docker images. ***DEPRECATED*** use [docker-action](../actions/docker-action/README.md)    |
+| [docker-publish](../docs/reusable/docker-publish.md)              | Automates building and publishing Docker images. **DEPRECATED** use [docker-action](../actions/docker-action/README.md)    |
 | [tag-creator](../docs/reusable//tag-creator.md)              | Creates a new tag in the repository. **DEPRECATED** use [tag-action](../actions/tag-action/README.md)     |
 | [tag-checker](../actions/tag-checker/README.md)         | Verifies the presence of specific tags in the repository. **DEPRECATED** use [tag-action](../actions/tag-action/README.md)       |
+| [commit-and-push](../actions/commit-and-push/README.md) | Automates committing and pushing changes to a remote repository. **DEPRECATED** use `git command` |
 
 ---
 
@@ -54,7 +55,6 @@ This index provides a quick overview of the available workflow and action docume
 | [archive-and-upload-assets](../actions/archive-and-upload-assets/README.md) | Archives and uploads assets to a specified location. |
 | [cdxgen](../actions/cdxgen/README.md)                   | Generates SBOM file and CycloneDX vulnerability report.          |
 | [chart-version](../actions/chart-version/README.md)     | Manages and updates chart versions.                             |
-| [commit-and-push](../actions/commit-and-push/README.md) | Automates committing and pushing changes to a remote repository. |
 | [custom-event](../actions/custom-event/README.md)       | Triggers a custom `repository_dispatch` event in the repository. |
 | [docker-action](../actions/docker-action/README.md)     | Builds and publishes Docker images using Docker Buildx.         |
 | [metadata-action](../actions/metadata-action/README.md) | Automates the management of repository metadata, including meta info, dist-tag, GitHub context, and semantic versioning. |
