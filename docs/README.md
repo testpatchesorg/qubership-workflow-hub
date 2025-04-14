@@ -12,6 +12,7 @@ This index provides a quick overview of the available workflow and action docume
 | [tag-creator](../docs/reusable//tag-creator.md)              | Creates a new tag in the repository. **DEPRECATED** use [tag-action](../actions/tag-action/README.md)     |
 | [tag-checker](../actions/tag-checker/README.md)         | Verifies the presence of specific tags in the repository. **DEPRECATED** use [tag-action](../actions/tag-action/README.md)       |
 | [commit-and-push](../actions/commit-and-push/README.md) | Automates committing and pushing changes to a remote repository. **DEPRECATED** use `git command` |
+| [pom-updater](../actions/pom-updater/README.md)         | Automatically updates the `pom.xml` file in Maven projects.  **DEPRECATED**    |
 
 ---
 
@@ -20,7 +21,6 @@ This index provides a quick overview of the available workflow and action docume
 | Name                                             | Description                                                      |
 | --------------------------------------------------------- | ---------------------------------------------------------------- |
 | [github-release](../docs/reusable/github-release.md) | Automates creating and tagging releases on GitHub.               |
-| [github-release](../docs/reusable/github-release.md)              | Creates a GitHub release based on the specified version.     |
 | [maven-publish](../docs/reusable/maven-publish.md)              | Automates signing and deploying Maven artifacts to a repository.     |
 | [python-publish](../docs/reusable/python-publish.md)              | Automates building, testing, and publishing Python packages.     |
 | [release-drafter](../docs/reusable/release-drafter.md)              | Drafts a new release based on merged pull requests.     |
@@ -59,7 +59,6 @@ This index provides a quick overview of the available workflow and action docume
 | [docker-action](../actions/docker-action/README.md)     | Builds and publishes Docker images using Docker Buildx.         |
 | [metadata-action](../actions/metadata-action/README.md) | Automates the management of repository metadata, including meta info, dist-tag, GitHub context, and semantic versioning. |
 | [poetry-publisher](../actions/poetry-publisher/README.md) | Automates building, testing, and publishing Python packages using Poetry. |
-| [pom-updater](../actions/pom-updater/README.md)         | Automatically updates the `pom.xml` file in Maven projects.      |
 | [pr-add-messages](../actions/pr-add-messages/README.md) | Adds commit messages to the pull request description.            |
 | [pr-assigner](../actions/pr-assigner/README.md)         | Automatically assigns reviewers to pull requests based on configuration or CODEOWNERS file. |
 | [tag-action](../actions/tag-action/README.md)           | Manages Git tags, including creation, deletion, and validation.  |
