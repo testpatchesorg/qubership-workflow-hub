@@ -8,7 +8,7 @@ This index provides a quick overview of the available workflow and action docume
 
 | Name                                             | Description                                                      |
 | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| [docker-publish](../docs/reusable/docker-publish.md)              | Automates building and publishing Docker images. *DEPRECATED* use [docker-action](../actions/docker-action/README.md)    |
+| [docker-publish](../docs/reusable/docker-publish.md)              | Automates building and publishing Docker images. ***DEPRECATED*** use [docker-action](../actions/docker-action/README.md)    |
 | [tag-creator](../docs/reusable//tag-creator.md)              | Creates a new tag in the repository. **DEPRECATED** use [tag-action](../actions/tag-action/README.md)     |
 | [tag-checker](../actions/tag-checker/README.md)         | Verifies the presence of specific tags in the repository. **DEPRECATED** use [tag-action](../actions/tag-action/README.md)       |
 
