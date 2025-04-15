@@ -42737,12 +42737,6 @@ function extractSemverParts(versionString) {
   return { major, minor, patch };
 }
 
-
-// function matchesPattern(refName, pattern) {
-//   const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
-//   return regex.test(refName);
-// }
-
 function matchesPattern(refName, pattern) {
   const normalizedPattern = pattern.replace(/\//g, '-').replace(/\*/g, '.*');
   const regex = new RegExp('^' + normalizedPattern + '$');
@@ -42759,32 +42753,6 @@ function findTemplate(refName, templates) {
   return null;
 }
 
-function findDistTag(ref, distTags) {
-  let branchName = ref.name;
-  if (ref.isTag) {
-    for (let item of distTags) {
-      let key = Object.keys(item)[0];
-      if (key === "tag") {
-        return item[key];
-      }
-    }
-    return "latest";
-  }
-  for (let item of distTags) {
-    let key = Object.keys(item)[0];
-    if (key.includes('*')) {
-      if (matchesPattern(branchName, key)) {
-        return item[key];
-      }
-    } else {
-      if (branchName === key || branchName.startsWith(key + "/")) {
-        return item[key];
-      }
-    }
-  }
-  return null;
-}
-
 function fillTemplate(template, values) {
   return template.replace(/{{\s*([\w-]+)\s*}}/g, (match, key) => {
     return key in values ? values[key] : match;
@@ -42792,7 +42760,6 @@ function fillTemplate(template, values) {
 }
 
 async function run() {
-  // const def_template = core.getInput("default-template");
 
   core.info(`pull_request head.ref: ${github.context.payload.pull_request?.head?.ref}`);
   core.info(`pull_request head: ${JSON.stringify(github.context.payload.pull_request?.head, null, 2)}`);
@@ -42817,7 +42784,7 @@ async function run() {
 
   if (loader.fileExists) {
     template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
-    distTag = findDistTag(ref, config["dist-tags"]);
+    distTag = findTemplate(ref.name, config["distribution-tag"]);
   }
 
   if (template === null) {
@@ -42830,23 +42797,25 @@ async function run() {
     distTag = "latest";
   }
 
-  // let fill =  fillTemplate(template, { ...ref, ...generateSnapshotVersionParts(), ...extractSemverParts(ref.name) });
   const parts = generateSnapshotVersionParts();
   const semverParts = extractSemverParts(ref.name);
   const shortShaDeep = core.getInput("short-sha");
   const shortSha = github.context.sha.slice(0, shortShaDeep);
-  const values = { ...ref, "ref-name": ref.name, "short-sha": shortSha, ...semverParts, ...parts, ...github.context, "distTag": distTag };
+  const values = {
+    ...ref, "ref-name": ref.name, "short-sha": shortSha, ...semverParts,
+    ...parts, ...github.context, "dist-tag": distTag, "runNumber": github.context.runId
+  };
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);
   core.info(`🔹 semver: ${JSON.stringify(semverParts)}`);
   core.info(`🔹 dist-tag: ${JSON.stringify(distTag)}`);
 
+  // core.info(`Values: ${JSON.stringify(values)}`); //debug values
   let result = fillTemplate(template, values)
 
   core.info(`🔹 Template: ${template}`);
 
-  let t = ref.name;
-  core.info(`🔹 Name: ${{ t }}`)
+  core.info(`🔹 Name: ${ref.name}`)
   core.info(`💡 Rendered template: ${result}`);
 
   core.setOutput("result", result);
@@ -42861,10 +42830,11 @@ async function run() {
   core.setOutput("tag", distTag);
   core.setOutput("short-sha", shortSha);
 
-  core.info('✅ Action completed successfully!');
+  core.info('✔️ Action completed successfully!');
 }
 
 run();
+
 module.exports = __webpack_exports__;
 /******/ })()
 ;
