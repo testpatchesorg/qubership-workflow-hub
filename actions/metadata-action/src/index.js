@@ -74,7 +74,7 @@ async function run() {
 
   if (loader.fileExists) {
     template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
-    distTag = findTemplate(ref.name, config["distribution-tag"]);
+    distTag = findTemplate(ref.name, config["distribution-tags"]);
   }
 
   if (template === null) {
