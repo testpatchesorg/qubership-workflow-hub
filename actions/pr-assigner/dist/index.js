@@ -42710,6 +42710,7 @@ function shuffleArray(array) {
 }
 
 async function run() {
+
     const pullRequest = github.context.payload.pull_request;
     if (!pullRequest) {
         core.setFailed("❗️ Action must run on a pull request.");
@@ -42756,18 +42757,16 @@ async function run() {
     assignees = assignees.slice(0, count);
 
     try {
+
         const getAssigneesCmd = `gh pr view ${pullRequest.number} --json assignees --jq ".assignees | map(.login) | join(\\" \\" )"`;
         let currentAssignees = execSync(getAssigneesCmd).toString().trim();
-        if (currentAssignees) {
-            const removeCmd = `gh pr edit ${pullRequest.number} --remove-assignee ${currentAssignees}`;
-            core.info(`🔍 Removing current assignees with: ${removeCmd}`);
-            execSync(removeCmd, { stdio: 'inherit' });
-        } else {
-            core.info("🔍 No assignees to remove.");
-        }
 
+        if (currentAssignees != "") {
+            core.info(`✅ PR has current assignees: ${currentAssignees}, skipping...`);
+            return;
+        }
         const addCmd = `gh pr edit ${pullRequest.number} --add-assignee ${assignees.join(' ')}`;
-        core.info(` Adding new assignees with: ${addCmd}`);
+        core.info(`🟣 Adding new assignees with: ${addCmd}`);
         execSync(addCmd, { stdio: 'inherit' });
 
         core.info("✅ Action completed successfully!");
@@ -42775,8 +42774,8 @@ async function run() {
         core.setFailed(`❗️ ${error.message}`);
     }
 }
-run();
 
+run();
 
 module.exports = __webpack_exports__;
 /******/ })()
