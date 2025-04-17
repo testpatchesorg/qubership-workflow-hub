@@ -123,7 +123,7 @@ Under `project/repositories` add new repositories
 
         <!-- GitHub packages repository for both release and SNAPSHOT versions -->
         <repository>
-            <id>github-nc</id>
+            <id>github</id>
             <url>https://maven.pkg.github.com/netcracker/*</url>
             <releases>
                 <enabled>true</enabled>
