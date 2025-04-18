@@ -103,7 +103,7 @@ jobs:
           server-id: github
           server-username: GITHUB_USER
           server-password: GITHUB_TOKEN
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-private-key: ${{ secrets.gpg-private-key }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: "Disable Maven Central Deploy"
