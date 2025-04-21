@@ -59,33 +59,63 @@ async function run() {
     name = github.context.eventName === 'pull_request' ? github.context.payload.pull_request?.head?.ref : github.context.ref;
   }
 
-  core.info(`🔹 Ref: ${name}`);
-
+  core.info(`🔹 Ref Original: ${name}`);
   const ref = new RefExtractor().extract(name);
 
-  const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
-  const loader = new ConfigLoader()
-  const config = loader.load(configurationPath);
-
   core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
+  const loader = new ConfigLoader();
 
-  let template = null;
-  let distTag = null;
+  let template = core.getInput('default-template');
+  let distributionTag = core.getInput('default-distribution-tag');
 
-  if (loader.fileExists) {
-    template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
-    distTag = findTemplate(ref.name, config["distribution-tags"]);
+  if (template.trim() === "") {
+    const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
+
+    if (loader.fileExists) {
+      const config = loader.load(configurationPath);
+      template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
+      distributionTag = findTemplate(ref.name, config["distribution-tags"]);
+    }
   }
 
-  if (template === null) {
-    core.warning(`💡 No template found for ref: ${ref.name}, will be used default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
+  if (!template || template.trim() === "") {
+    core.warning(`💡 No template found for ref: ${ref.name}, using default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
     template = `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
   }
-
-  if (distTag === null) {
-    core.warning(`💡 No dist-tag found for ref: ${ref.name}, will be used default -> latest`);
-    distTag = "latest";
+  if (!distributionTag || distributionTag.trim() === "") {
+    core.warning(`💡 No dist-tag found for ref: ${ref.name}, using default -> latest`);
+    distributionTag = "latest";
   }
+
+
+
+  // const defaultTemplate = core.getInput('default-template');
+  // if (defaultTemplate.trim() === "") {
+
+  //   const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
+  //   const loader = new ConfigLoader()
+  //   const config = loader.load(configurationPath);
+
+  //   core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
+
+  //   let template = null;
+  //   let distTag = null;
+
+  //   if (loader.fileExists) {
+  //     template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
+  //     distTag = findTemplate(ref.name, config["distribution-tags"]);
+  //   }
+
+  //   if (template === null) {
+  //     core.warning(`💡 No template found for ref: ${ref.name}, will be used default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
+  //     template = `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
+  //   }
+  // }
+
+  // if (distTag === null) {
+  //   core.warning(`💡 No dist-tag found for ref: ${ref.name}, will be used default -> latest`);
+  //   distTag = "latest";
+  // }
 
   const parts = generateSnapshotVersionParts();
   const semverParts = extractSemverParts(ref.name);
@@ -93,7 +123,7 @@ async function run() {
   const shortSha = github.context.sha.slice(0, shortShaDeep);
   const values = {
     ...ref, "ref-name": ref.name, "short-sha": shortSha, ...semverParts,
-    ...parts, ...github.context, "dist-tag": distTag, "runNumber": github.context.runId
+    ...parts, ...github.context, "dist-tag": distributionTag, "runNumber": github.context.runId
   };
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);

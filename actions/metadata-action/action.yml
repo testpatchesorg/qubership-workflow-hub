@@ -8,6 +8,10 @@ inputs:
         description: "Short SHA deep."
         default: "7"
         required: false
+    default-template:
+        description: "Default template."
+        default: "{{ref-name}}-{{timestamp}}-{{runNumber}}"
+        required: false    
 outputs:
     result:
         description: "Current timestamp."
