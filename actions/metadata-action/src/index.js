@@ -63,30 +63,31 @@ async function run() {
   const ref = new RefExtractor().extract(name);
 
   core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
-  const loader = new ConfigLoader();
 
-  let template = core.getInput('default-template');
-  let distributionTag = core.getInput('default-distribution-tag');
+  let defaultTemplate = core.getInput('default-template');
+  let defaultDistributionTag = core.getInput('default-distribution-tag');
 
-  if (template.trim() === "") {
-    const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
+  let template;
+  let distributionTag;
 
-    if (loader.fileExists) {
-      const config = loader.load(configurationPath);
-      template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
+  if (!defaultTemplate || defaultTemplate.trim() === "") {
+    const path = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
+    const loader = new ConfigLoader();
+    if (loader.fileExists()) {
+      const config = loader.load(path);
+      template = findTemplate(ref.name, config["branches-template"]);
       distributionTag = findTemplate(ref.name, config["distribution-tags"]);
     }
   }
-
   if (!template || template.trim() === "") {
     core.warning(`💡 No template found for ref: ${ref.name}, using default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
     template = `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
   }
   if (!distributionTag || distributionTag.trim() === "") {
     core.warning(`💡 No dist-tag found for ref: ${ref.name}, using default -> latest`);
-    distributionTag = "latest";
+    distributionTag = defaultDistributionTag || "latest";
   }
-
+  
   const parts = generateSnapshotVersionParts();
   const semverParts = extractSemverParts(ref.name);
   const shortShaDeep = core.getInput("short-sha");
@@ -98,7 +99,7 @@ async function run() {
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);
   core.info(`🔹 semver: ${JSON.stringify(semverParts)}`);
-  core.info(`🔹 dist-tag: ${JSON.stringify(distTag)}`);
+  core.info(`🔹 dist-tag: ${JSON.stringify(distributionTag)}`);
 
   // core.info(`Values: ${JSON.stringify(values)}`); //debug values
   let result = fillTemplate(template, values)
@@ -117,7 +118,7 @@ async function run() {
   core.setOutput("major", semverParts.major);
   core.setOutput("minor", semverParts.minor);
   core.setOutput("patch", semverParts.patch);
-  core.setOutput("tag", distTag);
+  core.setOutput("tag", distributionTag);
   core.setOutput("short-sha", shortSha);
 
   core.info('✔️ Action completed successfully!');
