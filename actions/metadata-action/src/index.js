@@ -87,36 +87,6 @@ async function run() {
     distributionTag = "latest";
   }
 
-
-
-  // const defaultTemplate = core.getInput('default-template');
-  // if (defaultTemplate.trim() === "") {
-
-  //   const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
-  //   const loader = new ConfigLoader()
-  //   const config = loader.load(configurationPath);
-
-  //   core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
-
-  //   let template = null;
-  //   let distTag = null;
-
-  //   if (loader.fileExists) {
-  //     template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
-  //     distTag = findTemplate(ref.name, config["distribution-tags"]);
-  //   }
-
-  //   if (template === null) {
-  //     core.warning(`💡 No template found for ref: ${ref.name}, will be used default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
-  //     template = `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
-  //   }
-  // }
-
-  // if (distTag === null) {
-  //   core.warning(`💡 No dist-tag found for ref: ${ref.name}, will be used default -> latest`);
-  //   distTag = "latest";
-  // }
-
   const parts = generateSnapshotVersionParts();
   const semverParts = extractSemverParts(ref.name);
   const shortShaDeep = core.getInput("short-sha");
