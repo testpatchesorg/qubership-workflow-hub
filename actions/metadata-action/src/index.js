@@ -77,17 +77,17 @@ async function run() {
       const config = loader.load(path);
       template = findTemplate(ref.name, config["branches-template"]);
       distributionTag = findTemplate(ref.name, config["distribution-tags"]);
+    } else {
+      core.warning(`💡 No template found for ref: ${ref.name}, using default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
+      template = `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
     }
   }
-  if (!template || template.trim() === "") {
-    core.warning(`💡 No template found for ref: ${ref.name}, using default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
-    template = `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
-  }
+
   if (!distributionTag || distributionTag.trim() === "") {
     core.warning(`💡 No dist-tag found for ref: ${ref.name}, using default -> latest`);
     distributionTag = defaultDistributionTag || "latest";
   }
-  
+
   const parts = generateSnapshotVersionParts();
   const semverParts = extractSemverParts(ref.name);
   const shortShaDeep = core.getInput("short-sha");
@@ -99,7 +99,7 @@ async function run() {
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);
   core.info(`🔹 semver: ${JSON.stringify(semverParts)}`);
-  core.info(`🔹 dist-tag: ${JSON.stringify(distributionTag)}`);
+  core.info(`🔹 distribution-tag: ${JSON.stringify(distributionTag)}`);
 
   // core.info(`Values: ${JSON.stringify(values)}`); //debug values
   let result = fillTemplate(template, values)
