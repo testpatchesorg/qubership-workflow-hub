@@ -9,7 +9,7 @@ class ConfigLoader {
     this.fileExist = true;
   }
 
-  fileExists() {
+  get fileExists() {
     return this.fileExist;
   }
 
@@ -20,7 +20,7 @@ class ConfigLoader {
     if (!fs.existsSync(configPath)) {
       core.warning(`❗️ Configuration file not found: ${configPath}`);
       this.fileExist = false;
-      return null;
+      return;
     }
 
     const fileContent = fs.readFileSync(configPath, 'utf8');
@@ -31,13 +31,13 @@ class ConfigLoader {
     }
     catch (error) {
       core.setFailed(`❗️ Error parsing YAML file: ${error.message}`);
-      return null;
+      return;
     }
 
     const schemaPath = path.resolve(__dirname, '..', 'config.schema.json');
     if (!fs.existsSync(schemaPath)) {
       core.setFailed(`❗️ Schema file not found: ${schemaPath}`);
-      return null;
+      return;
     }
 
     const schemaContent = fs.readFileSync(schemaPath, 'utf8');
@@ -48,7 +48,7 @@ class ConfigLoader {
     }
     catch (error) {
       core.setFailed(`❗️ Error parsing JSON schema: ${error.message}`);
-      return null;
+      return;
     }
 
     const ajv = new Ajv();
@@ -57,7 +57,7 @@ class ConfigLoader {
     if (!valid) {
       let errors = ajv.errorsText(validate.errors);
       core.setFailed(`❗️ Configuration file is invalid: ${errors}`);
-      return null;
+      return;
     }
     core.warning(`Configuration file is valid: ${valid}`);
     return config;

@@ -8,7 +8,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "This **GitHub Metadata** GitHub Action extracts metadata from the current GitHub context and generates a version string based on templates and tags.",
+  "description": "",
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
@@ -17,6 +17,5 @@
     "js-yaml": "^4.1.0",
     "path": "^0.12.7",
     "semver": "^7.7.1"
-  },
-  "devDependencies": {}
+  }
 }
