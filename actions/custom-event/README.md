@@ -10,11 +10,13 @@ This **Custom Event** GitHub Action triggers a custom `repository_dispatch` even
 
 ## 📌 Inputs
 
-| Name             | Description                                   | Required | Default |
-| ---------------- | --------------------------------------------- | -------- | ------- |
-| `event_type`     | The type of the custom event to trigger.      | Yes      | None    |
-| `client_payload` | Optional JSON payload to send with the event. | No       | `{}`    |
-| `GITHUB_TOKEN`   | GitHub Token for authentication.              | Yes      | None    |
+| Name             | Description                                   | Required | Default                  |
+| ---------------- | --------------------------------------------- | -------- | ------------------------ |
+| `event-type`     | The type of the custom event to trigger.      | Yes      | None                     |
+| `client-payload` | Optional JSON payload to send with the event. | No       | `{}`                     |
+| `github-token`   | GitHub Token for authentication.              | Yes      | None                     |
+| `owner`          | Owner of the repository to sent event to.     | No       | Current repository owner |
+| `repo`           | Name of the repository to sent event to.      | No       | Current repository name  |
 
 ## Outputs
 
@@ -39,7 +41,6 @@ jobs:
       - name: Trigger custom event
         uses: netcracker/qubership-workflow-hub/actions/custom-event@main
         with:
-          event_type: "my-custom-event"
-          client_payload: '{"key": "value"}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          event-type: "my-custom-event"
+          client-payload: '{"key": "value"}'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
