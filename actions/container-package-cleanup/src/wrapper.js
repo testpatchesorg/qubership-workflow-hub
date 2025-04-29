@@ -56,7 +56,11 @@ class OctokitWrapper {
    */
   async listPackagesForOrganization(org, package_type) {
     try {
-      const response = await this.octokit.rest.packages.listPackagesForOrganization({ org, package_type });
+      const response = this.octokit.paginate(
+        this.octokit.rest.packages.listPackagesForOrganization,
+        { org, package_type, per_page: 100 }
+      );
+      //await this.octokit.rest.packages.listPackagesForOrganization({ org, package_type });
       return response.data;
     } catch (error) {
       console.error(`Error fetching packages for organization ${org}:`, error);
