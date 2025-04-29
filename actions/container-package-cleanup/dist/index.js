@@ -30023,12 +30023,13 @@ class OctokitWrapper {
    */
   async listPackagesForOrganization(org, package_type) {
     try {
-      const response = this.octokit.paginate(
-        this.octokit.rest.packages.listPackagesForOrganization,
-        { org, package_type, per_page: 100 }
+      return await this.octokit.paginate(this.octokit.rest.packages.listPackagesForOrganization,
+        {
+          org: org,
+          package_type: 'container',
+          per_page: 200,      // максимум 100 пакетов за запрос
+        }
       );
-      //await this.octokit.rest.packages.listPackagesForOrganization({ org, package_type });
-      return response.data;
     } catch (error) {
       console.error(`Error fetching packages for organization ${org}:`, error);
       throw error;
@@ -30043,8 +30044,14 @@ class OctokitWrapper {
    */
   async listPackagesForUser(username, package_type) {
     try {
-      const response = await this.octokit.rest.packages.listPackagesForUser({ username, package_type });
-      return response.data;
+      return await this.octokit.paginate(this.octokit.rest.packages.listPackagesForUser,
+        {
+          username,
+          package_type,
+          per_page: 100,      // максимум 100 пакетов за запрос
+        }
+      );
+
     } catch (error) {
       console.error(`Error fetching packages for user ${username}:`, error);
       throw error;
@@ -30060,12 +30067,13 @@ class OctokitWrapper {
    */
   async getPackageVersionsForUser(owner, package_type, package_name) {
     try {
-      const response = await this.octokit.rest.packages.getAllPackageVersionsForPackageOwnedByUser({
-        package_type,
-        package_name,
-        username: owner,
-      });
-      return response.data;
+      return await this.octokit.paginate(this.octokit.rest.packages.getAllPackageVersionsForPackageOwnedByUser,
+        {
+          package_type,
+          package_name,
+          username: owner,
+          per_page: 100,
+        });
     } catch (error) {
       console.error(`Error fetching package versions for ${owner}/${package_name}:`, error);
       throw error;
@@ -30081,12 +30089,14 @@ class OctokitWrapper {
    */
   async getPackageVersionsForOrganization(org, package_type, package_name) {
     try {
-      const response = await this.octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
-        package_type,
-        package_name,
-        org,
-      });
-      return response.data;
+      return await this.octokit.paginate(this.octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
+        {
+          package_type,
+          package_name,
+          org,
+          per_page: 100,
+        });
+
     } catch (error) {
       console.error(`Error fetching package versions for ${org}/${package_name}:`, error);
       throw error;
@@ -32091,16 +32101,13 @@ async function run() {
   core.info(`🔹Organization marker: ${isOrganization}`);
 
   let packages = await wrapper.listPackages(owner, 'container', isOrganization);
-
-  core.info(`🔹Packages ${JSON.stringify(packages, null, 2)}`);
+  // core.info(`🔹Packages ${JSON.stringify(packages, null, 2)}`);
 
   let filteredPackages = packages.filter((pkg) => pkg.repository?.name === repo);
-
-  core.info(`🔹Filtered Packages: ${JSON.stringify(filteredPackages)}`);
+  // core.info(`🔹Filtered Packages: ${JSON.stringify(filteredPackages, null, 2)}`);
 
   let packagesNames = filteredPackages.map((pkg) => pkg.name);
-  core.info(`🔹Packages names: ${JSON.stringify(packagesNames)}`);
-
+  // core.info(`🔹Packages names: ${JSON.stringify(packagesNames, null, 2)}`);
 
   const packagesWithVersions = await Promise.all(
     filteredPackages.map(async (pkg) => {
