@@ -32088,7 +32088,7 @@ async function run() {
 
   let packages = await wrapper.listPackages(owner, 'container', isOrganization);
 
-  core.info(`🔹Packages ${JSON.stringify(packages)}`);
+  core.info(`🔹Packages ${JSON.stringify(packages).toString()}`);
 
   let filteredPackages = packages.filter((pkg) => pkg.repository?.name === repo);
 
