@@ -98,7 +98,7 @@ jobs:
         if: ${{ inputs.target-store == 'github-packages' }}
         uses: actions/setup-java@v4
         with:
-          java-version: "21"
+          java-version: ${{ inputs.java-version }}
           distribution: "temurin"
           server-id: github
           server-username: GITHUB_USER
