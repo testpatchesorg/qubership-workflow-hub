@@ -32073,8 +32073,8 @@ async function run() {
 
   const isDebug = core.getInput("debug").toLowerCase() === "true";
   const dryRun = core.getInput("dry-run").toLowerCase() === "true";
-  core.info(`🔹isDebug: ${isDebug}`);
-  core.info(`🔹dryRun: ${dryRun}`);
+  core.info(`🔹 isDebug: ${isDebug}`);
+  core.info(`🔹 dryRun: ${dryRun}`);
 
   const thresholdDays = parseInt(core.getInput('threshold-days'), 10) || 7;
 
@@ -32098,7 +32098,7 @@ async function run() {
   const wrapper = new OctokitWrapper(process.env.PACKAGE_TOKEN);
 
   const isOrganization = await wrapper.isOrganization(owner);
-  core.info(`🔹Organization marker: ${isOrganization}`);
+  core.info(`🔹 Organization marker: ${isOrganization}`);
 
   let packages = await wrapper.listPackages(owner, 'container', isOrganization);
   // core.info(`🔹Packages ${JSON.stringify(packages, null, 2)}`);
