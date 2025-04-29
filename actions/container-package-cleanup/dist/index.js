@@ -30000,7 +30000,7 @@ class OctokitWrapper {
    * @returns {Promise<Array>} - A list of packages.
    */
   async listPackages(owner, package_type, type) {
-    return type ? this.listPackagesForOrganization(owner, package_type) : this.listPackagesForUser(owner, package_type);
+    return type ? await this.listPackagesForOrganization(owner, package_type) : this.listPackagesForUser(owner, package_type);
   }
 
   /**
@@ -30023,7 +30023,7 @@ class OctokitWrapper {
    */
   async listPackagesForOrganization(org, package_type) {
     try {
-      const response = await this.octokit.paginate(
+      const response = this.octokit.paginate(
         this.octokit.rest.packages.listPackagesForOrganization,
         { org, package_type, per_page: 100 }
       );
