@@ -56,7 +56,7 @@ class OctokitWrapper {
    */
   async listPackagesForOrganization(org, package_type) {
     try {
-      const response = this.octokit.paginate(
+      const response = await this.octokit.paginate(
         this.octokit.rest.packages.listPackagesForOrganization,
         { org, package_type, per_page: 100 }
       );
