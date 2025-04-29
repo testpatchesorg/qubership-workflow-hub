@@ -49,7 +49,7 @@ async function run() {
 
   core.info(`🔹Packages ${JSON.stringify(packages).toString()}`);
 
-  let filteredPackages = packages.filter((pkg) => pkg.repository?.name === repo);
+  let filteredPackages = packages.filter((pkg) => pkg.repository.name === repo);
 
   core.info(`🔹Filtered Packages: ${JSON.stringify(filteredPackages)}`);
 
