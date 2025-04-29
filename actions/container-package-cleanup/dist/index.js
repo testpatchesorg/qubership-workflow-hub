@@ -32090,7 +32090,7 @@ async function run() {
 
   core.info(`🔹Packages ${JSON.stringify(packages)}`);
 
-  let filteredPackages = packages.filter((pkg) => pkg.repository.name === repo);
+  let filteredPackages = packages.filter((pkg) => pkg.repository?.name === repo);
 
   let packagesNames = filteredPackages.map((pkg) => pkg.name);
 
