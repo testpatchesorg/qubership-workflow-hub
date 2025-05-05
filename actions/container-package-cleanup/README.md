@@ -2,6 +2,8 @@
 
 This **Container Package Cleanup** GitHub Action automates the cleanup of old Docker images (or other container packages) in a GitHub repository or organization based on specified criteria.
 
+---
+
 ## Features
 
 - Deletes old container package versions based on a threshold date.
@@ -9,10 +11,9 @@ This **Container Package Cleanup** GitHub Action automates the cleanup of old Do
 - Allows configuration through inputs or a configuration file.
 - Provides debug mode for detailed logging.
 - Supports dry-run mode to preview deletions without making changes.
+- **Supports wildcard-based tag matching** for flexible filtering.
 
-### Action Result
-
-The primary result of this action is the deletion of old container package versions based on the specified criteria. The action logs detailed information about the cleanup process, including the packages and versions that were deleted or would be deleted in dry-run mode.
+---
 
 ## 📌 Inputs
 
@@ -20,25 +21,29 @@ The primary result of this action is the deletion of old container package versi
 | ------------------ | --------------------------------------------------------------------------- | -------- | --------------------------- |
 | `threshold-days`   | The number of days to keep container package versions. Older versions will be deleted. | No       | `7`                         |
 | `included-tags`    | A comma-separated list of tags to include for deletion. Wildcards (`*`) are supported. | No       | `""` (all tags included)     |
-| `excluded-tags`    | A comma-separated list of tags to exclude from deletion. Wildcards (`*`) are supported.| No       | `""` (no tags excluded)                  |
-| `config-file-path` | The path to the configuration file. `NOT SUPPORTED AT THIS MOMENT`          | No       | `.github/package-cleanup.yml` |
+| `excluded-tags`    | A comma-separated list of tags to exclude from deletion. Wildcards (`*`) are supported.| No       | `""` (no tags excluded)      |
 | `dry-run`          | Enable dry-run mode to preview deletions without making changes.            | No       | `false`                     |
+| `debug`            | Enable debug mode for detailed logging.                                     | No       | `false`                     |
+
+---
 
 ## 📌 Outputs
 
 This action does not produce any outputs. It performs cleanup operations directly on the container packages.
 
-## Environment Variables
+---
+
+## 📌 Environment Variables
 
 | Name            | Description                                      | Required |
 | --------------- | ------------------------------------------------ | -------- |
 | `PACKAGE_TOKEN` | GitHub token with permissions to manage packages | Yes      |
 
 > **Note:** The `PACKAGE_TOKEN` must have the following permissions:
->
 > - **`read:packages`**: To list and retrieve package information.
->
 > - **`delete:packages`**: To delete package versions.
+
+---
 
 ## Usage Example
 
@@ -78,7 +83,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Container Package Cleanup Action
-        uses: Netcracker/qubership-workflow-hub/actions/container-package-cleanup@main
+        uses: netcracker/qubership-workflow-hub/actions/container-package-cleanup@main
         with:
           threshold-days: ${{ github.event.inputs.threshold-days }}
           included-tags: ${{ github.event.inputs.included-tags }}
@@ -86,28 +91,10 @@ jobs:
           debug: ${{ github.event.inputs.debug }}
           dry-run: ${{ github.event.inputs.dry-run }}
         env:
-          PACKAGE_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
 ```
 
-## Configuration File `NOT SUPPORTED AT THIS MOMENT`
-
-The configuration file (e.g., `.github/package-cleanup.yml`) can be used to define the cleanup criteria. Here is an example configuration:
-
-```yaml
-threshold-days: 7
-included-tags:
-  - latest
-  - stable
-excluded-tags:
-  - release*
-  - protected*
-```
-
-In this example:
-
-- **Threshold Days:** Deletes versions older than 30 days.
-- **Included Tags:** Only versions with the tags `latest` or `stable` will be considered for deletion.
-- **Excluded Tags:** Versions with tags matching `release*` or `protected*` will be skipped.
+---
 
 ## Additional Information
 
@@ -122,25 +109,57 @@ When `debug` is set to `true`, the action logs detailed information, including:
 
 This mode is useful for troubleshooting and understanding how the action processes packages and versions.
 
+---
+
 ### Dry-Run Mode
 
 When `dry-run` is set to `true`, the action will simulate the cleanup process without actually deleting any package versions. It will log the versions that would be deleted if the action were run without `dry-run`.
 
 This mode is useful for previewing the cleanup results and ensuring the filtering criteria are correct before making changes.
 
+---
+
 ### Priority of Tag Filtering
 
+The action filters tags in the following order of priority:
+
 1. **Excluded Tags**:
-   - Versions with tags matching `excluded-tags` are **always skipped**, even if they match `included-tags`.
+   - Versions with tags matching `excluded-tags` are **always skipped**, even if they also match `included-tags`.
+   - This ensures that excluded tags take precedence over any other filtering criteria.
+
 2. **Included Tags**:
-   - If specified, only versions with tags matching `included-tags` are considered for deletion.
+   - If `included-tags` is specified, only versions with tags matching `included-tags` are considered for deletion.
+   - Tags that do not match `included-tags` are ignored, unless they are explicitly excluded.
+
 3. **Default Behavior**:
-   - If `included-tags` is empty, all versions (except those excluded) are considered for deletion.
+   - If `included-tags` is empty, all versions are considered for deletion, except those explicitly excluded by `excluded-tags`.
+
+#### Filtering Process
+
+The filtering process works as follows:
+1. **Step 1**: Exclude versions with tags matching `excluded-tags`.
+2. **Step 2**: From the remaining versions, include only those matching `included-tags` (if specified).
+3. **Step 3**: If `included-tags` is not specified, all remaining versions are considered for deletion.
+
+---
 
 ### Tag Matching Behavior
 
-- **Exact Match**: If a tag is specified without a wildcard (e.g., `release`), the action will look for an exact match. Only versions with the tag `release` will be included or excluded.
+The action supports flexible tag matching using exact matches and wildcard patterns. This allows you to define which tags should be included or excluded during the cleanup process.
 
-- **Wildcard Match**: If a tag is specified with a wildcard (e.g., `release*`), the action will look for partial matches. For example, `release*` will match tags like `release`, `release-v1`, or `release-candidate`.
+#### Supported Patterns
 
-This allows for flexible filtering based on your tagging strategy.
+1. **Exact Match**: Matches tags exactly as specified (e.g., `release` matches only `release`).
+2. **Prefix Match**: Patterns ending with `*` match tags starting with the prefix (e.g., `release*` matches `release-v1`).
+3. **Suffix Match**: Patterns starting with `*` match tags ending with the suffix (e.g., `*release` matches `v1-release`).
+4. **Substring Match**: Patterns with `*` at both ends match tags containing the substring (e.g., `*release*` matches `v1-release-candidate`).
+5. **Wildcard in the Middle**: Patterns with `*` in the middle match tags with any characters in place of `*` (e.g., `release*v1` matches `release-v1`).
+
+#### Examples
+
+| Pattern       | Matches                          | Does Not Match       |
+|---------------|----------------------------------|----------------------|
+| `release*`    | `release`, `release-v1`          | `v1-release`         |
+| `*release`    | `v1-release`, `candidate-release`| `release-v1`         |
+| `*release*`   | `v1-release-candidate`, `release-v1` | `v1-candidate`    |
+| `release*v1`  | `release-v1`, `release-candidate-v1` | `release-v2`     |
