@@ -46,7 +46,7 @@ jobs:
       - name: Info
         run: |
             echo "::warning:: 💥🚀 This action is not supported anymore (depricated).
-            echo "::warning:: Please use [actions/docker-action] instead. "https://github.com/netcracker/qubership-workflow-hub/tree/main/actions/docker-action."      
+            echo "::warning:: Please use [actions/docker-action] instead. "https://github.com/netcracker/qubership-workflow-hub/tree/main/actions/docker-action."
 
       - name: Checkout repository
         uses: actions/checkout@v4
