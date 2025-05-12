@@ -46,12 +46,13 @@ async function run() {
   core.info(`🔹Organization marker: ${isOrganization}`);
 
   let packages = await wrapper.listPackages(owner, 'container', isOrganization);
+  // core.info(`🔹Packages ${JSON.stringify(packages, null, 2)}`);
 
-  core.info(`🔹Packages: ${JSON.stringify(packages, null, 2)}`);
-
-  let filteredPackages = packages.filter((pkg) => pkg.repository.name === repo);
+  let filteredPackages = packages.filter((pkg) => pkg.repository?.name === repo);
+  // core.info(`🔹Filtered Packages: ${JSON.stringify(filteredPackages, null, 2)}`);
 
   let packagesNames = filteredPackages.map((pkg) => pkg.name);
+  // core.info(`🔹Packages names: ${JSON.stringify(packagesNames, null, 2)}`);
 
   const packagesWithVersions = await Promise.all(
     filteredPackages.map(async (pkg) => {
