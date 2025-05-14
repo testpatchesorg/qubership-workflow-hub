@@ -39900,7 +39900,7 @@ class RefExtractor {
         } else {
             isTag = false;
             name = ref.replace(/\//g, "-");
-            core.warning(`Cant detect type ref: ${ref}`);
+            core.warning(`🔸 Cant detect type ref: ${ref}`);
         }
         return { name, isTag };
     }
@@ -39928,12 +39928,12 @@ class ConfigLoader {
     return this.fileExist;
   }
 
-  load(filePath) {
+  load(filePath, debug = false) {
     const configPath = path.resolve(filePath);
     console.log(`💡 Try to reading configuration ${configPath}`)
 
     if (!fs.existsSync(configPath)) {
-      core.warning(`❗️ Configuration file not found: ${configPath}`);
+      core.info(`❗️ Configuration file not found: ${configPath}`);
       this.fileExist = false;
       return;
     }
@@ -39943,6 +39943,10 @@ class ConfigLoader {
     let config;
     try {
       config = yaml.load(fileContent);
+      if (debug) {
+        console.log("🔍 Loaded configuration YAML:", JSON.stringify(config, null, 2));
+        console.log("🔑 Object Keys:", Object.keys(config));
+      }
     }
     catch (error) {
       core.setFailed(`❗️ Error parsing YAML file: ${error.message}`);
@@ -39974,12 +39978,58 @@ class ConfigLoader {
       core.setFailed(`❗️ Configuration file is invalid: ${errors}`);
       return;
     }
-    core.warning(`Configuration file is valid: ${valid}`);
+    core.info(`💡 Configuration file is valid: ${valid}`);
     return config;
   }
 }
 
 module.exports = ConfigLoader;
+
+/***/ }),
+
+/***/ 1090:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(8335);
+
+class Report {
+    async writeSummary(reportItem, dryRun = false) {
+        core.info("Calculate summary statistics.");
+        const dryRunText = dryRun ? " (Dry Run)" : "";
+
+        core.summary.addRaw(`### 🧪 Metadata in use: ${dryRunText} \n\n`);
+
+        const fields = [
+            ["Ref", reportItem.ref],
+            ["SHA", reportItem.sha],
+            ["Short SHA", reportItem.shortSha],
+            ["Semver", reportItem.semver],
+            ["Timestamp", reportItem.timestamp],
+            ["Distribution tag", reportItem.distTag],
+            ["Extra tags", reportItem.extraTags],
+            ["Template", reportItem.template],
+            ["Render result", reportItem.renderResult],
+        ];
+
+        const rows = fields
+            .filter(([_, value]) => value != null && value !== "" && value !== "..")
+            .map(([label, value]) => [
+                { data: label },
+                { data: String(value) }
+            ]);
+
+        if (rows.length) {
+            core.summary.addTable(rows);
+        } else {
+            core.summary.addRaw("No data to display.\n");
+        }
+
+        core.summary.addRaw(`\n\n---\n\n✅ Metadata extract completed successfully.`);
+        await core.summary.write();
+    }
+}
+
+module.exports = Report;
 
 /***/ }),
 
@@ -42718,6 +42768,9 @@ const github = __nccwpck_require__(5355);
 
 const ConfigLoader = __nccwpck_require__(9027);
 const RefExtractor = __nccwpck_require__(1074);
+const { default: def } = __nccwpck_require__(4431);
+
+const Report = __nccwpck_require__(1090);
 
 function generateSnapshotVersionParts() {
   const now = new Date();
@@ -42730,7 +42783,7 @@ function generateSnapshotVersionParts() {
 function extractSemverParts(versionString) {
   const normalized = versionString.replace(/^v/i, "");
   if (!/^\d+\.\d+\.\d+$/.test(normalized)) {
-    core.warning(`Not a valid semver string (skip): ${versionString}`);
+    core.info(`💡 Not a valid semver string (skip): ${versionString}`);
     return { major: "", minor: "", patch: "" };
   }
   const [major, minor, patch] = normalized.split(".");
@@ -42759,6 +42812,17 @@ function fillTemplate(template, values) {
   });
 }
 
+// Objects
+const selectedTemplateAndTag = {
+  template: '',
+  distTag: '',
+  toString() {
+    return `Template: ${this.template}, DistTag: ${this.distTag}`;
+  }
+};
+
+
+
 async function run() {
 
   core.info(`pull_request head.ref: ${github.context.payload.pull_request?.head?.ref}`);
@@ -42769,32 +42833,50 @@ async function run() {
     name = github.context.eventName === 'pull_request' ? github.context.payload.pull_request?.head?.ref : github.context.ref;
   }
 
-  core.info(`🔹 Ref: ${name}`);
+  core.info(`Ref: ${name}`);
+
+  const debug = core.getInput('debug') === "true";
+  const dryRun = core.getInput('dry-run') === "true";
+  const isDebug = debug === 'true' || debug === '1' || debug === 'yes' || debug === 'on';
+
+  core.info(`Debug: ${isDebug}`);
 
   const ref = new RefExtractor().extract(name);
 
   const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
   const loader = new ConfigLoader()
-  const config = loader.load(configurationPath);
+  const config = loader.load(configurationPath, debug);
 
-  core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
+  const defaultTemplate = core.getInput('default-template') || config["default-template"] || `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
+  const defaultTag = core.getInput('default-tag') || config["default-tag"] || "latest";
+
+  //const defaultTemplate = core.getInput('default-template'); // || config["default-template"] || `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
+  //const defaultTag = core.getInput('defaut-tag'); //|| config["default-tag"] || "latest";
+
+  const extraTags = core.getInput('extra-tags');
+  const mergeTags = core.getInput('merge-tags');
+
+  core.info(`🔸 defaultTemplate: ${defaultTemplate}`);
+  core.info(`🔸 defaultTag: ${defaultTag}`);
+
+  // core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
 
   let template = null;
   let distTag = null;
 
   if (loader.fileExists) {
-    template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
-    distTag = findTemplate(ref.name, config["distribution-tags"]);
+    selectedTemplateAndTag.template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
+    selectedTemplateAndTag.distTag = findTemplate(ref.name, config["distribution-tag"]);
   }
 
   if (template === null) {
-    core.warning(`💡 No template found for ref: ${ref.name}, will be used default -> {{ref-name}}-{{timestamp}}-{{runNumber}}`);
-    template = `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
+    core.info(`⚠️ No template found for ref: ${ref.name}, will be used default -> ${defaultTemplate}`);
+    selectedTemplateAndTag.template = defaultTemplate;
   }
 
   if (distTag === null) {
-    core.warning(`💡 No dist-tag found for ref: ${ref.name}, will be used default -> latest`);
-    distTag = "latest";
+    core.info(`⚠️ No dist-tag found for ref: ${ref.name}, will be used default -> ${defaultTag}`);
+    selectedTemplateAndTag.distTag = defaultTag;
   }
 
   const parts = generateSnapshotVersionParts();
@@ -42803,7 +42885,7 @@ async function run() {
   const shortSha = github.context.sha.slice(0, shortShaDeep);
   const values = {
     ...ref, "ref-name": ref.name, "short-sha": shortSha, ...semverParts,
-    ...parts, ...github.context, "dist-tag": distTag, "runNumber": github.context.runId
+    ...parts, ...github.context, "dist-tag": distTag, "distTag": distTag, "runNumber": github.context.runId
   };
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);
@@ -42811,11 +42893,15 @@ async function run() {
   core.info(`🔹 dist-tag: ${JSON.stringify(distTag)}`);
 
   // core.info(`Values: ${JSON.stringify(values)}`); //debug values
-  let result = fillTemplate(template, values)
+  let result = fillTemplate(selectedTemplateAndTag.template, values)
 
-  core.info(`🔹 Template: ${template}`);
+  core.info(`🔹 Template: ${selectedTemplateAndTag.template}`);
 
-  core.info(`🔹 Name: ${ref.name}`)
+  if (extraTags != '' && mergeTags == 'true') {
+    core.info(`🔹 Merging extra tags: ${extraTags}`);
+    result = result + ", " + extraTags;
+  }
+
   core.info(`💡 Rendered template: ${result}`);
 
   core.setOutput("result", result);
@@ -42827,10 +42913,24 @@ async function run() {
   core.setOutput("major", semverParts.major);
   core.setOutput("minor", semverParts.minor);
   core.setOutput("patch", semverParts.patch);
-  core.setOutput("tag", distTag);
+  core.setOutput("tag", selectedTemplateAndTag.distTag);
   core.setOutput("short-sha", shortSha);
 
-  core.info('✔️ Action completed successfully!');
+  if (core.getInput('show-report') == 'true') {
+    const reportItem = {
+      "ref": ref.name,
+      "sha": github.context.sha,
+      "shortSha": shortSha,
+      "semver": `${semverParts.major}.${semverParts.minor}.${semverParts.patch}`,
+      "timestamp": parts.timestamp,
+      "template": selectedTemplateAndTag.template,
+      "distTag": selectedTemplateAndTag.distTag,
+      "extraTags": extraTags,
+      "renderResult": result
+    };
+    await new Report().writeSummary(reportItem, dryRun);
+  }
+  core.info('✅ Action completed successfully!');
 }
 
 run();
