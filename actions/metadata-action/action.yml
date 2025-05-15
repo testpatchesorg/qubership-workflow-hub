@@ -10,13 +10,32 @@ inputs:
         required: false
     default-template:
         description: "Default template."
-        default: "{{ref-name}}-{{timestamp}}-{{runNumber}}"
-        required: false 
-    default-distrubution-tag:
-        description: "Default distribution tag."
-        default: "latest"
+        default: ""
         required: false
-          
+    default-tag:
+        description: "Default tag."
+        default: ""
+        required: false
+    extra-tags:
+        description: "Extra tags."
+        default: ""
+        required: false
+    merge-tags:
+        default: "true"
+        description: "Merge extra tags."
+        required: false
+    debug:
+        description: "Debug mode."
+        default: "false"
+        required: false
+    show-report:
+        description: "Show report."
+        default: "true"
+        required: false
+    dry-run:
+        description: "Dry run mode."
+        default: "false"
+        required: false
 outputs:
     result:
         description: "Current timestamp."

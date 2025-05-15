@@ -42847,8 +42847,8 @@ async function run() {
   const loader = new ConfigLoader()
   const config = loader.load(configurationPath, debug);
 
-  const defaultTemplate = core.getInput('default-template') || config["default-template"] || `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
-  const defaultTag = core.getInput('default-tag') || config["default-tag"] || "latest";
+  const defaultTemplate = core.getInput('default-template') || config?.["default-template"] || `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
+  const defaultTag = core.getInput('default-tag') || config?.["default-tag"] || "latest";
 
   //const defaultTemplate = core.getInput('default-template'); // || config["default-template"] || `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
   //const defaultTag = core.getInput('defaut-tag'); //|| config["default-tag"] || "latest";
