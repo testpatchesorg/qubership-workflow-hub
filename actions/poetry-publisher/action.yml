@@ -1,3 +1,4 @@
+---
 name: "Poetry Publisher"
 description: ""
 
@@ -26,7 +27,14 @@ inputs:
     description: "Parameters for pytest"
     required: false
     default: ""
-
+  publish:
+    description: "Publish to PyPi"
+    required: false
+    default: "true"
+outputs:
+  release-version:
+    description: "Published artifact version"
+    value: ${{ steps.get-version.outputs.published-version }}
 runs:
   using: composite
   steps:
@@ -34,15 +42,22 @@ runs:
       shell: bash
       run: |
         python -m pip install --upgrade pip
-        python -m pip install --user pipx
-        pipx ensurepath
-        pipx install poetry
+        # WA for python 3.8
+        effective_python_version=$(python3 --version | cut -d ' ' -f2 | cut -d '.' -f1,2)
+        if [[ "${effective_python_version}" != "3.8" ]]; then
+          python -m pip install --user pipx
+          pipx ensurepath
+          pipx install poetry
+        else
+          pip install poetry
+        fi
 
     - name: Remove dist
       shell: bash
       run: rm -rf dist/
 
     - name: Check token length
+      if: ${{ inputs.publish != 'false' }}
       shell: bash
       run: |
         if [ -z "${{ env.PYPI_TOKEN }}" ] || [ ${#PYPI_TOKEN} -lt 10 ]; then
@@ -79,6 +94,7 @@ runs:
         poetry run pytest ${{ inputs.pytest_options }}
 
     - name: Publish to PyPi
+      if: ${{ inputs.publish != 'false' }}
       shell: bash
       run: |
         poetry config pypi-token.pypi $PYPI_TOKEN
@@ -86,3 +102,11 @@ runs:
         poetry publish --no-interaction -u __token__ -p $PYPI_TOKEN -r test
       env:
         PYPI_TOKEN: ${{ env.PYPI_API_TOKEN }}
+
+    - name: Get published version
+      id: get-version
+      shell: bash
+      run: |
+        published_version=$(poetry version | cut -d' ' -f2)
+        echo "published-version=${published_version}" >> $GITHUB_OUTPUT
+        echo "## Published version: ${published_version}" >> $GITHUB_STEP_SUMMARY
