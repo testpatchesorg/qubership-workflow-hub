@@ -45,6 +45,10 @@ inputs:
     description: "A glob pattern to the artifacts that should be downloaded. Ignored if name is specified. Optional."
     required: false
     default: ""
+  sbom:
+    description: "Flag to enable SBoM generation."
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -154,6 +158,7 @@ runs:
       uses: docker/build-push-action@v6
       with:
         provenance: false
+        sbom: ${{ inputs.sbom == 'true' && 'true' || 'false' }}
         context: ${{ steps.parse_component.outputs.ctx }}
         file: ${{ steps.parse_component.outputs.file }}
         push: ${{ inputs.dry-run == 'true' && 'false' || 'true' }}
