@@ -99,20 +99,20 @@ async function run() {
 
   // core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
 
-  let template = null;
-  let distTag = null;
+  // let template = null;
+  // let distTag = null;
 
   if (loader.fileExists) {
     selectedTemplateAndTag.template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
     selectedTemplateAndTag.distTag = findTemplate(ref.name, config["distribution-tag"]);
   }
 
-  if (template === null) {
+  if (selectedTemplateAndTag.template === null) {
     core.info(`⚠️ No template found for ref: ${ref.name}, will be used default -> ${defaultTemplate}`);
     selectedTemplateAndTag.template = defaultTemplate;
   }
 
-  if (distTag === null) {
+  if (selectedTemplateAndTag.distTag === null) {
     core.info(`⚠️ No dist-tag found for ref: ${ref.name}, will be used default -> ${defaultTag}`);
     selectedTemplateAndTag.distTag = defaultTag;
   }
