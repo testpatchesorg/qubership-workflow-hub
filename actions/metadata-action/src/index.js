@@ -99,9 +99,6 @@ async function run() {
 
   // core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
 
-  // let template = null;
-  // let distTag = null;
-
   if (loader.fileExists) {
     selectedTemplateAndTag.template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
     selectedTemplateAndTag.distTag = findTemplate(ref.name, config["distribution-tag"]);
