@@ -42886,7 +42886,7 @@ async function run() {
     ...semverParts, ...parts, 
     "dist-tag": selectedTemplateAndTag.distTag, 
     "distTag": selectedTemplateAndTag.distTag,
-    ...github, ...github.context
+    ...github, ...github.context, 'run-number': github.context.runNumber
   };
 
   core.info(`🔹 time: ${JSON.stringify(parts)}`);
