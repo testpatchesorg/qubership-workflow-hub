@@ -30,7 +30,7 @@ Add following entries under `project` section (see [maven central requirements](
     </developers>
     <scm>
         <connection>scm:git:https//github.com/Netcracker/your-repository.git</connection>
-        <developerConnection>scm:git:https://github.com:Netcracker/your-repository.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/Netcracker/your-repository.git</developerConnection>
         <url>scm:git:https://github.com/Netcracker/your-repository/tree/main</url>
     </scm>
 ```
