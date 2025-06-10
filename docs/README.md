@@ -33,11 +33,8 @@ This index provides a quick overview of the available workflow and action docume
 | [auto-labeler](../.github/workflows/auto-labeler.yaml)          | Automatically labels pull requests based on conventional commits. |
 | [cla](../.github/workflows/cla.yaml)              | Manages Contributor License Agreements (CLA) for pull requests.     |
 | [go-check-license](../.github/workflows/go-check-license.yaml)              | Checks licenses for Go modules.     |
-| [pr-collect-commit-messages](../.github/workflows/pr-collect-commit-messages.yaml)              | Collects commit messages from a pull request and adds them to the description.     |
 | [pr-conventional-commits](../.github/workflows/pr-conventional-commits.yaml)              | Checks if pull request commits follow the Conventional Commits specification.     |
 | [pr-lint-title](../.github/workflows/pr-lint-title.yaml)              | Lints the pull request title to ensure it follows the Conventional Commits specification.     |
-| [prettier](../.github/workflows/prettier.yaml)              | Runs Prettier to format code.     |
-| [prettierFix](../.github/workflows/prettierFix.yaml)              | Fixes code formatting issues using Prettier.     |
 | [profanity-filter](../.github/workflows/profanity-filter.yaml)              | Filters profanity in issues, comments, and pull requests.     |
 | [profanityFilter](../.github/workflows/profanityFilter.yaml)              | Filters profanity in issues, comments, and pull requests.     |
 | [super-linter](../.github/workflows/super-linter.yaml)              | Runs multiple linters to validate code.     |

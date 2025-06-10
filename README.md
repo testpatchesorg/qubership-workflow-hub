@@ -9,6 +9,7 @@ Detailed description of existing workflows can be found here [Index of Workflow 
 - [qubership-workflow-hub](#qubership-workflow-hub)
   - [The organization level secrets and vars used in actions](#the-organization-level-secrets-and-vars-used-in-actions)
   - [Common workflows](#common-workflows)
+    - [Mandatory workflows list](#mandatory-workflows-list)
     - [CLA](#cla)
     - [Lint codebase (Super-linter)](#lint-codebase-super-linter)
     - [Profanity filter](#profanity-filter)
@@ -62,6 +63,17 @@ There are several reusable workflows which should be added into every Netcracker
 **Important Consideration for Fork and Sync**  
 **If this repository is forked and synced via pull requests, some workflows (such as the auto-labeler) will not function properly due to missing token in fork repository.**  
 **Consider submitting pull requests to the target branch. [details here](./docs/fork-sequence.md)**
+
+### Mandatory workflows list
+
+- CLA: https://github.com/Netcracker/.github/blob/main/workflow-templates/cla.yaml
+- Automatic PR Labeler: https://github.com/Netcracker/.github/blob/main/workflow-templates/automatic-pr-labeler.yaml
+- Link Checker: https://github.com/Netcracker/.github/blob/main/workflow-templates/link-checker.yaml
+- Assign PR: https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-assigner.yml
+- Lint Code Base: https://github.com/Netcracker/.github/blob/main/workflow-templates/super-linter.yaml
+- Profanity filter: https://github.com/Netcracker/.github/blob/main/workflow-templates/profanity-filter.yaml
+- Lint PR Title: https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-lint-title.yaml
+- Conventional Commits PR Check: https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-conventional-commits.yaml
 
 ### CLA
 
@@ -126,8 +138,6 @@ The configuration file from [previous step](#step-2-add-configuration-file) defi
 Labels on PRs used to generate release notes for GitHub releases. You can edit labels configuration and [release notes generation template](#step-3-add-configuration-file-for-github-release) to extend or improve the default ones.
 
 ---
-
-To add commit messages in pull request description into your repository copy the [prepared file](https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-collect-commit-messages.yaml) into `.github/workflows` directory of your repository.
 
 ### Conventional Commits PR Check
 
