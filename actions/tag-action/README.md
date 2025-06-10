@@ -28,6 +28,7 @@ This **Tag Composite Action** automates the process of managing Git tags in a re
 | `switch-to-tag`    | Switch to the created tag after creation.                                   | No       | `false`                     |
 | `tag-message`      | Tag creation message.                                                       | No       | `Release tag`               |
 | `create-release`   | Create a GitHub release for the tag.                                        | No       | `false`                     |
+| `skip-checkout`    | Skip the checkout step (useful if the code is already checked out).         | No       | `false`                     |
 
 ---
 
@@ -64,6 +65,10 @@ You can customize the tag message using the `tag-message` input. By default, it 
 ### Create Release
 
 If `create-release` is set to `true`, the action will create or update a GitHub Release for the specified tag using the GitHub CLI (`gh`). The release will have a default title and body, which you can later edit as needed.
+
+### Skip Checkout
+
+If `skip-checkout` is set to `true`, the action will skip the repository checkout step. This is useful when the repository is already checked out in a previous step, saving time and avoiding redundant operations.
 
 ---
 
@@ -116,6 +121,18 @@ jobs:
           create-tag: true
           force-create: true
           switch-to-tag: true
+
+      - name: Create Tag Without Checkout
+        uses: netcracker/qubership-workflow-hub/actions/tag-action@main
+        with:
+          skip-checkout: true
+          tag-name: v1.0.2
+          create-tag: true
+          tag-message: "Release v1.0.2"
+        id: skip-checkout-step
+
+      - name: Output Created Tag
+        run: echo "Created tag: ${{ steps.skip-checkout-step.outputs.created-tag }}"
 ```
 
 ---
@@ -125,3 +142,4 @@ jobs:
 - Ensure that the `ref` input matches the branch you want to work on.
 - Use `dry-run` mode to test the workflow without making changes.
 - The `force-create` input can be used to overwrite existing tags, but use it cautiously to avoid unintended changes.
+- The `skip-checkout` input can be used to skip the repository checkout step if the repository is already checked out in a previous step, saving time and avoiding redundant operations.
