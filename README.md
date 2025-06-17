@@ -163,18 +163,15 @@ To add the workflow into your repository copy the [prepared file](https://github
 
 ## Maven project release workflow
 
-Maven project release workflow is used to make a GitHub release and publish released artifacts into Maven Central.
+Maven project release workflow is used to make a GitHub release and publish released artifacts into Maven Central or Github packages.
 The workflow consists of several sequential jobs:
 
 1. Checks if the tag already exists.
-2. [Updates the version in the pom.xml file](./docs/reusable/pomupdater.md)
-3. Commits the changes to the repository.
-4. Builds the project using Maven.
-5. Runs tests.
-6. Tags the commit with the release version.
-7. [Deploys the artifact to the Maven repository](./docs/reusable/maven-publish.md)
-8. Builds and publishes a Docker image.
-9. [Create GitHub release](./docs/reusable/github-release.md)
+2. Builds current snapshot versions (dry run step)
+3. Prepares release using Maven (maven-release-plugin)
+4. Builds and deploys the project using Maven (maven-release-plugin).
+5. Builds and publishes a Docker image if there is Dockerfile.
+6. [Create GitHub release](./docs/reusable/github-release.md)
 
 ---
 
@@ -186,25 +183,14 @@ First of all please make sure the `pom.xml` file prepared to build source code a
 
 ### Step 2: Maven release workflow
 
-Copy the [prepared file](https://github.com/Netcracker/.github/blob/main/workflow-templates/maven-release.yaml) into `.github/workflows` directory of your repository.
+Copy the [prepared file](https://github.com/Netcracker/.github/blob/main/workflow-templates/maven-release-v2.yaml) into `.github/workflows` directory of your repository.
 
 This workflow is designed to be run manually. It has four input parameters on manual execution:
 
-- `Release version` -- a string represents version number of the release
-- `Java version` -- a string represents Java version to use to build artifacts.
-- `Release docker image if there is Docker file` -- build and publish docker image to GitHub packages if Dockerfile exists
-- `Dry run` -- if selected the workflow will go through all the steps, but will not publish anything.
-
-This workflow will:
-
-- Check the provided release/tag existence and fail if it alredy exists.
-- Set the release version in `pom.xml` file
-- Build maven artifact package from `main` codebase
-- Run tests
-- Create a new tag
-- Build and publish artifacts into Maven Central
-- Build and publish docker image into GitHub packages
-- Create GitHub release in `draft` state.
+- `Version type to release` -- a string represents version type to release: `patch`, `minor` or `major`
+- `Maven profile to use` -- maven profile can be `central` or `github`.
+- `Additional maven arguments to pass` -- additional arguments to pass to `mvn` command.
+- `Build Docker image` -- build and publish docker image to GitHub packages if Dockerfile exists
 
 ### Step 3: Add configuration file for GitHub release
 

@@ -73,7 +73,7 @@ inputs:
     required: false
     default: ''
     type: string
-  bumb-dependencies-after-release:
+  bump-dependencies-after-release:
     description: 'Bump dependencies versions to next snapshot'
     required: false
     default: 'false'
@@ -141,12 +141,12 @@ runs:
         MAVEN_GPG_PASSPHRASE: ${{ inputs.gpg-passphrase }}
         PROFILE: ${{ inputs.profile }}
     - name: Cleanup
-      if: ${{ inputs.dry-run == 'false' && inputs.bumb-dependencies-after-release == 'true' }}
+      if: ${{ inputs.dry-run == 'false' && inputs.bump-dependencies-after-release == 'true' }}
       run: |
         rm -rf ${GITHUB_WORKSPACE}/${{ inputs.module }}
       shell: bash
     - name: Checkout
-      if: ${{ inputs.dry-run == 'false' && inputs.bumb-dependencies-after-release == 'true' }}
+      if: ${{ inputs.dry-run == 'false' && inputs.bump-dependencies-after-release == 'true' }}
       uses: actions/checkout@v4
       with:
         ref: main
@@ -154,7 +154,7 @@ runs:
         repository: ${{ github.repository_owner }}/${{ inputs.module }}
         token: ${{ inputs.token }}
     - name: "Bump dependencies versions to next snapshot"
-      if: ${{ inputs.dry-run == 'false' && inputs.bumb-dependencies-after-release == 'true' }}
+      if: ${{ inputs.dry-run == 'false' && inputs.bump-dependencies-after-release == 'true' }}
       run: |
         . ${GITHUB_ACTION_PATH}/action-script.sh
         bump_dependencies_versions
