@@ -1,92 +1,39 @@
-# Maven Release Action
+# 🚀 Maven Release Action
 
 This GitHub Action automates the process of building and releasing a Maven artifact. It supports version bumping (major, minor, patch), GPG signing, and optional dependency version bumping after release.
 
-## Inputs
+---
+## Features
 
-### `version-type`
+- **Automatic Version Bumping:** Supports major, minor, and patch version increments for Maven artifacts.
+- **Branch Selection:** Allows releasing from any branch (default is `main`).
+- **GPG Signing:** Signs artifacts using provided GPG keys and passphrase.
+- **Custom Maven Arguments:** Pass additional Maven arguments for flexible builds.
+- **Dry Run Support:** Optionally perform a dry run without pushing changes.
+- **Dependency Snapshot Bumping:** Optionally bumps dependencies to the next snapshot version after release.
+- **Custom Profiles and Credentials:** Supports custom Maven profiles, usernames, and passwords for publishing.
 
-**Required**  
-Type of version bump for the release. Can be one of: `major`, `minor`, `patch`.  
-_Default: `patch`_
+## 📌 Inputs
 
-### `module`
+| Name                        | Description                                                                                       | Required | Default                                                    |
+|-----------------------------|---------------------------------------------------------------------------------------------------|----------|------------------------------------------------------------|
+| `version-type`              | Type of version bump for the release. Can be one of: `major`, `minor`, `patch`.                  | Yes      | `patch`                                                    |
+| `module`                    | The module (repository name) to build.                                                            | Yes      |                                                            |
+| `ref`                       | Branch name to create the release from.                                                           | No       | `main`                                                     |
+| `maven-args`                | Additional Maven arguments to pass.                                                               | No       | `-DskipTests=true -Dmaven.javadoc.skip=true -B`            |
+| `server-id`                 | Maven server ID.                                                                                  | No       | `github`                                                   |
+| `java-version`              | Java version to use.                                                                              | No       | `21`                                                       |
+| `maven-version`             | Maven version to use.                                                                             | No       |                                                            |
+| `dry-run`                   | If set to `true`, performs a dry run without pushing changes.                                     | No       | `true`                                                     |
+| `token`                     | GitHub token for authentication.                                                                  | Yes      |                                                            |
+| `gpg-private-key`           | GPG private key for signing artifacts.                                                            | Yes      |                                                            |
+| `gpg-passphrase`            | Passphrase for the GPG private key.                                                               | Yes      |                                                            |
+| `profile`                   | Maven profile to use.                                                                             | No       |                                                            |
+| `maven-user`                | Username to login to Maven central or GitHub packages.                                            | No       |                                                            |
+| `maven-password`            | Password to login to Maven central or GitHub packages.                                            | No       |                                                            |
+| `bump-dependencies-after-release` | If set to `true`, bumps dependencies versions to the next snapshot after release.         | No       | `false`                                                    |
 
-**Required**  
-The module (repository name) to build.
-
-### `ref`
-
-**Optional**  
-Branch name to create the release from.  
-_Default: `main`_
-
-### `maven-args`
-
-**Optional**  
-Additional Maven arguments to pass.  
-_Default: `-DskipTests=true -Dmaven.javadoc.skip=true -B`_
-
-### `server-id`
-
-**Optional**  
-Maven server ID.  
-_Default: `github`_
-
-### `java-version`
-
-**Optional**  
-Java version to use.  
-_Default: `21`_
-
-### `maven-version`
-
-**Optional**  
-Maven version to use.
-
-### `dry-run`
-
-**Optional**  
-If set to `true`, performs a dry run without pushing changes.  
-_Default: `true`_
-
-### `token`
-
-**Required**  
-GitHub token for authentication.
-
-### `gpg-private-key`
-
-**Required**  
-GPG private key for signing artifacts.
-
-### `gpg-passphrase`
-
-**Required**  
-Passphrase for the GPG private key.
-
-### `profile`
-
-**Optional**  
-Maven profile to use.
-
-### `maven-user`
-
-**Optional**  
-Username to login to Maven central or GitHub packages.
-
-### `maven-password`
-
-**Optional**  
-Password to login to Maven central or GitHub packages.
-
-### `bump-dependencies-after-release`
-
-**Optional**  
-If set to `true`, bumps dependencies versions to the next snapshot after release.  
-_Default: `false`_
-
-## Outputs
+## 📌 Outputs
 
 ### `release-version`
 
@@ -128,5 +75,6 @@ jobs:
 
 ## Notes
 
+- Ensure project pom.xml file configured according [pom preparation instruction](../../docs/maven-publish-pom-preparation_doc.md)
 - Ensure all required secrets are available in your repository.
 - The action supports both dry-run and actual release modes.
