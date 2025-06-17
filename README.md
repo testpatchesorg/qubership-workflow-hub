@@ -119,7 +119,7 @@ Create a new workflow in your repository. Copy the [prepared file](https://githu
 
 #### Step 2: Add configuration file
 
-Create a new configuration file `.github/auto-labeler-config.yaml`. Copy [prepared file](./docs/examples/auto-labeler-config.yaml)  into `.github` directory of your repository.
+Create a new configuration file `.github/auto-labeler-config.yaml`. Copy [prepared file](https://github.com/Netcracker/.github/blob/main/config/examples/auto-labeler-config.yaml)  into `.github` directory of your repository.
 
 #### Step 3: Follow the conventional commits messages strategy
 
@@ -194,7 +194,7 @@ This workflow is designed to be run manually. It has four input parameters on ma
 
 ### Step 3: Add configuration file for GitHub release
 
-Upload [prepared configuration file](./docs/examples/release-drafter-config.yml) to your repository in `.github` folder. You can customize it in future for your needs.
+Upload [prepared configuration file](https://github.com/Netcracker/.github/blob/main/config/examples/release-drafter-config.yml) to your repository in `.github` folder. You can customize it in future for your needs.
 
 ### Step 4: Prepare actions secrets
 
@@ -284,4 +284,4 @@ Copy the [prepared file](https://github.com/Netcracker/.github/blob/main/workflo
 
 ### Step 2: Create Configuration File
 
-Copy the [prepared file](./docs/examples/.wwhrd.yml) into root directory of your repository.
+Copy the [prepared file](https://github.com/Netcracker/.github/blob/main/config/examples/.wwhrd.yml) into root directory of your repository.
