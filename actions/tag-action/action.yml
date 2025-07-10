@@ -38,7 +38,7 @@ inputs:
   draft-release:
     description: "Create the release as a draft."
     required: false
-    default: "false"
+    default: "true"
   dry-run:
     description: "Run the action in dry-run mode (no changes will be pushed)."
     required: false
