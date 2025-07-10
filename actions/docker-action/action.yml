@@ -49,6 +49,10 @@ inputs:
     description: "Flag to enable SBoM generation."
     required: false
     default: "false"
+  build-args:
+    description: "Build arguments for the Docker image, in JSON format."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -165,3 +169,4 @@ runs:
         tags: ${{ inputs.tags != '' && steps.prepare-tags.outputs.prepared_tags || steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         platforms: ${{ inputs.platforms }}
+        build-args: ${{ inputs.build-args != ''}}
