@@ -35,6 +35,10 @@ inputs:
     description: "Create a GitHub release for the tag."
     required: false
     default: "false"
+  draft-release:
+    description: "Create the release as a draft."
+    required: false
+    default: "false"
   dry-run:
     description: "Run the action in dry-run mode (no changes will be pushed)."
     required: false
@@ -114,15 +118,16 @@ runs:
         TAG_NAME="${{ inputs.tag-name }}"
         RELEASE_TITLE="$TAG_NAME"
         RELEASE_BODY="Automatically generated release for tag $TAG_NAME."
+        RELEASE_DRAFT="${{ inputs.draft-release }}"
 
         echo "Checking if release $TAG_NAME exists..."
 
         if gh release view "$TAG_NAME" &>/dev/null; then
           echo "🔁 echo Release $TAG_NAME already exists. Updating it..."
-          gh release edit "$TAG_NAME"  --title "$RELEASE_TITLE" --notes "$RELEASE_BODY"
+          gh release edit "$TAG_NAME"  --title "$RELEASE_TITLE" --notes "$RELEASE_BODY" --draft="$RELEASE_DRAFT" --latest
         else
           echo "🚀 Release $TAG_NAME does not exist. Creating it..."
-          gh release create "$TAG_NAME" --title "$RELEASE_TITLE" --notes "$RELEASE_BODY"  --draft=false --latest
+          gh release create "$TAG_NAME" --title "$RELEASE_TITLE" --notes "$RELEASE_BODY"  --draft="$RELEASE_DRAFT" --latest
         fi
         echo "✅ Release $TAG_NAME has been created or updated successfully."
 
