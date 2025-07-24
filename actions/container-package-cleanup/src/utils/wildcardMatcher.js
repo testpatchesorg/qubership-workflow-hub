@@ -7,42 +7,43 @@ class WildcardMatcher {
     const t = tag.toLowerCase();
     const p = pattern.toLowerCase();
 
-    // 1) точное соответствие (никаких джокеров)
+    // специальный кейс для '?*' — только буквы+цифры и хотя бы одна цифра
+    if (p === '?*') {
+      // /^[a-z0-9]+$/ соответствует только алфа‑цифре
+      // /\d/ проверяет, что есть хотя бы одна цифра
+      return /^[a-z0-9]+$/.test(t) && /\d/.test(t);
+    }
+
+    // нет ни звёздочки, ни вопроса — строгое сравнение
     if (!p.includes('*') && !p.includes('?')) {
       return t === p;
     }
 
-    // 2) префиксный метод (xxx*)
+    // чистый префикс: xxx*
     if (p.endsWith('*') && !p.startsWith('*') && !p.includes('?')) {
       return t.startsWith(p.slice(0, -1));
     }
 
-    // 3) суффиксный метод (*xxx)
+    // чистый суффикс: *xxx
     if (p.startsWith('*') && !p.endsWith('*') && !p.includes('?')) {
       return t.endsWith(p.slice(1));
     }
 
-    // 4) спецкейс для чистых семвер‑тегов «x.y.z» (три цифры через точку)
-    if (p === '*.*.*') {
-      return /^\d+\.\d+\.\d+$/.test(tag);
+    // contains: *xxx*
+    if (p.startsWith('*') && p.endsWith('*') && !p.includes('?')) {
+      return t.includes(p.slice(1, -1));
     }
 
-    // 5) спецкейс для семвер‑тегов с суффиксом «x.y.z-foo»
-    if (p === '*.*.*-*') {
-      return /^\d+\.\d+\.\d+-[\w.]+$/.test(tag);
-    }
-
-    // 6) общий вариант: экранируем RegExp‑спецсимволы, превращаем '*'→'.*' и '?'→'.'
+    // общий вариант: билдим RegExp, эскейпим спецсимволы, затем *→.* и ?→.
     const escaped = p
-      // экранируем всё, кроме '*' и '?'
+      // эскейпим всё, кроме * и ?
       .replace(/[-[\]{}()+\\^$|#\s.]/g, '\\$&')
-      // точку эскейпим отдельно
-      .replace(/\./g, '\\.')
+      // превращаем джокеры в RegExp
       .replace(/\*/g, '.*')
       .replace(/\?/g, '.');
 
     const re = new RegExp(`^${escaped}$`, 'i');
-    return re.test(tag);
+    return re.test(t);
   }
 }
 
