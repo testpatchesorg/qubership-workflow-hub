@@ -7,45 +7,28 @@ class WildcardMatcher {
         const t = tag.toLowerCase();
         const p = pattern.toLowerCase();
 
-        // Спецкейс ?* (для инклюдов)
-        if (p === '?*') {
-            return /^[a-z0-9]+$/.test(t) && /\d/.test(t);
-        }
-
-        // Если нет ни '*' ни '?' — строгое сравнение
-        if (!p.includes('*') && !p.includes('?')) {
+        if (!p.includes('*')) {
             return t === p;
         }
 
-        // Считаем сколько джокеров '*'
-        const starCount = (p.match(/\*/g) || []).length;
-
-        // Чистый префикс (xxx*) — ровно один '*', он в конце
-        if (starCount === 1 && p.endsWith('*') && !p.startsWith('*') && !p.includes('?')) {
-            return t.startsWith(p.slice(0, -1));
+        if (p.endsWith('*') && !p.startsWith('*')) {
+            const prefix = p.slice(0, -1);
+            return t.startsWith(prefix);
         }
 
-        // Чистый суффикс (*xxx) — ровно один '*', он в начале
-        if (starCount === 1 && p.startsWith('*') && !p.endsWith('*') && !p.includes('?')) {
-            return t.endsWith(p.slice(1));
+        if (p.startsWith('*') && !p.endsWith('*')) {
+            const suffix = p.slice(1);
+            return t.endsWith(suffix);
         }
 
-        // Простое contains (*xxx*) — ровно два '*', один в начале и один в конце
-        if (starCount === 2 && p.startsWith('*') && p.endsWith('*') && !p.includes('?')) {
-            return t.includes(p.slice(1, -1));
+        if (p.startsWith('*') && p.endsWith('*')) {
+            const substr = p.slice(1, -1);
+            return t.includes(substr);
         }
 
-        // Общий случай: строим RegExp из паттерна
-        // 1) экранируем все спецсимволы RegExp, включая '.', кроме '*' и '?'
-        // 2) '*' → '.*', '?' → '.'
-        const escaped = p
-            .replace(/[-[\]{}()+\\^$|#\s]/g, '\\$&')  // note: точку мы не экранируем здесь
-            .replace(/\./g, '\\.')                   // экранируем '.' отдельно
-            .replace(/\*/g, '.*')
-            .replace(/\?/g, '.');
-
+        const escaped = p.replace(/[-[\]{}()+?.,\\^$|#\s]/g, '\\$&').replace(/\*/g, '.*');
         const re = new RegExp(`^${escaped}$`, 'i');
-        return re.test(t);
+        return re.test(tag);
     }
 }
 
