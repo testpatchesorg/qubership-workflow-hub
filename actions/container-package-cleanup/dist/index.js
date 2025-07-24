@@ -30383,40 +30383,56 @@ module.exports = { getStrategy };
 /***/ ((module) => {
 
 class WildcardMatcher {
-    constructor() {
-        this.name = 'WildcardMatcher';
+  constructor() {
+    this.name = 'WildcardMatcher';
+  }
+
+  match(tag, pattern) {
+    const t = tag.toLowerCase();
+    const p = pattern.toLowerCase();
+
+    // специальный кейс для '?*' — только буквы+цифры и хотя бы одна цифра
+    if (p === '?*') {
+      // /^[a-z0-9]+$/ соответствует только алфа‑цифре
+      // /\d/ проверяет, что есть хотя бы одна цифра
+      return /^[a-z0-9]+$/.test(t) && /\d/.test(t);
     }
 
-    match(tag, pattern) {
-        const t = tag.toLowerCase();
-        const p = pattern.toLowerCase();
-
-        if (!p.includes('*')) {
-            return t === p;
-        }
-
-        if (p.endsWith('*') && !p.startsWith('*')) {
-            const prefix = p.slice(0, -1);
-            return t.startsWith(prefix);
-        }
-
-        if (p.startsWith('*') && !p.endsWith('*')) {
-            const suffix = p.slice(1);
-            return t.endsWith(suffix);
-        }
-
-        if (p.startsWith('*') && p.endsWith('*')) {
-            const substr = p.slice(1, -1);
-            return t.includes(substr);
-        }
-
-        const escaped = p.replace(/[-[\]{}()+?.,\\^$|#\s]/g, '\\$&').replace(/\*/g, '.*');
-        const re = new RegExp(`^${escaped}$`, 'i');
-        return re.test(tag);
+    // нет ни звёздочки, ни вопроса — строгое сравнение
+    if (!p.includes('*') && !p.includes('?')) {
+      return t === p;
     }
+
+    // чистый префикс: xxx*
+    if (p.endsWith('*') && !p.startsWith('*') && !p.includes('?')) {
+      return t.startsWith(p.slice(0, -1));
+    }
+
+    // чистый суффикс: *xxx
+    if (p.startsWith('*') && !p.endsWith('*') && !p.includes('?')) {
+      return t.endsWith(p.slice(1));
+    }
+
+    // contains: *xxx*
+    if (p.startsWith('*') && p.endsWith('*') && !p.includes('?')) {
+      return t.includes(p.slice(1, -1));
+    }
+
+    // общий вариант: билдим RegExp, эскейпим спецсимволы, затем *→.* и ?→.
+    const escaped = p
+      // эскейпим всё, кроме * и ?
+      .replace(/[-[\]{}()+\\^$|#\s.]/g, '\\$&')
+      // превращаем джокеры в RegExp
+      .replace(/\*/g, '.*')
+      .replace(/\?/g, '.');
+
+    const re = new RegExp(`^${escaped}$`, 'i');
+    return re.test(t);
+  }
 }
 
 module.exports = WildcardMatcher;
+
 
 /***/ }),
 
@@ -32618,39 +32634,6 @@ async function run() {
     })
   );
 
-
-  // // 3) Для каждого пакета группируем тэг → его manifest digest’ы → архитектурные слои
-  // for (const { package: pkg, versions } of packagesWithVersions) {
-  //   // оставляем только версии с тегами
-  //   const tagged = versions.filter(v => (v.metadata.container.tags || []).length > 0);
-  //   if (tagged.length === 0) {
-  //     core.info(`→ ${pkg.name}: нет версий с тегами`);
-  //     continue;
-  //   }
-
-  //   for (const tagVer of tagged) {
-  //     // возьмём, например, первый тег
-  //     const tag = tagVer.metadata.container.tags[0];
-  //     core.info(`\nПакет ${pkg.name} — версия id=${tagVer.id}, tag=${tag}`);
-
-  //     // получаем через docker manifest digest’ы всех платформ
-  //     const digests = await wrapper.getManifestDigests(owner, pkg.name, tag);
-  //     core.info(` → manifest-list digests:\n   ${digests.join("\n   ")}`);
-
-  //     // сопоставляем с sha-версиями из GH Packages
-  //     const archLayers = versions.filter(v => digests.includes(v.name));
-  //     if (archLayers.length) {
-  //       core.info(` → связанные архитектурные слои:`);
-  //       archLayers.forEach(v =>
-  //         core.info(`    • id=${v.id}, name=${v.name}`)
-  //       );
-  //     } else {
-  //       core.info(` → архитектурные слои не найдены.`);
-  //     }
-  //   }
-  // }
-
-
   //core.info(JSON.stringify(packagesWithVersions, null, 2));
 
   const strategyContext = {
@@ -32691,20 +32674,28 @@ async function run() {
 
   if (dryRun) {
     core.warning("Dry run mode enabled. No versions will be deleted.");
-    await showReport(reportContext, package_type,);
+    await showReport(reportContext, package_type);
     return;
   }
 
   for (const { package: pkg, versions } of filteredPackagesWithVersionsForDelete) {
     for (const version of versions) {
-      let detail = pkg.type === 'maven' ? version.name : (version.metadata?.container?.tags ?? []).join(', ');
-      core.info(`Package: ${pkg.name} (${pkg.type}) — deleting version: ${version.id} (${detail})`);
-      await wrapper.deletePackageVersion(owner, pkg.type, pkg.name, version.id, isOrganization);
+      try {
+        let detail = pkg.type === 'maven' ? version.name : (version.metadata?.container?.tags ?? []).join(', ');
+        core.info(`Package: ${pkg.name} (${pkg.type}) — deleting version: ${version.id} (${detail})`);
+        await wrapper.deletePackageVersion(owner, pkg.type, pkg.name, version.id, isOrganization);
+      } catch (error) {
+        if (error.message.includes("Publicly visible package versions with more than 5000 downloads cannot be deleted")) {
+          core.warning(`Skipping version: ${version.id} (${version.metadata?.container?.tags?.join(', ')}) due to high download count.`);
+        } else {
+          core.error(`Failed to delete version: ${version.id} (${version.metadata?.container?.tags?.join(', ')}) — ${error.message}`);
+        }
+      }
     }
   }
 
-  await showReport(filteredPackagesWithVersionsForDelete);
-  core.info("✅ All specified versions have been deleted successfully.");
+  await showReport(reportContext, package_type);
+  core.info("✅ Action completed.");
 }
 
 async function showReport(context, type = 'container') {
