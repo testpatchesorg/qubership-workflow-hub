@@ -21,7 +21,7 @@ class WildcardMatcher {
             return t.endsWith(suffix);
         }
 
-        if (p.startsWith('*') && p.endsWith('*')) {
+        if (p.startsWith('*') && p.endsWith('*') && (p.match(/\*/g) || []).length === 2) {
             const substr = p.slice(1, -1);
             return t.includes(substr);
         }
