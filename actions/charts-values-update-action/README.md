@@ -32,9 +32,9 @@ Can be `replace` or `parse`. Defaults to `parse`.
 If set to `replace` the action will just replace the versions of docker images with `release-version` value.
 If set to `parse` the action read provided `config-file` and substitute any environment variables provided in the version part.
 For example if you have some 3-rd party image in `values.yaml` file and want to manage it's version, you can add repository level variable and use it in the config file: `some-thirg-party-image:${THIRD_PARTY_VERSION}`.
-Also if you want the action to find the latest version of some image (supplimentary service for instance), you can set it to something like `#4.*.*` or `#latest`.
-In that case the action will find the latest tag of an image which satisfy the regular expression. The regular expression of a tag must start with `#` symbol and follow the `jq` syntax.
-**Special word `#latest` will result the latest SemVer tag of the image, not the one which marked with `latest` tag.**
+Also if you want the action to find the latest version of some image (supplimentary service for instance), you can set it to something like `#4\.\d+\.\d+` or `#latest`.
+In that case the action will find the latest tag of an image which satisfy the regular expression. The regular expression of a tag must start with `#` symbol and follow the Python `re` syntax.
+**Special word `#latest` will result the latest SemVer tag of the image ('2.1.0','v4.3.2', etc.), not the one which marked with `latest` tag.**
 
 ### `working-directory`
 
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Release Helm Charts
-        uses: netcracker/qubership-workflow-hub/actions/helm-charts-release@main
+        uses: netcracker/qubership-workflow-hub/actions/charts-values-update-action@main
         with:
           release-version: '1.0.0'
           chart-version: '1.0.0'
@@ -113,4 +113,4 @@ jobs:
   - `version`: Template for the image version (e.g., `my-image:${release}`).
   - `image`: List of image keys to update in `values.yaml`.
 
-> Example: [helm-charts-release-config.yaml](./helm-charts-release-config.yaml).
+> Example: [charts-values-update-config.yaml](./charts-values-update-config.yaml).
