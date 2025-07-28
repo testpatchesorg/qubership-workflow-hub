@@ -66,14 +66,14 @@ There are several reusable workflows which should be added into every Netcracker
 
 ### Mandatory workflows list
 
-- CLA: https://github.com/Netcracker/.github/blob/main/workflow-templates/cla.yaml
-- Automatic PR Labeler: https://github.com/Netcracker/.github/blob/main/workflow-templates/automatic-pr-labeler.yaml
-- Link Checker: https://github.com/Netcracker/.github/blob/main/workflow-templates/link-checker.yaml
-- Assign PR: https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-assigner.yml
-- Lint Code Base: https://github.com/Netcracker/.github/blob/main/workflow-templates/super-linter.yaml
-- Profanity filter: https://github.com/Netcracker/.github/blob/main/workflow-templates/profanity-filter.yaml
-- Lint PR Title: https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-lint-title.yaml
-- Conventional Commits PR Check: https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-conventional-commits.yaml
+- CLA: [workflow template](https://github.com/Netcracker/.github/blob/main/workflow-templates/cla.yaml)
+- Automatic PR Labeler: [workflow template](https://github.com/Netcracker/.github/blob/main/workflow-templates/automatic-pr-labeler.yaml)
+- Link Checker: [workflow template](https://github.com/Netcracker/.github/blob/main/workflow-templates/link-checker.yaml)
+- Assign PR: [workflow template](https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-assigner.yml)
+- Lint codebase: [workflow template](https://github.com/Netcracker/.github/blob/main/workflow-templates/super-linter.yaml)
+- Profanity filter: [workflow template](https://github.com/Netcracker/.github/blob/main/workflow-templates/profanity-filter.yaml)
+- Lint PR Title: [workflow template](https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-lint-title.yaml)
+- Conventional Commits PR Check: [workflow template](https://github.com/Netcracker/.github/blob/main/workflow-templates/pr-conventional-commits.yaml)
 
 ### CLA
 
@@ -151,7 +151,7 @@ To add the workflow into your repository copy the [prepared file](https://github
 
 ### Lint PR Title
 
-The workflow will check pull request title if it follows [Conventional Commits](conventionalcommits.org) strategy.
+The workflow will check pull request title if it follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) strategy.
 
 More info on underlying GitHub Action can be found here [Semantic Pull Request](https://github.com/amannn/action-semantic-pull-request).
 
@@ -163,7 +163,7 @@ To add the workflow into your repository copy the [prepared file](https://github
 
 ## Maven project release workflow
 
-Maven project release workflow is used to make a GitHub release and publish released artifacts into Maven Central or Github packages.
+Maven project release workflow is used to make a GitHub release and publish released artifacts into Maven Central or GitHub packages.
 The workflow consists of several sequential jobs:
 
 1. Checks if the tag already exists.
@@ -239,7 +239,7 @@ The workflow consists of several sequential jobs:
 1. Checks if the tag already exists.
 2. Ceates a new tag with name "v${version}.
 3. [Builds and publishes a Docker image](./docs/reusable/docker-publish.md).
-4. [Create GitHub release](./docs/reusable/create-github-release.md)
+4. Create GitHub release <!-- TODO: Will be added -->
 
 ---
 
