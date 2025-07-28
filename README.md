@@ -239,7 +239,7 @@ The workflow consists of several sequential jobs:
 1. Checks if the tag already exists.
 2. Ceates a new tag with name "v${version}.
 3. [Builds and publishes a Docker image](./docs/reusable/docker-publish.md).
-4. [Create GitHub release](./docs/reusable/create-github-release.md) <!-- TODO: Will be added -->
+4. Create GitHub release <!-- TODO: Will be added -->
 
 ---
 
