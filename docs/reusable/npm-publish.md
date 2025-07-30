@@ -48,7 +48,7 @@ permissions:
 
 jobs:
   call-npm-publish:
-    uses: netcracker/qubership-workflow-hub/.github/workflows/npm-publish.yml@main
+    uses: netcracker/qubership-workflow-hub/.github/workflows/re-npm-publish.yml@main
     with:
       version: ${{ github.event.inputs.version }}
       scope: "@netcracker"
@@ -65,7 +65,7 @@ jobs:
 
 ### Required Setup
 
-1. **GitHub Repository** with the workflow file in `.github/workflows/npm-publish.yml`
+1. **GitHub Repository** with the workflow file in `.github/workflows/re-npm-publish.yml`
 2. **Package.json** file with proper configuration
 3. **GitHub Token** (automatically provided via `GITHUB_TOKEN` secret)
 4. **Write permissions** for contents and packages
