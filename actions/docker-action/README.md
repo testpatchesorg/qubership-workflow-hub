@@ -30,7 +30,20 @@ This **Docker Build and Publish** GitHub Action automates the process of buildin
 | `download-artifact-ids`   | IDs of the artifacts to download, comma-separated. Either inputs `artifact-ids` or `name` can be used, but not both. Optional      | No       | `""`                                                         |
 | `download-artifact-path`  | Destination path. Supports basic tilde expansion. Optional. Default is `$GITHUB_WORKSPACE`                                         | No       | `""`                                                         |
 | `download-artifact-pattern`| A glob pattern to the artifacts that should be downloaded. Ignored if name is specified. Optional.                                | No       | `false`                                                         |
-| `sbom`                    | Flag to enable SBoM generation.
+| `sbom`                    | Flag to enable SBoM generation. | No | `false` |
+| `build-args`              | List of build-time variables, newline-delimited string. | No | `""` |
+| `security-scan`           | Perform security scan of the built image by docker-scout. | No | `false` |
+| `docker-io-user`          | Docker Hub username for security scanning. Required if `security-scan` is `"true"`| No | `""` |
+| `docker-io-password`      | Docker Hub user password for security scanning. Required if `security-scan` is `"true"`| No | `""` |
+
+---
+
+## Permisions
+
+- Minimum permissions level `contents: read` in dry-run mode.
+- In normal mode it is required to set `packages: write`.
+- If `security-scan: 'true'` then need to set `security-events: write`.
+- If action used in workflow which triggered by `pool_request` and `security-scan: true`, then need to set `pull-requests: write` permission. The summary of seurity scan will be added to pull request as a comment.
 
 ---
 
@@ -45,10 +58,18 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+permissions: {}
 jobs:
   build-and-push:
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+      pull-requests: write
     runs-on: ubuntu-latest
 
     steps:
@@ -65,6 +86,9 @@ jobs:
           dry-run: false
           download-artifact: true
           download-artifact-path: ./artifacts
+          security-scan: true
+          docker-io-user: ${{ secrets.DOCKERHUB_USER }}
+          docker-io-password: ${{ secrets.DOCKERHUB_RW_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -125,5 +149,6 @@ with:
 ```
 
 In this configuration:
+
 - If `custom-image-name` is left empty, the action will use the `name` field from the `component` configuration (`custom-image-name`) as the Docker image name.
 - If no `component` is provided, the repository name will be used as the fallback.
