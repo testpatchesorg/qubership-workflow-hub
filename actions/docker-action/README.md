@@ -38,12 +38,12 @@ This **Docker Build and Publish** GitHub Action automates the process of buildin
 
 ---
 
-## Permisions
+## Permissions
 
 - Minimum permissions level `contents: read` in dry-run mode.
 - In normal mode it is required to set `packages: write`.
 - If `security-scan: 'true'` then need to set `security-events: write`.
-- If action used in workflow which triggered by `pool_request` and `security-scan: true`, then need to set `pull-requests: write` permission. The summary of seurity scan will be added to pull request as a comment.
+- If action used in workflow which triggered by `pool_request` and `security-scan: true`, then need to set `pull-requests: write` permission. The summary of security scan will be added to pull request as a comment.
 
 ---
 

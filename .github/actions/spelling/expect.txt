@@ -25,6 +25,7 @@ cla
 CLPLCI
 codehaus
 codeowners
+CODEOWNERS
 codeql
 conventionalcommits
 ctx
@@ -45,6 +46,7 @@ Dgpg
 Dincludes
 Dmaven
 dockerbuild
+DOCKERHUB
 dockerhub
 DOTALL
 dpkg
@@ -65,6 +67,7 @@ fullmatch
 getenv
 gitattributes
 gitdiffstat
+github
 GITLEAKS
 gitmodules
 globber
