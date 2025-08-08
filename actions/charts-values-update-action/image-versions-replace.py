@@ -44,7 +44,7 @@ def get_latest_version_by_regex(versions, pattern_str):
         pattern = r'' + pattern_str
         compiled_pattern = re.compile(pattern)
     except re.error as e:
-        print(f"Invalid regular expression '{pattern}': {str(e)}")
+        print(f"::error::Invalid regular expression '{pattern}': {str(e)}")
         sys.exit(1)
         #raise ValueError(f"Incorrect regular expression: {str(e)}") from None
 
@@ -53,9 +53,8 @@ def get_latest_version_by_regex(versions, pattern_str):
     for v in versions:
         try:
             if compiled_pattern.fullmatch(v):
-                ver = version.parse(v)
-                if not ver.is_prerelease:
-                    matched_versions.append((v, ver))
+                ver = v
+                matched_versions.append((v, ver))
         except version.InvalidVersion:
             continue
 
@@ -75,7 +74,7 @@ def replace_tag_regexp(image_str, tag_re):
             else:
                 result_tag = get_latest_version_by_regex(tags, tag_re[1:])
             if not result_tag:
-                print(f"No matching tag found for {image_str} with pattern {tag_re}")
+                print(f"::error::No matching tag found for {image_str} with pattern {tag_re}")
                 #raise ValueError(f"No matching tag found for {image_str} with pattern {tag_re}")
                 sys.exit(1)
             return(result_tag)
@@ -105,8 +104,11 @@ def set_image_versions(config_file, release, chart_version,  method):
     for chart in data['charts']:
         chart_file = chart['chart_file']
         values_file = chart['values_file']
+        chart_name = chart['name']
         # Update chart version in Chart.yaml
-        print(f"{chart['name']} Version: {chart_version}")
+        print(f"{chart_name} Version: {chart_version}")
+        print(f"Chart file: {chart_file}")
+        print(f"Values file: {values_file}")
         os.system(f"sed -i 's|^version:.*|version: {chart_version}|' {chart_file}")
         # Update image version in values.yaml
         # If method is 'replace', replace the image version with the release version as is
@@ -116,7 +118,7 @@ def set_image_versions(config_file, release, chart_version,  method):
             if method == 'parse':
                 image_ver = replace_env_variables(image.split(':')[1].replace('${release}', release))
                 image_ver = replace_tag_regexp(search_str, image_ver)
-            print(f"Updating {search_str} version to {image_ver}")
+            print(f"{values_file}: Updating {search_str} version to {image_ver}")
             os.system(f"sed -i 's|{search_str}:[a-zA-Z0-9._-]*|{search_str}:{image_ver}|' {values_file}")
             # Add to dictionary for action output
             images_versions[search_str.split('/')[-1]] = image_ver
