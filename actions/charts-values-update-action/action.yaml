@@ -56,6 +56,7 @@ runs:
       shell: bash
     - name: Check configuration
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: |
         charts=$(grep "chart_file: " ${{ inputs.config-file }} | sed "s#^\s*chart_file:\s*##")
         values=$(grep "values_file: " ${{ inputs.config-file }} | sed "s#^\s*values_file:\s*##")
