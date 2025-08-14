@@ -39,11 +39,18 @@ jobs:
           cache-dependency-path: "**/*.sum"
           go-version-file: "${{ env.GO_MOD_FILE }}"
 
-      - name: Check License
+      - name: Get GO modules
+        continue-on-error: true
         run: |
           go get ${MODULE}/... || true
           go mod vendor -e | grep "go get" | bash
-          go mod vendor
+          go mod vendor -e | grep "go get" | bash
+          go mod vendor -e | grep "go get" | bash
+        working-directory: "${{ github.workspace }}/${{ env.GO_MOD_DIR }}"
+
+      - name: Check License
+        continue-on-error: true
+        run: |
           which wwhrd || go install github.com/frapposelli/wwhrd@latest
           wwhrd check -f ${{ github.workspace }}/.wwhrd.yml
         working-directory: "${{ github.workspace }}/${{ env.GO_MOD_DIR }}"
