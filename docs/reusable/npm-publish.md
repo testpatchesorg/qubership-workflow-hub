@@ -86,14 +86,21 @@ jobs:
   npm-publish:
     uses: Netcracker/qubership-workflow-hub/.github/workflows/re-npm-publish.yml@main
     with:
-      version: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
-      scope: ${{ github.event_name == 'workflow_dispatch' && inputs.scope || '@netcracker' }}
-      node-version: ${{ github.event_name == 'workflow_dispatch' && inputs.node-version || '22.x' }}
-      registry-url: ${{ github.event_name == 'workflow_dispatch' && inputs.registry-url || 'https://npm.pkg.github.com' }}
-      update-nc-dependency: ${{ github.event_name == 'workflow_dispatch' && inputs.update-nc-dependency || false }}
-      dry-run: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry-run) }}
-      dist-tag: ${{ github.event_name == 'workflow_dispatch' && inputs.npm-dist-tag || 'latest' }}
-      branch_name: ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name || github.ref_name }}
+       version: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
+       scope: ${{ github.event_name == 'workflow_dispatch' && inputs.scope || 
+         '@netcracker' }}
+       node-version: ${{ github.event_name == 'workflow_dispatch' && 
+         inputs.node-version || '22.x' }}
+       registry-url: ${{ github.event_name == 'workflow_dispatch' && 
+         inputs.registry-url || 'https://npm.pkg.github.com' }}
+       update-nc-dependency: ${{ github.event_name == 'workflow_dispatch' && 
+         inputs.update-nc-dependency || false }}
+       dry-run: ${{ github.event_name == 'push' || 
+         (github.event_name == 'workflow_dispatch' && inputs.dry-run) }}
+       dist-tag: ${{ github.event_name == 'workflow_dispatch' && 
+         inputs.npm-dist-tag || 'latest' }}
+       branch_name: ${{ github.event_name == 'workflow_dispatch' && 
+         inputs.branch_name || github.ref_name }}
     secrets: inherit
 ```
 
@@ -173,6 +180,7 @@ The workflow includes a **dry-run mode** that allows you to test the entire publ
 - Validating Lerna configuration (for monorepos)
 
 To use dry-run mode, set `dry-run: true` when calling the workflow. In this mode:
+
 - All steps except actual publishing are executed
 - Version updates are applied locally
 - Build and test processes run normally
