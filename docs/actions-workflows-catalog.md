@@ -3,15 +3,17 @@
 Central directory of available GitHub Actions and Reusable Workflows in this repository.
 
 Purpose:
+
 * Single place to browse everything (active + deprecated) with short descriptions.
 * Shows deprecation status so you avoid adopting legacy components.
-* Fast jumping-off point to each Action / Workflow detail README.
+* Fast jumping-off point to each Action / Workflow detail readme.
 
 Deprecation & evolution rules are defined in [Standards & Change Policy](standards-and-change-policy.md). Always check that document before modifying or depending on a deprecated component.
 
 ---
 
 ## 🔄 Actions
+
 | Action | Description |
 |--------|-------------|
 | [assets-action](../actions/assets-action/README.md) | Alternative asset archiving / upload path (legacy alias) |
@@ -32,19 +34,20 @@ Deprecation & evolution rules are defined in [Standards & Change Policy](standar
 | [verify-json](../actions/verify-json/README.md) | Validate JSON files against a schema |
 
 ### Deprecated Actions
+
 | Action | Replacement / Note |
 |--------|--------------------|
-| [commit-and-push](../actions/commit-and-push/README.md) | Use native git steps |
+| [commit-and-push](../actions/commit-and-push/README.md) | Use native Git steps |
 | [pom-updater](../actions/pom-updater/README.md) | Prefer metadata-action + build tooling |
 | [tag-checker](../actions/tag-checker/README.md) | Functionality superseded by tag-action |
 | [archive-and-upload-assets](../actions/archive-and-upload-assets/README.md) | Superseded by assets-action (consolidated implementation) |
-
 
 ---
 
 ## 🔄 Reusable Workflows
 
 ### Active
+
 | Workflow | Description |
 |----------|-------------|
 | [broadcast-files](reusable/broadcast-files.md) | Distribute specified files to multiple target repos |
@@ -52,8 +55,10 @@ Deprecation & evolution rules are defined in [Standards & Change Policy](standar
 | [maven-publish](reusable/maven-publish.md) | Build & publish Maven artifacts (release flow) |
 | [python-publish](reusable/python-publish.md) | Build, test & publish Python package (Poetry) |
 | [release-drafter](reusable/release-drafter.md) | Generate or refresh draft release notes |
+| [npm-publish](reusable/npm-publish.md) | Build, test, and publish npm packages to a registry (supports monorepo and single package) |
 
 ### Deprecated Workflows
+
 | Workflow | Replacement / Note |
 |----------|--------------------|
 | [docker-publish](reusable/docker-publish.md) | Use docker-action (action) + custom workflow |
