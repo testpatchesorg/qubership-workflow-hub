@@ -35,7 +35,7 @@ on:
       ref:
         required: false
         type: string
-        default: "main"  
+        default: "main"
 
 permissions:
   contents: write
