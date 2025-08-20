@@ -32,10 +32,6 @@ on:
         type: string
         description: "NPM dist-tag"
         required: false
-      branch_name:
-        required: false
-        type: string
-        default: "main"
 
 permissions:
   contents: write
@@ -50,9 +46,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Show branch
-        run: echo "Branch= ${{ github.event.inputs.branch_name }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
