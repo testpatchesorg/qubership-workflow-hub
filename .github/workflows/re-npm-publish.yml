@@ -32,10 +32,6 @@ on:
         type: string
         description: "NPM dist-tag"
         required: false
-      branch_name:
-        required: false
-        type: string
-        default: "main"
 
 permissions:
   contents: write
@@ -50,9 +46,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Show branch
-        run: echo "Branch= ${{ github.event.inputs.branch_name }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -80,7 +73,43 @@ jobs:
         run: |
           npm ls --json | jq -r '.dependencies | keys[]' | grep "@netcracker" | xargs --no-run-if-empty npm update
 
+      - name: Check current version
+        id: current_version
+        if: ${{ !inputs.dry-run }}
+        run: |
+          if [ "$IS_LERNA" == "true" ]; then
+            CURRENT_VERSION=$(lerna list --json | jq -r '.[0].version')
+          else
+            CURRENT_VERSION=$(jq -r '.version' package.json)
+          fi
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
+          echo "Requested version: ${{ inputs.version }}"
+
+      - name: Validate version
+        if: ${{ !inputs.dry-run }}
+        run: |
+          CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
+          REQUESTED_VERSION="${{ inputs.version }}"
+
+          echo "Current version: $CURRENT_VERSION"
+          echo "Requested version: $REQUESTED_VERSION"
+
+          # Use sort -V for proper semantic version comparison
+          if [ "$(printf '%s\n%s' "$CURRENT_VERSION" "$REQUESTED_VERSION" | sort -V | head -n1)" = "$REQUESTED_VERSION" ] && [ "$CURRENT_VERSION" != "$REQUESTED_VERSION" ]; then
+            echo "Error: Requested version $REQUESTED_VERSION is not greater than current version $CURRENT_VERSION"
+            echo "Please provide a version higher than $CURRENT_VERSION"
+            echo "Valid examples for current version $CURRENT_VERSION:"
+            echo "  - Patch: $(echo "$CURRENT_VERSION" | awk -F. '{print $1"."$2"."$3+1}')"
+            echo "  - Minor: $(echo "$CURRENT_VERSION" | awk -F. '{print $1"."$2+1".0"}')"
+            echo "  - Major: $(echo "$CURRENT_VERSION" | awk -F. '{print $1+1".0.0"}')"
+            exit 1
+          fi
+
+          echo "Version validation passed: $REQUESTED_VERSION > $CURRENT_VERSION"
+
       - name: Update package version (for Lerna or NPM)
+        if: ${{ !inputs.dry-run }}
         run: |
           if [ "$IS_LERNA" = "true" ]; then
             echo "Updating version in lerna.json and all package.json files..."
@@ -92,7 +121,14 @@ jobs:
           git diff --color
           git diff >> changes.txt
 
+      - name: Commit Changes
+        if: ${{ !inputs.dry-run }}
+        uses: netcracker/qubership-workflow-hub/actions/commit-and-push@v1.0.3
+        with:
+          commit_message: "Update package.json version to ${{ inputs.version }}"
+
       - name: Get package version
+        if: ${{ !inputs.dry-run }}
         id: get_version
         run: |
             if [ "$IS_LERNA" == "true" ]; then
@@ -116,14 +152,14 @@ jobs:
         run: npm test --if-present
 
       - name: Skip publishing (dry-run mode)
-        if: ${{ inputs.dry-run == 'true' }}
+        if: ${{ inputs.dry-run }}
         run: |
           echo "Publishing skipped - running in dry-run mode"
           echo "Package version: ${{ steps.get_version.outputs.package_version }}"
           echo "Would publish with tag: ${{ inputs.dist-tag }}"
 
       - name: Publish Package
-        if: ${{ inputs.dry-run == 'false' }}
+        if: ${{ !inputs.dry-run }}
         run: |
           npm config get registry
           if [ "$IS_LERNA" = "true" ]; then
