@@ -32,6 +32,10 @@ on:
         type: string
         description: "NPM dist-tag"
         required: false
+      ref:
+        required: false
+        type: string
+        default: "main"  
 
 permissions:
   contents: write
@@ -46,6 +50,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref}}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
