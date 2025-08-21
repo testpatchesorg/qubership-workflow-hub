@@ -19,6 +19,28 @@ The target store for the artifact. Can be `central` or `github`. Defaults to `ce
 **Optional**  
 Additional Maven command-line parameters (e.g., `-Dskip.tests=true`). Defaults to an empty string.
 
+### `working-directory`
+
+**Optional**  
+Working directory for the action. It is usefull when there are several independant pom.xml files in the repository.
+Default is `.`.
+
+### `pom-file`
+
+**Optional**  
+Path and name of pom.xml file. Path to file must be relative to `working-directory`.
+Default is `pom.xml`
+
+### `upload-artifact`
+
+**Optional**  
+Upload `**/target` as an artifact to the workflow artifacts. Defaults to `'false'`.
+
+### `artifact-id`
+
+**Optional**  
+Artifact ID. Defaults to `maven-snapshot-deploy-artifact`.
+
 ### `maven-username`
 
 **Optional**  
