@@ -1,6 +1,6 @@
 # 🚀 Package Cleanup Action
 
-This **Package Cleanup** GitHub Action automates the cleanup of old package versions in a GitHub repository or organization.  
+This **Package Cleanup** GitHub Action automates the cleanup of old package versions in a GitHub repository or organization.
 It supports both Docker/container images and Maven JAR files.
 
 ---
@@ -10,6 +10,7 @@ It supports both Docker/container images and Maven JAR files.
 | Name               | Description                                                                 | Required | Default                     |
 | ------------------ | --------------------------------------------------------------------------- | -------- | --------------------------- |
 | `threshold-days`   | The number of days to keep package versions. Older versions will be deleted. | No       | `7`                         |
+| `threshold-versions` | The number of versions to keep. Applicable for maven artifacts only. | No | `1` |
 | `included-tags`    | A comma-separated list of tags/versions to include for deletion. Wildcards (`*`) are supported. | No       | `""` (all tags included, or `*SNAPSHOT*` for Maven) |
 | `excluded-tags`    | A comma-separated list of tags/versions to exclude from deletion. Wildcards (`*`) are supported.| No       | `""` (no tags excluded)      |
 | `included-patterns`| A comma-separated list of patterns to include for deletion. Wildcards (`*`) are supported. | No       | `""`                       |
@@ -27,6 +28,7 @@ It supports both Docker/container images and Maven JAR files.
 | `PACKAGE_TOKEN` | GitHub token with permissions to manage packages | Yes      |
 
 > **Note:** The `PACKAGE_TOKEN` must have the following permissions:
+>
 > - **`read:packages`**: To list and retrieve package information.
 > - **`delete:packages`**: To delete package versions.
 
@@ -98,6 +100,10 @@ on:
         description: "Number of days to keep Maven JAR versions"
         required: false
         default: "14"
+      threshold-versions:
+        description: "The number of latest SNAPSHOT versions to keep."
+        required: false
+        default: "1"
       included-patterns:
         description: "Patterns to include for deletion"
         required: false
@@ -127,6 +133,7 @@ jobs:
         uses: netcracker/qubership-workflow-hub/actions/container-package-cleanup@main
         with:
           threshold-days: ${{ github.event.inputs.threshold-days || 14 }}
+          threshold-versions: ${{ github.event.inputs.threshold-versions || 1 }}
           included-patterns: ${{ github.event.inputs.included-patterns || '*SNAPSHOT*' }}
           excluded-patterns: ${{ github.event.inputs.excluded-patterns || 'release*' }}
           debug: ${{ github.event.inputs.debug || 'false' }}
@@ -172,7 +179,7 @@ The action filters tags/versions in the following order of priority:
    - If neither `included-tags` nor `included-patterns` is specified, all versions are considered for deletion, except those explicitly excluded by `excluded-tags` or `excluded-patterns`.
    - **For Maven:** If neither `included-tags` or `included-patterns` is specified, only `*SNAPSHOT*` versions are considered for deletion by default.
 
-#### Filtering Process
+### Filtering Process
 
 1. Exclude versions matching `excluded-tags` or `excluded-patterns`.
 2. From the remaining versions, include only those matching `included-tags` or `included-patterns` (if specified).
@@ -194,6 +201,7 @@ Supported patterns for tags/versions:
 | **Special wildcards** | | |
 | `?*` | alphanum string: `SHA2430957234628737465`, `SHANGRILLA2` | `1.2.3`, `SHANGRILLA-2` |
 | `semver` | SemVer: `1.2.3`, `v1.2.3`, `v1.2.3-1`, `1.2.3-megafix` | `alpha-1.2.3`, `dependabot-1.2.3-update` |
+
 ---
 
 ## Debug & Dry-Run Modes

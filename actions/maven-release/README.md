@@ -3,6 +3,7 @@
 This GitHub Action automates the process of building and releasing a Maven artifact. It supports version bumping (major, minor, patch), GPG signing, and optional dependency version bumping after release.
 
 ---
+
 ## Features
 
 - **Automatic Version Bumping:** Supports major, minor, and patch version increments for Maven artifacts.
@@ -75,6 +76,6 @@ jobs:
 
 ## Notes
 
-- Ensure project pom.xml file configured according [pom preparation instruction](../../docs/maven-publish-pom-preparation_doc.md)
+- Ensure project pom.xml file configured according [pom preparation instruction](https://github.com/Netcracker/.github/blob/main/docs/maven-publish-pom-preparation_doc.md)
 - Ensure all required secrets are available in your repository.
 - The action supports both dry-run and actual release modes.
