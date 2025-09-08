@@ -138,21 +138,26 @@ runs:
         name: ${{ inputs.custom-image-name }}
         path: ${{ inputs.download-artifact-path != '' && inputs.download-artifact-path || '..' }}
 
-    - name: Dubug ls
+    - name: Debug ls
       if: ${{ inputs.debug == 'true' }}
       shell: bash
+      env:
+        DL_PATH: ${{ inputs.download-artifact-path }}
+        CONTEXT_DIR: ${{ steps.parse_component.outputs.ctx }}
       run: |
-        echo "Listing files in the current directory:"
+        echo "🔍 Current directory:"
+        pwd
+        echo "📁 Listing current directory:"
         ls -la
 
-        echo "Listing files in the parent directory:"
+        echo "📁 Listing parent directory:"
         ls -la ..
 
-        echo "Listing files in the download-artifact-path directory:"
-        ls -la ${{ inputs.download-artifact-path != '' && inputs.download-artifact-path || '..' }}
+        echo "📁 Listing download-artifact-path directory: $DL_PATH"
+        ls -la "$DL_PATH" || echo "⚠️ Directory not found: $DL_PATH"
 
-        echo "Listing files in the context directory:"
-        ls -la steps.parse_component.outputs.ctx
+        echo "📁 Listing context directory: $CONTEXT_DIR"
+        ls -la "$CONTEXT_DIR" || echo "⚠️ Directory not found: $CONTEXT_DIR"
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
