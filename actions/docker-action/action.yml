@@ -144,8 +144,15 @@ runs:
       run: |
         echo "Listing files in the current directory:"
         ls -la
+
         echo "Listing files in the parent directory:"
         ls -la ..
+
+        echo "Listing files in the download-artifact-path directory:"
+        ls -la ${{ inputs.download-artifact-path != '' && inputs.download-artifact-path || '..' }}
+
+        echo "Listing files in the context directory:"
+        ls -la steps.parse_component.outputs.ctx
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
