@@ -69,6 +69,10 @@ inputs:
     description: "Flag to enable repository checkout."
     required: false
     default: "true"
+  debug:
+    description: "Flag to enable debug mode."
+    required: false
+    default: "false"
 outputs:
   image-name:
     description: "The name of the built Docker image."
@@ -112,13 +116,6 @@ runs:
         fi
         echo "CONTAINER_NAME=$CONTAINER_NAME" >> "$GITHUB_OUTPUT"
 
-    - name: Download Artifact
-      if: ${{ inputs.download-artifact == 'true' }}
-      uses: actions/download-artifact@v4
-      with:
-        name: ${{ inputs.custom-image-name }}
-        path: ${{ inputs.download-artifact-path != '' && inputs.download-artifact-path || '..' }}
-
     - name: Checkout Repository
       if: ${{ inputs.checkout == 'true' }}
       uses: actions/checkout@v4
@@ -133,6 +130,22 @@ runs:
         echo "ref: ${{ inputs.ref }}"
         echo "GITHUB_REPOSITORY: ${{ github.repository }}"
         echo "GITHUB_REF: ${{ github.ref }}"
+
+    - name: Download Artifact
+      if: ${{ inputs.download-artifact == 'true' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.custom-image-name }}
+        path: ${{ inputs.download-artifact-path != '' && inputs.download-artifact-path || '..' }}
+
+    - name: Dubug ls
+      if: ${{ inputs.debug == 'true' }}
+      shell: bash
+      run: |
+        echo "Listing files in the current directory:"
+        ls -la
+        echo "Listing files in the parent directory:"
+        ls -la ..
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
