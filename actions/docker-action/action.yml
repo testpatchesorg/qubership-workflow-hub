@@ -147,6 +147,10 @@ runs:
       run: |
         echo "🔍 Current directory:"
         pwd
+        echo
+        echo "📂 Full tree under workspace:"
+        ls -R -la ${{ github.workspace }} || true
+
         echo "📁 Listing current directory:"
         ls -la
 
