@@ -138,21 +138,6 @@ runs:
         name: ${{ inputs.custom-image-name }}
         path: ${{ inputs.download-artifact-path != '' && inputs.download-artifact-path || '..' }}
 
-    - name: Flatten downloaded artifact
-      if: ${{ inputs.download-artifact == 'true' }}
-      shell: bash
-      run: |
-        ROOT="${{ inputs.download-artifact-path != '' && inputs.download-artifact-path || '..' }}"
-        echo "🔍 Flattening artifact contents from $ROOT"
-        shopt -s dotglob
-        for dir in "$ROOT"/*/; do
-          echo " Moving contents of $dir to $ROOT"
-          mv "$dir"* "$ROOT"/
-          rm -rf "$dir"
-        done
-        echo "✅ Flatten complete"
-        ls -la "$ROOT"
-
     - name: Debug ls
       if: ${{ inputs.debug == 'true' }}
       shell: bash
