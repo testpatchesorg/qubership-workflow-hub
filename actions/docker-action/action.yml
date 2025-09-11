@@ -157,11 +157,8 @@ runs:
         echo "📁 Listing parent directory:"
         ls -la ..
 
-        echo "📁 Listing download-artifact-path directory: $DL_PATH"
-        ls -la "$DL_PATH" || echo "⚠️ Directory not found: $DL_PATH"
-
-        echo "📁 Listing context directory: $CONTEXT_DIR"
-        ls -la "$CONTEXT_DIR" || echo "⚠️ Directory not found: $CONTEXT_DIR"
+        echo "📂 Full workspace tree:"
+        ls -R -la ${{ github.workspace }}
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
