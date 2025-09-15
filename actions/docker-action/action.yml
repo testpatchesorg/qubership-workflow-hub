@@ -45,6 +45,10 @@ inputs:
     description: "A glob pattern to the artifacts that should be downloaded. Ignored if name is specified. Optional."
     required: false
     default: ""
+  download-artifact-merge-multiple:
+    description: "When download multiple artifacts unpack them as is or into separate directories. Optional."
+    required: false
+    default: "false"
   sbom:
     description: "Flag to enable SBoM generation."
     required: false
@@ -137,6 +141,7 @@ runs:
       with:
         name: ${{ inputs.custom-image-name }}
         path: ${{ inputs.download-artifact-path != '' && inputs.download-artifact-path || '..' }}
+        merge-multiple: ${{ inputs.download-artifact-merge-multiple == 'true' }}
 
     - name: Debug ls
       if: ${{ inputs.debug == 'true' }}
