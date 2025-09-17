@@ -76,7 +76,7 @@ runs:
         git config --global user.email "qubership-actions[bot]@users.noreply.github.com"
         git checkout -b release-${{ inputs.release-version }}
         git config pull.rebase false
-        git pull origin main
+        git pull origin ${{ github.ref_name }}
         git push --set-upstream origin release-${{ inputs.release-version }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}
