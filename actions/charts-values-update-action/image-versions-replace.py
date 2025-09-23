@@ -46,7 +46,6 @@ def get_latest_version_by_regex(versions, pattern_str):
     except re.error as e:
         print(f"::error::Invalid regular expression '{pattern}': {str(e)}")
         sys.exit(1)
-        #raise ValueError(f"Incorrect regular expression: {str(e)}") from None
 
     matched_versions = []
 
@@ -67,7 +66,7 @@ def replace_tag_regexp(image_str, tag_re):
     # Try to find the requested tag for given image_str
     if tag_re.startswith("#"):
         try:
-            os.system(f"skopeo login -u $GITHUB_ACTOR -p $GITHUB_TOKEN ghcr.io")
+            os.system("skopeo login -u $GITHUB_ACTOR -p $GITHUB_TOKEN ghcr.io")
             tags = subprocess.run(f"skopeo list-tags docker://{image_str} | jq -r '.Tags[]'", shell=True, text=True, check=True, capture_output=True).stdout.split()
             if tag_re[1:] == 'latest':
                 result_tag = get_latest_stable_version(tags)
@@ -87,8 +86,8 @@ def replace_tag_regexp(image_str, tag_re):
 def create_summary(images_versions):
     # Create a summary of the images versions
     summary = "## Image Versions Updated\n"
-    for image, version in images_versions.items():
-        summary += f"- **{image}**: `{version}`\n"
+    for image, image_version in images_versions.items():
+        summary += f"- **{image}**: `{image_version}`\n"
     # Write the summary to a file
     with open('summary.md', 'w') as f:
         f.write(summary)
@@ -120,6 +119,13 @@ def set_image_versions(config_file, release, chart_version,  method):
                 image_ver = replace_tag_regexp(search_str, image_ver)
             print(f"{values_file}: Updating {search_str} version to {image_ver}")
             os.system(f"sed -i 's|{search_str}:[a-zA-Z0-9._-]*|{search_str}:{image_ver}|' {values_file}")
+            # Check if image key exists in values.yaml
+            replacements = subprocess.run(f"grep -o '{search_str}' {values_file} | wc -l", shell=True, check=True, capture_output=True).stdout.split()[0]
+            if int(replacements) == 0:
+                print(f"::warning::Image {search_str} not found in {values_file}")
+            else:
+                print(f"Replaced {str(replacements)} occurrence(s) of {search_str} in {values_file}")
+                print(f"{values_file}: {search_str} version set to {image_ver}")
             # Add to dictionary for action output
             images_versions[search_str.split('/')[-1]] = image_ver
     # Write the updated images versions to GITHUB_OUTPUT as a JSON string
