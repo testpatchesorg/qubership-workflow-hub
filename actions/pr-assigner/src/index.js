@@ -5,14 +5,42 @@ const path = require("path");
 const ConfigLoader = require("./loader");
 const GhCommand = require("./command");
 
-function findFile(filename, startDir = process.cwd()) {
-    let dir = startDir;
-    while (dir !== path.parse(dir).root) {
-        const filePath = path.join(dir, filename);
+// function findCodeowners(startDir = process.cwd()) {
+//     let found = null;
+
+//     function searchDir(dir) {
+//         const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+//         for (const entry of entries) {
+//             const fullPath = path.join(dir, entry.name);
+
+//             if (entry.isFile() && entry.name === "CODEOWNERS") {
+//                 found = fullPath;
+//                 return true;
+//             } else if (entry.isDirectory()) {
+//                 if ([".git", "node_modules"].includes(entry.name)) continue;
+//                 if (searchDir(fullPath)) return true;
+//             }
+//         }
+//         return false;
+//     }
+
+//     searchDir(startDir);
+//     return found;
+// }
+
+function findCodeowners(startDir = process.cwd()) {
+    const repoRoot = startDir;
+    const candidates = [
+        path.join(repoRoot, ".github", "CODEOWNERS"),
+        path.join(repoRoot, "CODEOWNERS"),
+        path.join(repoRoot, "docs", "CODEOWNERS"),
+    ];
+
+    for (const filePath of candidates) {
         if (fs.existsSync(filePath)) {
             return filePath;
         }
-        dir = path.dirname(dir);
     }
     return null;
 }
@@ -60,12 +88,12 @@ async function run() {
         sourceUsed = `configuration file: ${configurationPath}`;
 
     } else {
-        const codeownersPath = findFile('CODEOWNERS');
-        if (!codeownersPath) {
+        const filePath = findCodeowners();
+        if (!filePath) {
             core.setFailed(`❗️ Can't find CODEOWNERS file.`);
             return;
         }
-        assignees = getUsersFromCodeowners(codeownersPath);
+        assignees = getUsersFromCodeowners(filePath);
     }
 
     core.info(`🔹 Count for shuffle: ${count}`);
@@ -89,7 +117,7 @@ async function run() {
         const ghCommand = new GhCommand();
         let currentAssignees = ghCommand.getAssigneesCommand(pullRequest.number);
         // core.info(`🔍 Current assignees: ${currentAssignees}`);
-        if (currentAssignees != null && currentAssignees != "" ) {
+        if (currentAssignees != null && currentAssignees != "") {
             core.info(`✔️ PR has current assignees: ${currentAssignees}, skipping...`);
             return;
         }
