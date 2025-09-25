@@ -3,6 +3,7 @@
 A comprehensive collection of reusable GitHub Actions and Workflows, designed to streamline your CI/CD pipelines and development processes.
 
 ## 🔍 Overview
+
 Centralises common CI/CD tasks (tagging, version / metadata generation, artifact & package publishing, Helm chart release, cleanup, custom events) to avoid per‑repo scripts and drift.
 
 Key pieces:
@@ -19,6 +20,7 @@ Version & security: pin versions, avoid `@main`, run dry‑run first where suppo
 ---
 
 ## 🔑 Key Documents
+
 Priority order (read top → bottom when starting / contributing):
 
 | # | Read When | Purpose | Document |
@@ -37,6 +39,7 @@ Shortcut: contributing code? Read 1 → 2 → 3 → 4, otherwise for usage start
 ---
 
 ## 🚀 Getting Started
+
 Full extended guide: see [Detailed Getting Started](docs/getting-started.md) for structure, composition patterns, permissions, versioning and checklist.
 
 1. **Clone the repository**
@@ -69,7 +72,7 @@ Full extended guide: see [Detailed Getting Started](docs/getting-started.md) for
    ```yaml
    jobs:
      release:
-       uses: netcracker/qubership-workflow-hub/docs/reusable/release-drafter.md@main
+       uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@main
        with:
          config-file: ".github/release-drafter.yml"
    ```
@@ -90,6 +93,7 @@ Quick starts:
 ---
 
 ## 📘 Standards & Change Policy
+
 Stable interface & evolution rules (naming, inputs/outputs, version pinning, minimal permissions, security and deprecation) are documented in [docs/standards-and-change-policy.md](docs/standards-and-change-policy.md).
 
 ---
