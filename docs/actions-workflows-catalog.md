@@ -58,6 +58,7 @@ Deprecation & evolution rules are defined in [Standards & Change Policy](standar
 | [python-publish](reusable/python-publish.md) | Build, test & publish Python package (Poetry) |
 | [release-drafter](reusable/release-drafter.md) | Generate or refresh draft release notes |
 | [npm-publish](reusable/npm-publish.md) | Build, test, and publish npm packages to a registry (supports monorepo and single package) |
+| [re-security-scan](reusable/re-security-scan.md) | On-demand security scan (Grype + Trivy) |
 
 ### Deprecated Workflows
 
