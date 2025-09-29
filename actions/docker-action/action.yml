@@ -245,12 +245,12 @@ runs:
         echo ">>> DIGEST            = $DIGEST"
         echo ">>> DIGEST_SHORT(12)  = $DIGEST_SHORT"
         echo ">>> FILENAME          = $FILENAME"
-        REFERENCE=ghcr.io/${OWNER}/${CONTAINER_NAME}:${VERSION}
+        REFERENCE=${IMAGE_NAME}:${VERSION}
         cat <<EOF > "$FILENAME"
         {
           "type": "container",
           "mime-type": "application/vnd.docker.image",
-          "name": "${IMAGE_NAME}",
+          "name": "${$CONTAINER_NAME}",
           "group": "${GROUP}",
           "version": "${VERSION}",
           "hashes":[
