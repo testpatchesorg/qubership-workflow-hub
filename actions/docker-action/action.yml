@@ -250,7 +250,7 @@ runs:
         {
           "type": "container",
           "mime-type": "application/vnd.docker.image",
-          "name": "${$CONTAINER_NAME}",
+          "name": "${CONTAINER_NAME}",
           "group": "${GROUP}",
           "version": "${VERSION}",
           "hashes":[
