@@ -245,9 +245,7 @@ runs:
         echo ">>> DIGEST            = $DIGEST"
         echo ">>> DIGEST_SHORT(12)  = $DIGEST_SHORT"
         echo ">>> FILENAME          = $FILENAME"
-        if [ -z $REFERENCE ]; then
-          REFERENCE=ghcr.io/${OWNER}/${CONTAINER_NAME}:${DOCKER_METADATA_OUTPUT_VERSION}
-        fi
+        REFERENCE=ghcr.io/${OWNER}/${CONTAINER_NAME}:${VERSION}
         cat <<EOF > "$FILENAME"
         {
           "type": "container",
