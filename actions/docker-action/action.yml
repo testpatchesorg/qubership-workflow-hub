@@ -99,12 +99,12 @@ runs:
     - name: Prepare Image Name
       shell: bash
       run: |
+        IFS='/' read -r owner repo <<< "$GITHUB_REPOSITORY"
         if [ -n "${{ inputs.custom-image-name }}" ]; then
             CONTAINER_NAME="${{ inputs.custom-image-name }}"
         elif [ -n "${{ steps.parse_component.outputs.name }}" ] && [ "${{ steps.parse_component.outputs.name }}" != "default" ]; then
            CONTAINER_NAME="${{ steps.parse_component.outputs.name }}"
         else
-           IFS='/' read -r owner repo <<< "$GITHUB_REPOSITORY"
            CONTAINER_NAME="$repo"
         fi
         echo "CONTAINER_NAME=$CONTAINER_NAME" >> "$GITHUB_OUTPUT"
