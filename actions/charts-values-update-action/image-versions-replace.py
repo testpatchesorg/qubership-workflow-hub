@@ -68,13 +68,12 @@ def replace_tag_regexp(image_str, tag_re):
         try:
             os.system("skopeo login -u $GITHUB_ACTOR -p $GITHUB_TOKEN ghcr.io")
             tags = subprocess.run(f"skopeo list-tags docker://{image_str} | jq -r '.Tags[]'", shell=True, text=True, check=True, capture_output=True).stdout.split()
-            if tag_re[1:] == 'latest':
+            if tag_re == '#latest':
                 result_tag = get_latest_stable_version(tags)
             else:
                 result_tag = get_latest_version_by_regex(tags, tag_re[1:])
             if not result_tag:
                 print(f"::error::No matching tag found for {image_str} with pattern {tag_re}")
-                #raise ValueError(f"No matching tag found for {image_str} with pattern {tag_re}")
                 sys.exit(1)
             return(result_tag)
         except Exception as e:
