@@ -6,7 +6,7 @@ on:
         required: true
 
 name: Create Workflow-Hub GitHub release
-
+run-name: "Workflow-Hub GitHub release v${{ inputs.version }}"
 permissions:
   contents: write
   actions: write
