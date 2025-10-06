@@ -1,0 +1,161 @@
+name: "Wait for Workflow"
+description: "Waits for a specific GitHub Actions workflow to start and complete successfully."
+
+inputs:
+  workflow:
+    description: "Workflow file name (e.g., build.yml) or workflow run ID."
+    required: true
+  token:
+    description: "GitHub token for API authentication (usually secrets.GITHUB_TOKEN)."
+    required: true
+  sha:
+    description: "Commit SHA to match the workflow run (if PR number is not provided)."
+    required: false
+    default: ${{ github.sha }}
+  pr-number:
+    description: "Pull request number if the workflow was triggered by a PR."
+    required: false
+    default: "${{ github.event.pull_request.number || '' }}"
+  timeout:
+    description: "Maximum time to wait for workflow completion (in minutes)."
+    required: false
+    default: "30"
+  max-wait:
+    description: "Maximum time (in minutes) to wait for the workflow run to start."
+    required: false
+    default: "10"
+  poll-interval:
+    description: "Interval (in seconds) between status checks."
+    required: false
+    default: "10"
+
+outputs:
+  conclusion:
+    value: ${{ steps.wait.outputs.conclusion }}
+    description: "The conclusion of the workflow run (success, failure, cancelled, etc.)."
+  run-id:
+    value: ${{ steps.wait.outputs.run-id }}
+    description: "The ID of the workflow run that was waited on."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Wait for workflow to complete
+      id: wait
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token || github.token }}
+        GH_REPO: ${{ github.repository }}
+        WORKFLOW: ${{ inputs.workflow }}
+        SHA: ${{ inputs.sha }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        TIMEOUT_MIN: ${{ inputs.timeout }}
+        MAX_WAIT_MIN: ${{ inputs.max-wait }}
+        POLL_INTERVAL: ${{ inputs.poll-interval }}
+      run: |
+        set -euo pipefail
+        trap 'echo "Process interrupted."' SIGTERM
+
+        echo "Repository: ${GH_REPO}"
+        echo "Workflow: ${WORKFLOW}"
+        echo "Commit SHA: ${SHA}"
+        echo "PR Number: ${PR_NUMBER:-none}"
+        echo ""
+
+        # 1. Determine if WORKFLOW is a run ID or a workflow file name
+        if [[ "$WORKFLOW" =~ ^[0-9]+$ ]]; then
+          RUN_ID="${WORKFLOW}"
+          echo "Using provided workflow run ID: ${RUN_ID}"
+        elif [[ "$WORKFLOW" =~ \.ya?ml$ ]]; then
+          WORKFLOW_FILE="${WORKFLOW}"
+          echo "Using workflow file: ${WORKFLOW_FILE}"
+        else
+          echo "Error: Invalid 'workflow' input. Provide a workflow file (e.g. build.yml) or numeric run ID."
+          exit 1
+        fi
+
+        # 2. Wait for workflow run to start
+        if [ -z "${RUN_ID:-}" ]; then
+          echo "Waiting for workflow '${WORKFLOW_FILE}' to be triggered..."
+          start_time=$(date +%s)
+
+          while true; do
+            if [ -n "${PR_NUMBER:-}" ]; then
+              response=$(gh api "repos/${GH_REPO}/actions/workflows/${WORKFLOW_FILE}/runs" 2>&1 || true)
+              if echo "$response" | grep -q "Not Found"; then
+                echo "Error: workflow file '${WORKFLOW_FILE}' not found in ${GH_REPO}."
+                exit 1
+              fi
+
+              run_id=$(echo "$response" | jq -r \
+                --arg pr "${PR_NUMBER}" \
+                '.workflow_runs | sort_by(.created_at)[]
+                | select(.event == "pull_request")
+                | select(any(.pull_requests[]; .number == ($pr | tonumber)))
+                | .id' | tail -n1)
+            else
+              response=$(gh api "repos/${GH_REPO}/actions/workflows/${WORKFLOW_FILE}/runs" 2>&1 || true)
+              if echo "$response" | grep -q "Not Found"; then
+                echo "Error: workflow file '${WORKFLOW_FILE}' not found in ${GH_REPO}."
+                exit 1
+              fi
+
+              run_id=$(echo "$response" | jq -r \
+                --arg sha "${SHA}" \
+                '.workflow_runs | sort_by(.created_at)[]
+                | select(.head_sha == $sha)
+                | .id' | tail -n1)
+            fi
+
+            if [ -n "${run_id:-}" ] && [ "${run_id}" != "null" ]; then
+              RUN_ID="${run_id}"
+              echo "Detected workflow run: ${RUN_ID}"
+              break
+            fi
+
+            now=$(date +%s)
+            elapsed=$(( (now - start_time) / 60 ))
+            if [ "${elapsed}" -ge "${MAX_WAIT_MIN}" ]; then
+              echo "Timeout: workflow '${WORKFLOW_FILE}' did not start within ${MAX_WAIT_MIN} minutes."
+              exit 1
+            fi
+
+            sleep "${POLL_INTERVAL}"
+          done
+        fi
+
+        echo "run-id=${RUN_ID}" >> "$GITHUB_OUTPUT"
+        echo ""
+        echo "Waiting for workflow run ${RUN_ID} to complete..."
+        echo "Timeout: ${TIMEOUT_MIN} minutes, Poll interval: ${POLL_INTERVAL}s"
+        echo ""
+
+        # 3. Poll for completion
+        start_time=$(date +%s)
+        while true; do
+          status=$(gh api "repos/${GH_REPO}/actions/runs/${RUN_ID}" --jq '.status')
+          conclusion=$(gh api "repos/${GH_REPO}/actions/runs/${RUN_ID}" --jq '.conclusion')
+
+          echo "Status: ${status}, Conclusion: ${conclusion:-Runned}"
+
+          if [ "${status}" = "completed" ]; then
+            echo ""
+            echo "Workflow completed with conclusion: ${conclusion}"
+            echo "conclusion=${conclusion}" >> "$GITHUB_OUTPUT"
+
+            if [ "${conclusion}" != "success" ]; then
+              echo "Workflow failed or was cancelled."
+              exit 1
+            fi
+            break
+          fi
+
+          now=$(date +%s)
+          elapsed=$(( (now - start_time) / 60 ))
+          if [ "${elapsed}" -ge "${TIMEOUT_MIN}" ]; then
+            echo "Timeout reached: workflow did not complete within ${TIMEOUT_MIN} minutes."
+            exit 1
+          fi
+
+          sleep "${POLL_INTERVAL}"
+        done
