@@ -1,26 +1,31 @@
 const core = require("@actions/core");
+const log = require("./logger");
 
-class RefExtractor {
-    constructor() {
-
-    }
-    extract(ref) {
-        let name = "";
-        let isTag = false;
-        if (ref.startsWith("refs/heads/")) {
-            name = ref.replace("refs/heads/", "").replace(/\//g, "-");
-            core.info(`Run-on branch: ${name}`);
-        } else if (ref.startsWith("refs/tags/")) {
-            isTag = true;
-            name = ref.replace("refs/tags/", "").replace(/\//g, "-");
-            core.info(`Run-on tag: ${name}`);
-        } else {
-            isTag = false;
-            name = ref.replace(/\//g, "-");
-            core.warning(`🔸 Cant detect type ref: ${ref}`);
+class RefNormalizer {
+    extract(ref, replaceSymbol = "-") {
+        if (!ref) {
+            core.setFailed("❌ No ref provided to RefNormalizer.extract()");
+            return { normalizedName: "", isTag: false, type: "unknown" };
         }
-        return { name, isTag };
+
+        const isBranch = ref.startsWith("refs/heads/");
+        const isTag = ref.startsWith("refs/tags/");
+        let rawName;
+
+        if (isBranch) {
+            rawName = ref.slice("refs/heads/".length);
+        } else if (isTag) {
+            rawName = ref.slice("refs/tags/".length);
+        } else {
+            rawName = ref;
+            log.warn(`Cant detect type ref: ${ref}`);
+        }
+
+        const normalizedName = rawName.replace(/\//g, replaceSymbol);
+        const type = isBranch ? "branch" : isTag ? "tag" : "unknown";
+
+        return { rawName, normalizedName, isTag, type };
     }
 }
 
-module.exports = RefExtractor;
+module.exports = RefNormalizer;

@@ -14,7 +14,7 @@ This **GitHub Metadata** GitHub Action extracts metadata from the current GitHub
 
 ### Action Result
 
-The primary output of this action is a generated version string. This string is determined by the branch or tag on which the action was executed, and it is created by applying the corresponding template defined in the configuration file. For example, if the action is triggered on the `v1.2.3` tag, the output might follow the `v{{major}}.{{minor}}.{{patch}}-{{date}}` template, resulting in a string such as `v1.2.3-20250312`. Or triggered on the `release/1.2.3` branch, resulting  `release-1.2.3-20250312`, `feature/some-feature` resulting `feature-some-feature-20250312`.
+The primary output of this action is a generated version string. This string is determined by the branch or tag on which the action was executed, and it is created by applying the corresponding template defined in the configuration file. For example, if the action is triggered on the `v1.2.3` tag, the output might follow the `v{{major}}.{{minor}}.{{patch}}-{{date}}` template, resulting in a string such as `v1.2.3-20250312`. Or triggered on the `release/1.2.3` branch, resulting in `release-1.2.3-20250313235959`, `feature/some-feature` resulting in `feature-some-feature-20250313235959`.
 
 ## 📌 Inputs
 
@@ -26,11 +26,11 @@ The primary output of this action is a generated version string. This string is 
 | `default-template`   | Default template for version generation.       | No       | `{{ref-name}}-{{timestamp}}-{{runNumber}}` |
 | `default-tag`        | Default distribution tag.                      | No       | `latest`                                   |
 | `extra-tags`         | Additional tags to append to the result.       | No       | `""`                                       |
-| `merge-tags`         | Whether to merge `extra-tags` with the result. | No       | `false`                                    |
+| `merge-tags`         | Whether to merge `extra-tags` with the result. | No       | `true`                                     |
 | `debug`              | Enable debug mode for detailed logging.        | No       | `false`                                    |
 | `show-report`        | Whether to display a summary report.           | No       | `true`                                     |
 | `dry-run`            | Enable dry-run mode to simulate the action.    | No       | `false`                                    |
-
+| `replace-symbol`     | Symbol to replace '/' in branch or tag names.  | No       | `-`                                        |
 
 ---
 
@@ -49,6 +49,9 @@ The primary output of this action is a generated version string. This string is 
 | `minor`     | Minor version number extracted from semantic versioning.                                                                            | 2               |
 | `patch`     | Patch version number extracted from semantic versioning.                                                                            | 3               |
 | `short-sha` | Shortened SHA of the current commit.                                                                                                | abc1234         |
+| `runNumber` | The unique number for each run of a particular workflow in a repository.                                                           | 123             |
+| `commit`    | The full SHA of the current commit.                                                                                                 | abc123456789    |
+| `ref-type`  | The type of the reference (e.g., branch or tag).                                                                                    | branch          |
 
 ---
 
@@ -82,6 +85,7 @@ jobs:
           merge-tags: 'true'
           debug: 'true'
           show-report: 'true'
+          replace-symbol: '_'  # Example: Replaces '/' in branch names like 'feature/my-branch' with 'feature_my-branch'
 ```
 
 ---
@@ -119,8 +123,7 @@ In this example:
 ### GitHub Context Availability
 
 The GitHub context is available, allowing you to access properties such as the current branch, tag, and other metadata. This context can be used within the action to dynamically generate version strings and tailor behavior based on the repository state.
-More information [here](https://docs.github.com/ru/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs).
-
+[More information](https://docs.github.com/ru/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs).
 
 ### Semantic Version Parsing Contract
 
@@ -128,7 +131,7 @@ The variables `major`, `minor`, and `patch` are parsed only from a branch or tag
 
 ### Configuration File Schema
 
-The configuration file for this action must adhere to the schema defined [here](https://github.com/netcracker/qubership-workflow-hub/blob/main/actions/metadata-action/config.schema.json). This ensures that all templates, distribution tags, and other configuration options follow the required structure for correct parsing and execution.
+The configuration file for this action must adhere to [the schema defined](https://github.com/netcracker/qubership-workflow-hub/blob/main/actions/metadata-action/config.schema.json). This ensures that all templates, distribution tags, and other configuration options follow the required structure for correct parsing and execution.
 
 ```json
 {
@@ -176,3 +179,10 @@ The configuration file for this action must adhere to the schema defined [here](
     "additionalProperties": false
 }
 ```
+
+## Troubleshooting
+
+- **Template not rendering correctly:** Ensure your configuration file matches the schema and that variables like `{{major}}` are used only on semantic version refs (e.g., `v1.2.3`).
+- **Missing outputs:** Check if the action ran successfully; use `debug: true` for logs.
+- **Configuration errors:** Validate your YAML against the schema at [config.schema.json](https://github.com/netcracker/qubership-workflow-hub/blob/main/actions/metadata-action/config.schema.json).
+- **Branch/tag name issues:** Use `replace-symbol` to customize how '/' is replaced in names (default is `-`).

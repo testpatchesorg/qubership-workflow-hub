@@ -1,4 +1,4 @@
-// With a motherfucking microphone, plug it in my soul
+// With a motherf***ing microphone, plug it in my soul
 // I'm a renegade riot getting out of control
 // I'm-a keeping it alive and continue to be
 // Flying like an eagle to my destiny
@@ -7,23 +7,23 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 
 const ConfigLoader = require("./loader");
-const RefExtractor = require("./extractor");
-const { default: def } = require("ajv/dist/vocabularies/discriminator");
-
+const RefNormalizer = require("./extractor");
 const Report = require("./report");
+const log = require("./logger");
 
+// --- utility functions ---
 function generateSnapshotVersionParts() {
   const now = new Date();
-  const iso = now.toISOString(); // "2025-02-25T14:30:53.123Z"
-  const date = iso.slice(0, 10).replace(/-/g, ""); // "20250225"
-  const time = iso.slice(11, 19).replace(/:/g, ""); // "143053"
+  const iso = now.toISOString();
+  const date = iso.slice(0, 10).replace(/-/g, "");
+  const time = iso.slice(11, 19).replace(/:/g, "");
   return { date, time, timestamp: `${date}${time}` };
 }
 
 function extractSemverParts(versionString) {
   const normalized = versionString.replace(/^v/i, "");
   if (!/^\d+\.\d+\.\d+$/.test(normalized)) {
-    core.info(`💡 Not a valid semver string (skip): ${versionString}`);
+    log.dim(`Not a valid semver string (skip): ${versionString}`);
     return { major: "", minor: "", patch: "" };
   }
   const [major, minor, patch] = normalized.split(".");
@@ -31,17 +31,16 @@ function extractSemverParts(versionString) {
 }
 
 function matchesPattern(refName, pattern) {
-  const normalizedPattern = pattern.replace(/\//g, '-').replace(/\*/g, '.*');
-  const regex = new RegExp('^' + normalizedPattern + '$');
-  return regex.test(refName);
+  const normalizedPattern = pattern.replace(/\//g, "-").replace(/\*/g, ".*");
+  return new RegExp(`^${normalizedPattern}$`).test(refName);
 }
 
 function findTemplate(refName, templates) {
   if (!Array.isArray(templates) || templates.length === 0) return null;
-  for (let item of templates) {
-    let pattern = Object.keys(item)[0];
+  for (const item of templates) {
+    const pattern = Object.keys(item)[0];
     if (matchesPattern(refName, pattern)) {
-      return item[pattern]; // return value from object item, not templates
+      return item[pattern];
     }
   }
   return null;
@@ -53,10 +52,10 @@ function fillTemplate(template, values) {
   });
 }
 
-function flattenObject(obj, prefix = '') {
+function flattenObject(obj, prefix = "") {
   return Object.entries(obj).reduce((acc, [key, val]) => {
     const name = prefix ? `${prefix}.${key}` : key;
-    if (val !== null && typeof val === 'object') {
+    if (val !== null && typeof val === "object") {
       Object.assign(acc, flattenObject(val, name));
     } else {
       acc[name] = val;
@@ -65,126 +64,142 @@ function flattenObject(obj, prefix = '') {
   }, {});
 }
 
-// Objects
-const selectedTemplateAndTag = {
-  template: null,
-  distTag: null,
-  toString() {
-    return `Template: ${this.template}, DistTag: ${this.distTag}`;
-  }
-};
-
 async function run() {
+  try {
+    log.group("🚀 Metadata Action Initialization");
 
-  core.info(`pull_request head.ref: ${github.context.payload.pull_request?.head?.ref}`);
-  core.info(`pull_request head: ${JSON.stringify(github.context.payload.pull_request?.head, null, 2)}`);
-  let name = core.getInput('ref');
-
-  if (!name) {
-    name = github.context.eventName === 'pull_request' ? github.context.payload.pull_request?.head?.ref : github.context.ref;
-  }
-
-  core.info(`Ref: ${name}`);
-
-  const debug = core.getInput('debug') === "true";
-  const dryRun = core.getInput('dry-run') === "true";
-  const showReport = core.getInput('show-report') === "true";
-  const isDebug = debug === 'true' || debug === '1' || debug === 'yes' || debug === 'on';
-
-  core.info(`Debug: ${isDebug}`);
-
-  const ref = new RefExtractor().extract(name);
-
-  const configurationPath = core.getInput('configuration-path') || "./.github/metadata-action-config.yml";
-  const loader = new ConfigLoader()
-  const config = loader.load(configurationPath, debug);
-
-  const defaultTemplate = core.getInput('default-template') || config?.["default-template"] || `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
-  const defaultTag = core.getInput('default-tag') || config?.["default-tag"] || "latest";
-
-  const extraTags = core.getInput('extra-tags');
-  const mergeTags = core.getInput('merge-tags');
-
-  core.info(`🔸 defaultTemplate: ${defaultTemplate}`);
-  core.info(`🔸 defaultTag: ${defaultTag}`);
-
-  // core.info(`🔹 Ref: ${JSON.stringify(ref)}`);
-
-  if (loader.fileExists) {
-    selectedTemplateAndTag.template = findTemplate(!ref.isTag ? ref.name : "tag", config["branches-template"]);
-    selectedTemplateAndTag.distTag = findTemplate(ref.name, config["distribution-tag"]);
-  }
-
-  if (selectedTemplateAndTag.template === null) {
-    core.info(`⚠️ No template found for ref: ${ref.name}, will be used default -> ${defaultTemplate}`);
-    selectedTemplateAndTag.template = defaultTemplate;
-  }
-
-  if (selectedTemplateAndTag.distTag === null) {
-    core.info(`⚠️ No dist-tag found for ref: ${ref.name}, will be used default -> ${defaultTag}`);
-    selectedTemplateAndTag.distTag = defaultTag;
-  }
-
-  const parts = generateSnapshotVersionParts();
-  const semverParts = extractSemverParts(ref.name);
-
-  const shortShaDeep = +core.getInput("short-sha");
-  if (!(shortShaDeep > 0)) {
-    core.info(`⚠️ Invalid short-sha value: ${shortShaDeep}, will be used default -> 7`);
-  }
-  const shortSha = github.context.sha.slice(0, shortShaDeep);
-
-  const values = {
-    ...ref, "ref-name": ref.name, "short-sha": shortSha,
-    ...semverParts, ...parts,
-    "dist-tag": selectedTemplateAndTag.distTag,
-    "runNumber": github.context.runNumber,
-    ...flattenObject({ github }, '')
-  };
-
-  core.info(`🔹 time: ${JSON.stringify(parts)}`);
-  core.info(`🔹 semver: ${JSON.stringify(semverParts)}`);
-  core.info(`🔹 dist-tag: ${JSON.stringify(selectedTemplateAndTag.distTag)}`);
-
-  // core.info(`Values: ${JSON.stringify(values)}`); //debug values
-  let result = fillTemplate(selectedTemplateAndTag.template, values)
-
-  core.info(`🔹 Template: ${selectedTemplateAndTag.template}`);
-
-  if (extraTags != '' && mergeTags == 'true') {
-    core.info(`🔹 Merging extra tags: ${extraTags}`);
-    result = result + ", " + extraTags;
-  }
-
-  core.info(`💡 Rendered template: ${result}`);
-
-  core.setOutput("result", result);
-  core.setOutput("ref", ref);
-  core.setOutput("ref-name", ref.name);
-  core.setOutput("date", parts.date);
-  core.setOutput("time", parts.time);
-  core.setOutput("Timestamp", parts.timestamp);
-  core.setOutput("major", semverParts.major);
-  core.setOutput("minor", semverParts.minor);
-  core.setOutput("patch", semverParts.patch);
-  core.setOutput("tag", selectedTemplateAndTag.distTag);
-  core.setOutput("short-sha", shortSha);
-
-  if (showReport) {
-    const reportItem = {
-      "ref": ref.name,
-      "sha": github.context.sha,
-      "shortSha": shortSha,
-      "semver": `${semverParts.major}.${semverParts.minor}.${semverParts.patch}`,
-      "timestamp": parts.timestamp,
-      "template": selectedTemplateAndTag.template,
-      "distTag": selectedTemplateAndTag.distTag,
-      "extraTags": extraTags,
-      "renderResult": result
+    const inputs = {
+      ref: core.getInput("ref"),
+      debug: ["true", "1", "yes", "on"].includes(core.getInput("debug")?.toLowerCase()),
+      dryRun: core.getInput("dry-run") === "true",
+      showReport: core.getInput("show-report") === "true",
+      replaceSymbol: core.getInput("replace-symbol") || "-",
+      mergeTags: core.getInput("merge-tags") === "true",
+      extraTags: core.getInput("extra-tags") || "",
+      configPath: core.getInput("configuration-path") || "./.github/metadata-action-config.yml",
+      defaultTemplate: core.getInput("default-template"),
+      defaultTag: core.getInput("default-tag"),
     };
-    await new Report().writeSummary(reportItem, dryRun);
+
+    log.setDebug(inputs.debug);
+
+    let ref = inputs.ref || (github.context.eventName === "pull_request" ? github.context.payload.pull_request?.head?.ref : github.context.ref);
+
+    log.info(`Ref: ${ref}`);
+
+    const refData = new RefNormalizer().extract(ref, inputs.replaceSymbol);
+    const { normalizedName } = refData;
+
+    // --- short-sha logic ---
+    let shortShaLength = parseInt(core.getInput("short-sha"), 10);
+    if (isNaN(shortShaLength) || shortShaLength < 1 || shortShaLength > 40) {
+      log.warn(`⚠️ Invalid short-sha value: ${core.getInput("short-sha")}, fallback to 7`);
+      shortShaLength = 7;
+    }
+
+    const fullSha = github.context.sha;
+    const shortSha = fullSha.slice(0, shortShaLength);
+    log.info(`Commit: ${shortSha} (full: ${fullSha}, length: ${shortShaLength})`);
+
+    // --- Config load ---
+    const loader = new ConfigLoader();
+    const config = loader.load(inputs.configPath, inputs.debug);
+
+    const defaultTemplate = inputs.defaultTemplate || config?.["default-template"] || `{{ref-name}}-{{timestamp}}-{{runNumber}}`;
+    const defaultTag = inputs.defaultTag || config?.["default-tag"] || "latest";
+
+    const extraTags = inputs.extraTags;
+    const mergeTags = inputs.mergeTags;
+
+    log.dim(`defaultTemplate: ${defaultTemplate}`);
+    log.dim(`defaultTag: ${defaultTag}`);
+
+    const selectedTemplateAndTag = { template: null, distTag: null, toString() { return `Template: ${this.template}, DistTag: ${this.distTag}`; }, };
+
+    if (loader.fileExists) {
+      selectedTemplateAndTag.template = findTemplate(!refData.isTag ? refData.normalizedName : "tag", config["branches-template"]);
+      selectedTemplateAndTag.distTag = findTemplate(refData.normalizedName, config["distribution-tag"]);
+    }
+
+    if (!selectedTemplateAndTag.template) {
+      log.warn(`No template found for ref: ${refData.normalizedName}, using default -> ${defaultTemplate}`);
+      selectedTemplateAndTag.template = defaultTemplate;
+    }
+
+    if (!selectedTemplateAndTag.distTag) {
+      log.warn(`No dist-tag found for ref: ${refData.normalizedName}, using default -> ${defaultTag}`);
+      selectedTemplateAndTag.distTag = defaultTag;
+    }
+
+    const parts = generateSnapshotVersionParts();
+    const semverParts = extractSemverParts(refData.normalizedName);
+
+    const values = {
+      ...refData,
+      "ref-name": refData.normalizedName,
+      "short-sha": shortSha,
+      ...semverParts,
+      ...parts,
+      "dist-tag": selectedTemplateAndTag.distTag,
+      "runNumber": github.context.runNumber,
+      ...flattenObject({ github }, ""),
+    };
+
+    let result = fillTemplate(selectedTemplateAndTag.template, values);
+
+    if (mergeTags && extraTags) {
+      log.info(`Merging extra tags: ${extraTags}`);
+      result = [result, extraTags].join(", ");
+    }
+
+    log.success(`💡 Rendered Metadata: ${result}`);
+
+    log.endGroup();
+
+    // --- Outputs ---
+    core.setOutput("result", result);
+    core.setOutput("ref", refData.normalizedName);
+    core.setOutput("ref-name", refData.normalizedName);
+    core.setOutput("commit", fullSha);
+    core.setOutput("short-sha", shortSha);
+    core.setOutput("date", parts.date);
+    core.setOutput("time", parts.time);
+    core.setOutput("timestamp", parts.timestamp);
+    core.setOutput("major", semverParts.major);
+    core.setOutput("minor", semverParts.minor);
+    core.setOutput("patch", semverParts.patch);
+    core.setOutput("tag", selectedTemplateAndTag.distTag);
+    core.setOutput("runNumber", github.context.runNumber);
+    core.setOutput("ref-type", refData.type);
+
+    if (inputs.showReport) {
+      const reportItem = {
+        ref: refData.normalizedName,
+        sha: fullSha,
+        shortSha,
+        semver: `${semverParts.major}.${semverParts.minor}.${semverParts.patch}`,
+        timestamp: parts.timestamp,
+        template: selectedTemplateAndTag.template,
+        distTag: selectedTemplateAndTag.distTag,
+        extraTags,
+        renderResult: result,
+        github: github.context
+      };
+      await new Report().writeSummary(reportItem, inputs.dryRun);
+    }
+
+    log.success("✅ Action completed successfully!");
+
+    //for testing purpose
+    return { result, refData, shortSha, parts, semverParts };
+  } catch (error) {
+    log.error(`❌ Action failed: ${error.message}`);
+    core.setFailed(error.message);
   }
-  core.info('✅ Action completed successfully!');
 }
 
-run();
+if (require.main === module) {
+  run();
+}
+
+module.exports = run;
