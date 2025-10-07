@@ -36,6 +36,9 @@ outputs:
   run-id:
     value: ${{ steps.wait.outputs.run-id }}
     description: "The ID of the workflow run that was waited on."
+  result:
+    value: ${{ steps.wait.outputs.conclusion }}
+    description: "Alias for conclusion output."
 
 runs:
   using: "composite"
