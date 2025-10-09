@@ -168,7 +168,7 @@ jobs:
           rm "${SARIF_FILE%.sarif}.ext.sarif"
 
       - name: Upload Grype SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: grype.sarif
 
@@ -255,7 +255,7 @@ jobs:
           rm "${SARIF_FILE%.sarif}.ext.sarif"
 
       - name: Upload Trivy SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy.sarif
 
