@@ -1,9 +1,9 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.0.0/schema.json",
   "files": {
-    "ignore": [
-      "**/dist/**"
-    ],
-    "maxSize": "3MiB"
+    "includes": ["**/*"],
+    "ignoreUnknown": false,
+    "experimentalScannerIgnores": ["**/dist/**"],
+    "maxSize": 3145728
   }
 }
