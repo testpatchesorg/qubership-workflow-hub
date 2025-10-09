@@ -3,7 +3,8 @@ const yaml = require("js-yaml");
 const core = require("@actions/core");
 const Ajv = require("ajv");
 const path = require("path");
-const log = require("./logger");
+
+const log = require("@netcracker/action-logger");
 
 class ConfigLoader {
   constructor() {
@@ -60,7 +61,7 @@ class ConfigLoader {
     const validate = ajv.compile(schema);
     const valid = validate(config);
     if (!valid) {
-      let errors = ajv.errorsText(validate.errors);
+      const errors = ajv.errorsText(validate.errors);
       core.setFailed(`❗️ Configuration file is invalid: ${errors}`);
       return;
     }

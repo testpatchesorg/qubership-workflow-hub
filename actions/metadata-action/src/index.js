@@ -48,7 +48,7 @@ function findTemplate(refName, templates) {
 }
 
 function fillTemplate(template, values) {
-  return template.replace(/{{\s*([\w\.-]+)\s*}}/g, (match, key) => {
+  return template.replace(/{{\s*([\w.-]+)\s*}}/g, (match, key) => {
     return key in values ? values[key] : match;
   });
 }
@@ -56,11 +56,16 @@ function fillTemplate(template, values) {
 function flattenObject(obj, prefix = "") {
   return Object.entries(obj).reduce((acc, [key, val]) => {
     const name = prefix ? `${prefix}.${key}` : key;
+
     if (val !== null && typeof val === "object") {
-      Object.assign(acc, flattenObject(val, name));
+      const flat = flattenObject(val, name);
+      for (const [k, v] of Object.entries(flat)) {
+        acc[k] = v;
+      }
     } else {
       acc[name] = val;
     }
+
     return acc;
   }, {});
 }
@@ -85,16 +90,18 @@ async function run() {
     log.setDebug(inputs.debug);
     log.debugJSON("Action Inputs", inputs);
 
-    let ref = inputs.ref || (github.context.eventName === "pull_request" ? github.context.payload.pull_request?.head?.ref : github.context.ref);
+    const ref = inputs.ref || (github.context.eventName === "pull_request" ? github.context.payload.pull_request?.head?.ref : github.context.ref);
 
     log.info(`Ref: ${ref}`);
 
     const refData = new RefNormalizer().extract(ref, inputs.replaceSymbol);
+
+    // biome-ignore lint/correctness/noUnusedVariables: variable reserved for future use
     const { normalizedName } = refData;
 
     // --- short-sha logic ---
     let shortShaLength = parseInt(core.getInput("short-sha"), 10);
-    if (isNaN(shortShaLength) || shortShaLength < 1 || shortShaLength > 40) {
+    if (Number.isNaN(shortShaLength) || shortShaLength < 1 || shortShaLength > 40) {
       log.warn(`⚠️ Invalid short-sha value: ${core.getInput("short-sha")}, fallback to 7`);
       shortShaLength = 7;
     }
