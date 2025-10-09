@@ -142,12 +142,17 @@ jobs:
                 (.security_severity | tonumber) >= 7
               ) | del(.security_severity) | del(.info)
               )' "${SARIF_FILE%.sarif}.ext.sarif" > "${SARIF_FILE%.sarif}.filtered.sarif"
-          mv "${SARIF_FILE%.sarif}.filtered.sarif" "$SARIF_FILE"
+              mv "${SARIF_FILE%.sarif}.filtered.sarif" "$SARIF_FILE"
           fi
           # Convert to CSV for easier reading
-          jq --raw-output '["CVE", "Severity", "Provider Severity", "Type", "Package", "Affected Version", "Fix Version", "Summary"] as $headers | (
+          SECURITY_SEVERITY_THRESHOLD='0'
+          if [ "${ONLY_HIGH_CRITICAL}" = "true" ]; then
+            SECURITY_SEVERITY_THRESHOLD='7'
+          fi
+          jq --raw-output --arg sst "$SECURITY_SEVERITY_THRESHOLD" '["CVE", "Severity", "Provider Severity", "Type", "Package", "Affected Version", "Fix Version", "Summary"] as $headers | (
               $headers, (
-                  .runs[0].results[] as $result | [
+                  .runs[0].results[] as $result | if ($result.security_severity | tonumber) >= ($sst | tonumber) then
+                  [
                       ($result.info | capture("Vulnerability (?<cve>.*)"; "n") | .cve),
                       ($result.security_severity | tonumber | if . < 4 then "Low" elif . < 7 then "Medium" elif . < 9 then "High" else "Critical" end),
                       ($result.info | capture("Severity: (?<severity>\\w+)"; "n") | .severity),
@@ -157,7 +162,7 @@ jobs:
                       ($result.info | capture("Fix Version: (?<fix_version>.*)"; "n") | .fix_version),
                       $result.message.text
 
-                  ]
+                  ] else empty end
               )
           ) | @csv' "${SARIF_FILE%.sarif}.ext.sarif" > "${SARIF_FILE%.sarif}.csv"
           rm "${SARIF_FILE%.sarif}.ext.sarif"
