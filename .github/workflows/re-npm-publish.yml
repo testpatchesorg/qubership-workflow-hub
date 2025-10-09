@@ -51,7 +51,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          persist-credentials: false
           ref: ${{ inputs.ref}}
           fetch-depth: 0
 
