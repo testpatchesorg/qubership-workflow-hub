@@ -1,6 +1,10 @@
 name: "Metadata Action"
 description: ""
 inputs:
+    ref:
+        description: "Git ref (branch or tag)."
+        default: ""
+        required: false
     configuration-path:
         description: "Path to the configuration file."
         required: false
