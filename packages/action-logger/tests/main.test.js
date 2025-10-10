@@ -133,7 +133,7 @@ describe('Logger', () => {
       Logger.debugMode = true;
       const obj = { key: 'value', nested: { prop: 123 } };
       Logger.debugJSON('test object', obj);
-      
+
       const expectedJson = JSON.stringify(obj, null, 2);
       expect(core.info).toHaveBeenCalledWith(expect.stringContaining(`[debug] test object:\n${expectedJson}`));
     });
@@ -163,10 +163,10 @@ describe('Logger', () => {
     test('should handle mixed debug and dry-run modes', () => {
       Logger.setDebug(true);
       Logger.setDryRun(true);
-      
+
       Logger.dryrun('test dry run');
       Logger.debug('test debug');
-      
+
       expect(core.info).toHaveBeenCalledTimes(4); // 2 for mode changes, 2 for messages
       expect(core.info).toHaveBeenCalledWith(expect.stringContaining('[dry-run] test dry run'));
       expect(core.info).toHaveBeenCalledWith(expect.stringContaining('[debug] test debug'));
