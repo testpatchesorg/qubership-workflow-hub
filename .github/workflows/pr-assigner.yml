@@ -1,7 +1,7 @@
 name: PR Auto-Assignment
 run-name: "Assigning reviewers for PR #${{ github.event.pull_request.number }}"
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize]
     branches:
       - main
@@ -19,4 +19,3 @@ jobs:
       - uses: netcracker/qubership-workflow-hub/actions/pr-assigner@0f2be042d7c833c6bf60df85732609b7991fb821 #2.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-          GH_TOKEN : ${{ secrets.GH_ACCESS_TOKEN }}
