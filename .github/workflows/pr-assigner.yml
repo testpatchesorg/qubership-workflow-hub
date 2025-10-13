@@ -26,7 +26,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: netcracker/qubership-workflow-hub/actions/pr-assigner@0f2be042d7c833c6bf60df85732609b7991fb821 #2.0.0
+      - uses: netcracker/qubership-workflow-hub/actions/pr-assigner@421-feat-auto-assign-pr-to-author-if-listed-in-codeowners #2.0.0
         with:
           self-assign: true
         env:
