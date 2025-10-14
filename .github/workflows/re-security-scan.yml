@@ -208,7 +208,7 @@ jobs:
           severity: ${{ env.TRIVY_SEVERITY }}
           output: trivy.sarif
           format: "sarif"
-          ignore-unfixed: ${{ inputs..only-fixed }}
+          ignore-unfixed: ${{ inputs.only-fixed }}
           limit-severities-for-sarif: true
         continue-on-error: ${{ inputs.continue-on-error }}
 
@@ -221,7 +221,7 @@ jobs:
           severity: ${{ env.TRIVY_SEVERITY }}
           output: trivy.sarif
           format: "sarif"
-          ignore-unfixed: ${{ inputs..only-fixed }}
+          ignore-unfixed: ${{ inputs.only-fixed }}
           limit-severities-for-sarif: true
         continue-on-error: ${{ inputs.continue-on-error }}
 
