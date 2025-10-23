@@ -94,6 +94,8 @@ runs:
   steps:
     - name: Validate inputs.registry
       shell: bash
+      env:
+        REG: ${{ inputs.registry }}
       run: |
         if [ -z "${REG+x}" ] || [ -z "${REG}" ]; then
           echo "REGISTRY='ghcr.io'" >> $GITHUB_ENV
@@ -142,12 +144,14 @@ runs:
       shell: bash
       run: |
         echo "GHCR_URL=ghcr.io/${{ env.GHCR_OWNER }}/${{ env.CONTAINER_NAME }}"
+        echo "GHCR_URL=ghcr.io/${{ env.GHCR_OWNER }}/${{ env.CONTAINER_NAME }}" >> $GITHUB_ENV
 
     - name: Prepare Image docker.io URL
       if: ${{ contains(env.REGISTRY, 'docker.io') }}
       shell: bash
       run: |
         echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${{ env.CONTAINER_NAME }}"
+        echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${{ env.CONTAINER_NAME }}" >> $GITHUB_ENV
 
     - name: Checkout Repository
       if: ${{ inputs.checkout == 'true' }}
