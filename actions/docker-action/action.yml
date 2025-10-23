@@ -95,7 +95,7 @@ runs:
     - name: Validate inputs.registry
       shell: bash
       run: |
-        if [ -z "${REG+x}" -or -z "${REG}" ]; then
+        if [ -z "${REG+x}" ] || [ -z "${REG}" ]; then
           echo "REGISTRY='ghcr.io'" >> $GITHUB_ENV
         else:
           echo "REGISTRY=${{ inputs.registry }}" >> $GITHUB_ENV
