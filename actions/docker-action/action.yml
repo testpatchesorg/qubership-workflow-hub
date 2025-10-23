@@ -160,7 +160,6 @@ runs:
         ref: ${{ inputs.ref }}
 
     - name: Display Debug Information
-      if: ${{ contains(env.REGISTRY, 'ghcr.io') }}
       shell: bash
       env:
         CUSTOM_IMAGE_NAME: ${{ inputs.custom-image-name }}
