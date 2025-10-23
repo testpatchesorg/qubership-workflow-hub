@@ -157,12 +157,12 @@ runs:
         DOCKER_REPO: ${{ inputs.docker-io-repository }}
       run: |
         echo "DOCKER_REPO: ${DOCKER_REPO}"
-        if [ -n ${DOCKER_REPO} ]; then
-          echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${DOCKER_REPO}/${{ env.CONTAINER_NAME }}"
-          echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${DOCKER_REPO}/${{ env.CONTAINER_NAME }}" >> $GITHUB_ENV
-        else
+        if [ -z ${DOCKER_REPO} ]; then
           echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${{ env.CONTAINER_NAME }}"
           echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${{ env.CONTAINER_NAME }}" >> $GITHUB_ENV
+        else
+          echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${DOCKER_REPO}/${{ env.CONTAINER_NAME }}"
+          echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${DOCKER_REPO}/${{ env.CONTAINER_NAME }}" >> $GITHUB_ENV
         fi
 
     - name: Checkout Repository
