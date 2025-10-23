@@ -97,7 +97,7 @@ runs:
       run: |
         if [ -z "${REG+x}" ] || [ -z "${REG}" ]; then
           echo "REGISTRY='ghcr.io'" >> $GITHUB_ENV
-        else:
+        else
           echo "REGISTRY=${{ inputs.registry }}" >> $GITHUB_ENV
         fi
     - name: Validate docker.io login params
