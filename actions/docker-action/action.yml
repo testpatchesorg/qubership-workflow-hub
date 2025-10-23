@@ -82,6 +82,7 @@ inputs:
   docker-io-repository:
     description: "docker.io repository under docker-io-login account"
     required: false
+    default: ''
 outputs:
   image-name:
     description: "The name of the built Docker image."
@@ -155,6 +156,7 @@ runs:
       env:
         DOCKER_REPO: ${{ inputs.docker-io-repository }}
       run: |
+        echo "DOCKER_REPO: ${DOCKER_REPO}"
         if [ -n ${DOCKER_REPO} ]; then
           echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${DOCKER_REPO}/${{ env.CONTAINER_NAME }}"
           echo "DOCKER_URL=${{ env.DOCKER_OWNER }}/${DOCKER_REPO}/${{ env.CONTAINER_NAME }}" >> $GITHUB_ENV
